@@ -1,0 +1,3 @@
+[submodule "deps/open-vcdiff"]
+	path = deps/open-vcdiff
+	url = https://github.com/google/open-vcdiff.git

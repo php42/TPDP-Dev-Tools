@@ -1,0 +1,25 @@
+https://github.com/google/open-vcdiff
+https://www.boost.org/
+
+extract boost to deps/boost
+run bootstrap.bat
+run b2.exe
+
+extract open-vcdiff to deps/open-vcdiff
+run cmake, set the build directory to deps/open-vcdiff/build
+make sure to pick the correct compiler for the arch you want to target (e.g. msvc x64)
+open ALL_BUILD.vcxproj and build
+
+you may also run 'git submodule update --init --recursive'
+to obtain open-vcdiff
+
+the following paths should be valid:
+
+include:
+TPDP-Dev-Tools/deps/boost/
+TPDP-Dev-Tools/deps/open-vcdiff/src/
+
+binaries:
+TPDP-Dev-Tools/deps/boost/stage/lib/
+TPDP-Dev-Tools/deps/open-vcdiff/build/Release/
+TPDP-Dev-Tools/deps/open-vcdiff/build/Debug/
