@@ -386,10 +386,10 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
     boost::property_tree::ptree tree;
 
     file[31] = 0; // ensure trainer name is null-terminated
-    file[0x3CB] = 0; // ensure trainer title is null-terminated
+    file[0x3C9] = 0; // ensure trainer title is null-terminated
 
     std::string trainer_name(file.get());
-    std::string trainer_title(&file[0x3AC]);
+    std::string trainer_title(&file[0x3AA]);
 
     tree.put("trainer_name", sjis_to_utf8(trainer_name));
     tree.put("trainer_title", sjis_to_utf8(trainer_title));
@@ -444,9 +444,9 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         throw BineditException("Trainer title must be less than 32 bytes!");
 
     memset(file.get(), 0, 32);
-    memset(&file[0x3AC], 0, 32);
+    memset(&file[0x3AA], 0, 32);
     memcpy(file.get(), trainer_name.data(), trainer_name.size());
-    memcpy(&file[0x3AC], trainer_title.data(), trainer_title.size());
+    memcpy(&file[0x3AA], trainer_title.data(), trainer_title.size());
 
     std::size_t pos = 0;
     auto buf = &file[0x2C];
