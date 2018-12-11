@@ -44,3 +44,4 @@
 patcher/obj/*
 .vs/*
 deps/*/*
+x64/*

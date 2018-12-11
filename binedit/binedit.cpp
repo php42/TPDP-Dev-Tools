@@ -384,12 +384,27 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
         throw BineditException("Error reading file: " + in.string());
 
     boost::property_tree::ptree tree;
+    std::string trainer_name;
+    std::string trainer_title;
 
-    file[31] = 0; // ensure trainer name is null-terminated
-    file[0x3C9] = 0; // ensure trainer title is null-terminated
-
-    std::string trainer_name(file.get());
-    std::string trainer_title(&file[0x3AA]);
+    if(file[31] != 0)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Warning: " << in.string() << std::endl;
+        std::cerr << "Truncating trainer name to 32 bytes.";
+        trainer_name.assign(file.get(), 32);
+    }
+    else
+        trainer_name = file.get();
+    if(file[0x3C9] != 0)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Warning: " << in.string() << std::endl;
+        std::cerr << "Truncating trainer title to 32 bytes.";
+        trainer_title.assign(&file[0x3AA], 32);
+    }
+    else
+        trainer_title = &file[0x3AA];
 
     tree.put("trainer_name", sjis_to_utf8(trainer_name));
     tree.put("trainer_title", sjis_to_utf8(trainer_title));
@@ -405,7 +420,7 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
         node.put("id", puppet.puppet_id);
         node.put("style", puppet.style_index);
         node.put("ability", puppet.ability_index);
-        node.put("costume", puppet.costume_index); // does this do anything?
+        node.put("costume", puppet.costume_index);
         node.put("experience", puppet.exp);
         node.put("mark", puppet.mark);
         node.put("held_item", puppet.held_item_id);
@@ -438,10 +453,23 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
     auto trainer_name = utf8_to_sjis(tree.get<std::string>("trainer_name"));
     auto trainer_title = utf8_to_sjis(tree.get<std::string>("trainer_title"));
 
-    if(trainer_name.size() >= 32)
-        throw BineditException("Trainer name must be less than 32 bytes!");
-    if(trainer_title.size() >= 32)
-        throw BineditException("Trainer title must be less than 32 bytes!");
+    if(trainer_name.size() > 32)
+        throw BineditException("Trainer name must not exceed 32 bytes!");
+    if(trainer_title.size() > 32)
+        throw BineditException("Trainer title must not exceed 32 bytes!");
+
+    if(trainer_name.size() == 32)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Warning: " << json.string() << std::endl;
+        std::cerr << "Unterminated trainer name (name is exactly 32 bytes)";
+    }
+    if(trainer_title.size() == 32)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Warning: " << json.string() << std::endl;
+        std::cerr << "Unterminated trainer title (title is exactly 32 bytes)";
+    }
 
     memset(file.get(), 0, 32);
     memset(&file[0x3AA], 0, 32);
@@ -487,6 +515,7 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
 
         puppet.write(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
         libtpdp::encrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+        ++pos;
     }
 
     if(!write_file(data.wstring(), file.get(), sz))
