@@ -19,6 +19,7 @@
 #include <string>
 #include <memory>
 #include <exception>
+#include "../common/typedefs.h"
 
 namespace libtpdp
 {
@@ -152,7 +153,7 @@ private:
 	ArchiveHeader header_;
 
 	std::size_t data_used_, data_max_;
-    std::unique_ptr<char[]> data_;
+    AlignedFileBuf data_; // file buffer aligned to 32 byte boundary for AVX/SSE (encryption)
 
     std::size_t file_table_offset_;
     std::size_t dir_table_offset_;
@@ -182,6 +183,8 @@ private:
      * so don't depend on this to uniquely identify a file.
      * used for the 'checksum' field of ArchiveFilenameHeader */
     unsigned int hash_filename(const std::string& filename) const;
+
+    void reallocate(std::size_t sz);
 
 public:
 	Archive() : header_(), data_used_(0), data_max_(0), is_ynk_(false) {};

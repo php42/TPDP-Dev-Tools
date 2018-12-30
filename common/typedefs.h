@@ -15,5 +15,8 @@
 */
 
 #pragma once
+#include <memory>
+#include <functional>
 
 typedef std::unique_ptr<char[]> FileBuf;
+typedef std::unique_ptr<char[], std::function<void(void*)>> AlignedFileBuf;

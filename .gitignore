@@ -41,7 +41,16 @@
 *.user
 *.cache
 *.ipch
+
 patcher/obj/*
 .vs/*
 deps/*/*
 x64/*
+Debug/*
+Release/*
+binedit/x64/*
+binedit/Debug/*
+binedit/Release/*
+diffgen/x64/*
+diffgen/Debug/*
+diffgen/Release/*

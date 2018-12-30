@@ -92,15 +92,18 @@ void Archive::encrypt()
     for(unsigned int i = 0; i < 8; ++i)
         memcpy(&avx_key_buf[i * 12], key, 12);
 
-    __m256i avxkey1 = _mm256_loadu_si256((__m256i*)&avx_key_buf[0]);
-    __m256i avxkey2 = _mm256_loadu_si256((__m256i*)&avx_key_buf[32]);
-    __m256i avxkey3 = _mm256_loadu_si256((__m256i*)&avx_key_buf[64]);
+    __m256i avxkey1 = _mm256_load_si256((__m256i*)&avx_key_buf[0]);
+    __m256i avxkey2 = _mm256_load_si256((__m256i*)&avx_key_buf[32]);
+    __m256i avxkey3 = _mm256_load_si256((__m256i*)&avx_key_buf[64]);
 
     for(; (data_used_ - pos) >= 96; pos += 96)
     {
-        _mm256_storeu_si256((__m256i*)&data[pos], _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos]), avxkey1));
-        _mm256_storeu_si256((__m256i*)&data[pos + 32], _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos + 32]), avxkey2));
-        _mm256_storeu_si256((__m256i*)&data[pos + 64], _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos + 64]), avxkey3));
+        auto block1 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos]), avxkey1);
+        auto block2 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 32]), avxkey2);
+        auto block3 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 64]), avxkey3);
+        _mm256_store_si256((__m256i*)&data[pos], block1);
+        _mm256_store_si256((__m256i*)&data[pos + 32], block2);
+        _mm256_store_si256((__m256i*)&data[pos + 64], block3);
     }
 #elif !defined(ARC_NO_SSE)
 
@@ -110,15 +113,18 @@ void Archive::encrypt()
     for(unsigned int i = 0; i < 4; ++i)
         memcpy(&sse_key_buf[i * 12], key, 12);
 
-    __m128i ssekey1 = _mm_loadu_si128((__m128i*)&sse_key_buf[0]);
-    __m128i ssekey2 = _mm_loadu_si128((__m128i*)&sse_key_buf[16]);
-    __m128i ssekey3 = _mm_loadu_si128((__m128i*)&sse_key_buf[32]);
+    __m128i ssekey1 = _mm_load_si128((__m128i*)&sse_key_buf[0]);
+    __m128i ssekey2 = _mm_load_si128((__m128i*)&sse_key_buf[16]);
+    __m128i ssekey3 = _mm_load_si128((__m128i*)&sse_key_buf[32]);
 
     for(; (data_used_ - pos) >= 48; pos += 48)
     {
-        _mm_storeu_si128((__m128i*)&data[pos], _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos]), ssekey1));
-        _mm_storeu_si128((__m128i*)&data[pos + 16], _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos + 16]), ssekey2));
-        _mm_storeu_si128((__m128i*)&data[pos + 32], _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos + 32]), ssekey3));
+        auto block1 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos]), ssekey1);
+        auto block2 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 16]), ssekey2);
+        auto block3 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 32]), ssekey3);
+        _mm_store_si128((__m128i*)&data[pos], block1);
+        _mm_store_si128((__m128i*)&data[pos + 16], block2);
+        _mm_store_si128((__m128i*)&data[pos + 32], block3);
     }
 #else
     uint32_t k1 = *(uint32_t*)(key);
@@ -149,7 +155,7 @@ void Archive::open(const std::string& filename)
 	close();
 
     std::size_t sz;
-	auto buf = read_file(filename, sz);
+	auto buf = aligned_read_file(filename, sz, 32);
     if(buf == nullptr)
         throw ArcError("File I/O read error.");
 
@@ -173,7 +179,7 @@ void Archive::open(const std::wstring& filename)
 	close();
 
     std::size_t sz;
-    auto buf = read_file(filename, sz);
+    auto buf = aligned_read_file(filename, sz, 32);
     if(buf == nullptr)
         throw ArcError("File I/O read error.");
 
@@ -222,23 +228,27 @@ bool Archive::save(const std::wstring& filename)
 
 std::size_t Archive::get_header_offset(const std::string& filepath) const
 {
-    std::string file = filepath;
+    std::wstring utf = sjis_to_utf(filepath); // avoid encoding problems
+    for(auto& i : utf)
+        i = std::towupper(i);
 
-    std::size_t pos = file.find_first_of("/\\");
+    std::string upper_path = utf_to_sjis(utf);
+
+    std::size_t pos = upper_path.find_first_of("/\\");
 
     auto dir_it = dir_begin();
     std::size_t offset = dir_it->dir_offset + file_table_offset_;
 
     for(;;)
     {
-        std::string dir = file.substr(0, pos);
-        file.erase(0, (pos == std::string::npos) ? std::string::npos : (pos + 1));
+        std::string dir = upper_path.substr(0, pos);
+        upper_path.erase(0, (pos == std::string::npos) ? std::string::npos : (pos + 1));
 
         if(dir.empty())
         {
             if(pos != std::string::npos)
             {
-                pos = file.find_first_of("/\\");
+                pos = upper_path.find_first_of("/\\");
                 continue;
             }
             else
@@ -253,7 +263,7 @@ std::size_t Archive::get_header_offset(const std::string& filepath) const
             std::size_t name_offset = it->filename_offset + header_.filename_table_offset + ARCHIVE_FILENAME_HEADER_SIZE;
             std::string name;
             if(filename_header->length > 0)
-                name = (const char*)&data_[name_offset + (filename_header->length * 4)];
+                name = (const char*)&data_[name_offset /*+ (filename_header->length * 4)*/];
             if(name == dir)
             {
                 //if(checksum != filename_header->checksum)
@@ -267,7 +277,7 @@ std::size_t Archive::get_header_offset(const std::string& filepath) const
         if(!found)
             return -1;
 
-        pos = file.find_first_of("/\\");
+        pos = upper_path.find_first_of("/\\");
     }
 
     return offset;
@@ -404,25 +414,13 @@ Archive::iterator Archive::repack_file(const iterator& it, const void * src, siz
     size_t new_used = data_used_ + diff;
 
     if(new_used > data_max_) /* buffer is too small for the new file, reallocate */
-    {
-        data_max_ = (std::size_t)(new_used * 1.15); /* allocate 15% extra to avoid future reallocations */
-        auto buf = new char[data_max_];
-        memcpy(buf, data_.get(), file_header.data_offset + header_.data_offset);    /* copy everything up to the file we're replacing */
-        memcpy(&buf[file_header.data_offset + header_.data_offset], src, len);      /* copy the new file */
+        reallocate((std::size_t)(new_used * 1.15)); /* allocate 15% extra to avoid future reallocations */
 
-        size_t i = file_header.data_offset + header_.data_offset + len;
-        size_t j = file_header.data_offset + header_.data_offset + orig_len;
-        memcpy(&buf[i], &data_[j], data_used_ - j); /* copy everything after the file we replaced */
-
-        data_.reset(buf); /* replace the old buffer */
-    }
-    else /* shift everything after the file we're replacing to account for the size difference */
-    {
-        size_t i = file_header.data_offset + header_.data_offset + len;
-        size_t j = file_header.data_offset + header_.data_offset + orig_len;
-        memmove(&data_[i], &data_[j], data_used_ - j);                              /* adjust the gap */
-        memcpy(&data_[file_header.data_offset + header_.data_offset], src, len);    /* copy new file into the gap */
-    }
+    /* shift everything after the file we're replacing to account for the size difference */
+    size_t i = file_header.data_offset + header_.data_offset + len;
+    size_t j = file_header.data_offset + header_.data_offset + orig_len;
+    memmove(&data_[i], &data_[j], data_used_ - j);                              /* adjust the gap */
+    memcpy(&data_[file_header.data_offset + header_.data_offset], src, len);    /* copy new file into the gap */
 
     data_used_ = new_used;
 
@@ -583,22 +581,11 @@ Archive::iterator Archive::insert(const iterator& it, const ArchiveFileHeader& h
     std::size_t new_len = data_used_ + sizeof(header);
 
     if(new_len > data_max_) // buffer is too small, reallocate
-    {
-        data_max_ = (std::size_t)(new_len * 1.15);  // allocate 15% extra to avoid future reallocations
-        auto buf = new char[data_max_];
+        reallocate((std::size_t)(new_len * 1.15));  // allocate 15% extra to avoid future reallocations
 
-        memcpy(buf, data_.get(), it.offset());      // copy everything up to the new header
-        header.write(&buf[it.offset()]);            // copy the new header
-
-        memcpy(&buf[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset()); // copy everything after the header we inserted
-
-        data_.reset(buf); // replace the old buffer
-    }
-    else // shift everything to make room for the new header
-    {
-        memmove(&data_[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset());
-        header.write(&data_[it.offset()]);
-    }
+    // shift everything to make room for the new header
+    memmove(&data_[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset());
+    header.write(&data_[it.offset()]);
 
     data_used_ = new_len;
 
@@ -662,22 +649,11 @@ Archive::directory_iterator Archive::insert(const directory_iterator& it, const 
     std::size_t new_len = data_used_ + sizeof(header);
 
     if(new_len > data_max_) // buffer is too small, reallocate
-    {
-        data_max_ = (std::size_t)(new_len * 1.15);  // allocate 15% extra to avoid future reallocations
-        auto buf = new char[data_max_];
+        reallocate((std::size_t)(new_len * 1.15));  // allocate 15% extra to avoid future reallocations
 
-        memcpy(buf, data_.get(), it.offset());      // copy everything up to the new header
-        header.write(&buf[it.offset()]);            // copy the new header
-
-        memcpy(&buf[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset()); // copy everything after the header we inserted
-
-        data_.reset(buf); // replace the old buffer
-    }
-    else // shift everything to make room for the new header
-    {
-        memmove(&data_[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset());
-        header.write(&data_[it.offset()]);
-    }
+    // shift everything to make room for the new header
+    memmove(&data_[it.offset() + sizeof(header)], &data_[it.offset()], data_used_ - it.offset());
+    header.write(&data_[it.offset()]);
 
     data_used_ = new_len;
 
@@ -705,29 +681,15 @@ std::size_t Archive::insert_filename_header(const std::string& filename)
         header.checksum += (unsigned char)i;
 
     if(new_len > data_max_) // buffer is too small, reallocate
-    {
-        data_max_ = (std::size_t)(new_len * 1.15);          // allocate 15% extra to avoid future reallocations
-        auto buf = new char[data_max_];
-        memcpy(buf, data_.get(), file_table_offset_);       // copy everything up to the new header
-        memset(&buf[file_table_offset_], 0, header_len);
-        header.write(&buf[file_table_offset_]);             // copy the new header
+        reallocate((std::size_t)(new_len * 1.15));          // allocate 15% extra to avoid future reallocations
 
-        memcpy(&buf[file_table_offset_ + sizeof(header)], upper_name.data(), upper_name.size());
-        memcpy(&buf[file_table_offset_ + sizeof(header) + (name_len * 4)], filename.data(), filename.size());
+    // shift everything to make room for the new header
+    memmove(&data_[file_table_offset_ + header_len], &data_[file_table_offset_], data_used_ - file_table_offset_);
+    memset(&data_[file_table_offset_], 0, header_len);
+    header.write(&data_[file_table_offset_]);
 
-        memcpy(&buf[file_table_offset_ + header_len], &data_[file_table_offset_], data_used_ - file_table_offset_); // copy everything after the header we inserted
-
-        data_.reset(buf); // replace the old buffer
-    }
-    else // shift everything to make room for the new header
-    {
-        memmove(&data_[file_table_offset_ + header_len], &data_[file_table_offset_], data_used_ - file_table_offset_);
-        memset(&data_[file_table_offset_], 0, header_len);
-        header.write(&data_[file_table_offset_]);
-
-        memcpy(&data_[file_table_offset_ + sizeof(header)], upper_name.data(), upper_name.size());
-        memcpy(&data_[file_table_offset_ + sizeof(header) + (name_len * 4)], filename.data(), filename.size());
-    }
+    memcpy(&data_[file_table_offset_ + sizeof(header)], upper_name.data(), upper_name.size());
+    memcpy(&data_[file_table_offset_ + sizeof(header) + (name_len * 4)], filename.data(), filename.size());
 
     data_used_ = new_len;
 
@@ -860,9 +822,15 @@ unsigned int Archive::hash_filename(const std::string& filename) const
     return ret;
 }
 
+void Archive::reallocate(std::size_t sz)
+{
+    data_.reset((char*)_aligned_realloc(data_.release(), sz, 32));
+    data_max_ = sz;
+}
+
 Archive::Archive(const void *data, std::size_t len, bool is_ynk) : data_used_(len), data_max_(len), is_ynk_(is_ynk)
 {
-    data_ = std::make_unique<char[]>(len);
+    data_ = AlignedFileBuf((char*)_aligned_malloc(len, 32), _aligned_free);
     memcpy(data_.get(), data, len);
     header_.read(data_.get());
 

@@ -15,6 +15,7 @@
 */
 
 #include "filesystem.h"
+#include <functional>
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -161,6 +162,76 @@ FileBuf read_file(const std::string& file, std::size_t& size)
     size = len;
     return buf;
 #endif // _WIN32
+}
+
+AlignedFileBuf aligned_read_file(const std::wstring& file, std::size_t& size, std::size_t alignment)
+{
+    HANDLE infile;
+
+    infile = CreateFileW(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(infile == INVALID_HANDLE_VALUE)
+        return AlignedFileBuf();
+
+    LARGE_INTEGER len;
+    DWORD bytes_read;
+    if(!GetFileSizeEx(infile, &len))
+    {
+        CloseHandle(infile);
+        return AlignedFileBuf();
+    }
+
+    AlignedFileBuf buf((char*)_aligned_malloc((std::size_t)len.QuadPart, alignment), _aligned_free);
+
+    if(!ReadFile(infile, buf.get(), (DWORD)len.QuadPart, &bytes_read, NULL))
+    {
+        CloseHandle(infile);
+        return AlignedFileBuf();
+    }
+
+    CloseHandle(infile);
+
+    if(bytes_read != (DWORD)len.QuadPart)
+    {
+        return AlignedFileBuf();
+    }
+
+    size = (std::size_t)len.QuadPart;
+    return buf;
+}
+
+AlignedFileBuf aligned_read_file(const std::string& file, std::size_t& size, std::size_t alignment)
+{
+    HANDLE infile;
+
+    infile = CreateFileA(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(infile == INVALID_HANDLE_VALUE)
+        return AlignedFileBuf();
+
+    LARGE_INTEGER len;
+    DWORD bytes_read;
+    if(!GetFileSizeEx(infile, &len))
+    {
+        CloseHandle(infile);
+        return AlignedFileBuf();
+    }
+
+    AlignedFileBuf buf((char*)_aligned_malloc((std::size_t)len.QuadPart, alignment), _aligned_free);
+
+    if(!ReadFile(infile, buf.get(), (DWORD)len.QuadPart, &bytes_read, NULL))
+    {
+        CloseHandle(infile);
+        return AlignedFileBuf();
+    }
+
+    CloseHandle(infile);
+
+    if(bytes_read != (DWORD)len.QuadPart)
+    {
+        return AlignedFileBuf();
+    }
+
+    size = (std::size_t)len.QuadPart;
+    return buf;
 }
 
 bool create_directory(const std::string& dir)

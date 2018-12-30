@@ -5,7 +5,7 @@ An explanation of the individual tools follows below.
 
 ##Diffgen
 This is a patching utility, you don't need to use it if you'd prefer to use xdelta or whatever.
-It just provides TPDP specific functionality such as bypassing the encryption on the archives which reduces diff sizes and allows file-level patching within the archive.
+It just provides TPDP specific functionality such as bypassing the encryption and compression on the archives which reduces diff sizes and allows file-level patching within the archive.
 It also provides a convenient way to extract all the files from the archives for editing.
 Invoke with --help for syntax.
 
@@ -13,6 +13,9 @@ Patches are applied on a **per-file** (within the archive) basis.
 This means that *multiple mods can be stacked*.
 Files that fail the CRC check are simply skipped, i.e. the first mod applied is the one that "sticks" for a given file.
 This does not apply to -m 2 (mode 2) which applies the diff to the entire archive (used to add new files to the archive).
+This means that only one mode 2 patch can be applied and it needs to be applied first. Mode 1 patches can still be applied afterward.
+
+Note that you *cannot create new directories* even in mode 2 as there is no legitimate need to do so.
 
 ##BinEdit
 This converts the games various binary file formats to human-readable json and back. The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).
@@ -71,3 +74,6 @@ binaries:
 TPDP-Dev-Tools/deps/boost/stage/lib/
 TPDP-Dev-Tools/deps/open-vcdiff/build/Release/
 TPDP-Dev-Tools/deps/open-vcdiff/build/Debug/
+
+you may also run `git submodule update --init --recursive`
+to obtain open-vcdiff
