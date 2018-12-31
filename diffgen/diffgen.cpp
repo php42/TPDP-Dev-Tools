@@ -28,6 +28,8 @@
 #include <tuple>
 #include <fstream>
 #include <unordered_map>
+#include <thread>
+#include <mutex>
 
 constexpr uint8_t DIFF_FILE_VERSION = 1;
 static const char DIFF_FILE_MAGIC[] = { 'T','P','D','P','D','i','f','f' };
@@ -56,6 +58,31 @@ struct DiffHeader
     uint8_t arc_num;
 };
 #pragma pack(pop)
+
+/* below is some syncronization madness for whenever i feel like
+ * implementing some sort of parallelism */
+
+/* synchronization for console access */
+class ScopedConsoleLock
+{
+private:
+    static std::recursive_mutex mtx_;
+    std::lock_guard<std::recursive_mutex> lock_;
+
+public:
+    ScopedConsoleLock() : lock_(mtx_) {}
+    ScopedConsoleLock(const ScopedConsoleLock&) = delete;
+    ScopedConsoleLock& operator=(const ScopedConsoleLock&) = delete;
+};
+
+std::recursive_mutex ScopedConsoleLock::mtx_;
+
+class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger
+{
+    using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
+};
+
+typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
 
 static bool diff_files(const Path& input, const Path& output, const Path& diff_path)
 {
@@ -184,10 +211,7 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
     /* XXX: this is a disaster pls fix */
     for(auto& i : diffs)
     {
-        uint32_t crc = (uint32_t)std::get<0>(i);
-        std::string& name(std::get<1>(i));
-        std::string& data(std::get<2>(i));
-        uint8_t arc_num = std::get<3>(i);
+        auto&[crc, name, data, arc_num] = i;
         std::size_t total_size = 9 + name.size() + data.size();
 
         auto buf = std::make_unique<char[]>(total_size);
@@ -607,9 +631,7 @@ bool patch(const Path& input, const Path& output)
 
         for(auto& entry : it.second)
         {
-            auto crc = std::get<0>(entry);
-            std::string& path(std::get<1>(entry));
-            std::string& data(std::get<2>(entry));
+            auto&[crc, path, data] = entry;
 
             auto file_iter = arc.find(path);
             if(file_iter >= arc.end())

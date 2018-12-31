@@ -14,8 +14,17 @@
    limitations under the License.
 */
 
+/* workaround for a bug in boost::property_tree (bad assert for json arrays) */
+#ifndef NDEBUG
+#define NDEBUG
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#undef NDEBUG
+#else
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#endif
+
 #include <boost/algorithm/string.hpp>
 #include "../common/textconvert.h"
 #include "../common/filesystem.h"
@@ -308,7 +317,6 @@ static void patch_mad(const Path& data, const Path& json)
 {
     boost::property_tree::ptree tree;
     read_as_utf8(json, tree);
-    //std::vector<libtpdp::MADEncounter> normal_encounters, special_encounters;
 
     std::size_t sz;
     auto file = read_file(data.wstring(), sz);
@@ -513,6 +521,7 @@ static void convert_skills(const Path& in, const Path& out)
         file[i + 31] = 0; // ensure null-terminated
         std::string name = &file[i];
 
+        node.put("id", i / libtpdp::SKILL_DATA_SIZE);
         node.put("name", sjis_to_utf8(name));
         node.put("element", skill.element);
         node.put("type", skill.type);
@@ -544,14 +553,14 @@ static void patch_skills(const Path& data, const Path& json)
     boost::property_tree::ptree tree;
     read_as_utf8(json, tree);
 
-    std::size_t pos = 0;
     for(auto& it : tree.get_child("skills"))
     {
+        auto& node = it.second;
+        auto pos = node.get<unsigned int>("id") * libtpdp::SKILL_DATA_SIZE;
         if(pos > (sz - libtpdp::SKILL_DATA_SIZE))
             throw BineditException("Too many skills!");
 
         libtpdp::SkillData skill(&file[pos]);
-        auto& node = it.second;
 
         std::string name = utf8_to_sjis(node.get<std::string>("name"));
         if(name.size() >= 32)
@@ -567,12 +576,11 @@ static void patch_skills(const Path& data, const Path& json)
         skill.priority = node.get<int>("priority");
         skill.effect_chance = node.get<unsigned int>("effect_chance");
         skill.effect_id = node.get<unsigned int>("effect_id");
-        skill.effect_target = node.get<unsigned int>("effect_id");
+        skill.effect_target = node.get<unsigned int>("effect_target");
         skill.effect_type = node.get<unsigned int>("ynk_effect_type");
         skill.ynk_id = node.get<unsigned int>("ynk_id");
 
         skill.write(&file[pos]);
-        pos += libtpdp::SKILL_DATA_SIZE;
     }
 
     if(!write_file(data.wstring(), file.get(), sz))

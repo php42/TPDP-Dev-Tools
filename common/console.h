@@ -44,6 +44,9 @@ public:
         }
     }
 
+    ScopedConsoleColorChanger(const ScopedConsoleColorChanger&) = delete;
+    ScopedConsoleColorChanger& operator=(const ScopedConsoleColorChanger&) = delete;
+
     ~ScopedConsoleColorChanger()
     {
         if(changed_)
