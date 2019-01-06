@@ -1,0 +1,50 @@
+definitions for all the puppets in the game
+this one should be mostly self-explanatory, i'll document some of the less obvious things:
+
+each puppet has 4 style slots. you can have less (type = None) but you can't add more than 4.
+
+"base_skills": skills shared by all styles of a puppet
+learned at levels 7, 10, 14, 19, 24 in that order
+
+"cost": 0-4 (inclusive) translates to 80-120 cost ((cost * 10) + 80)
+
+"item_drop_table": items dropped as loot when defeated in the wild (untested)
+
+"base_stats": hp, f.atk, f.def, s.atk, s.def, speed in that order
+
+"style_skills": learned at levels 0, 0, 0, 0, 30, 36, 42, 49, 56, 63, 70 in that order (zero being starting skills for normal puppets)
+
+"compatibility": list of item IDs
+these are the IDs of items that teach skillcards, presence of an ID indicates that the puppet can use that item to learn the skill that it teaches.
+wordy, but the semantics are important. skillcards are items and the skill a skillcard teaches can be changed.
+valid values are 385 - 512 (inclusive)
+
+
+
+---BINARY FORMAT---
+                               _
+0x00: char name[32] (unused)    |
+0x21: u8   cost                 |
+0x22: u16  base_skills[5]       |
+0x2B: u16  item_drop_table[4]   |--0x1F1
+0x33: u16  id(???)(IGNORE)      |
+0x35-0x5C: ???                  |
+0x5D: style[4]                 _|
+
+NOTE: use index into the file as ID i.e. index of first byte divided by 0x1F1
+
+style format:
+                               _
+0x00: u8   style_type           |
+0x01: u8   element1             |
+0x02: u8   element2             |
+0x03: u8   base_stats[6]        |
+0x09: u16  abilities[2]         |
+0x0D-0x10: ???                  |
+0x11: u16  style_skills[11]     |--0x65
+0x27-0x2C: ???                  |
+0x2D: u16  level_100_skill      |
+0x2F-0x30: ???                  |
+0x31: u8   compat_bitfield[16]  | (bitfield of 128 bools indicating ability to learn skills taught by items 385-512)
+0x41: u16  level_70_skills[8]   |
+0x51-0x64: ???                 _|

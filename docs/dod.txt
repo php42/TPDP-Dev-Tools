@@ -1,0 +1,25 @@
+definition for a trainer battle.
+this file contains the name and title for a given trainer, as well as their party of puppets.
+the puppets are encrypted, see puppet.h in libtpdp for the encryption algorithm. gn_dat1/common/Efile.bin is used as a source of random data (seed) to perform the encryption.
+if you're clever, you can defeat the encryption without the use of efile.bin, but since the algorithm is known and efile.bin is available i don't bother with that method.
+
+"style": style index (0-3 inclusive). corresponds to the style array in DollData.dbs, check DollData.json to see which one is which (json arrays mirror the binary).
+"ability": ability index (0 or 1). 0 = 1st ability, 1 = 2nd ability. check DollData.json.
+"costume": costume index (0-3 inclusive). 0 = normal, 1 = alt color, 2 = alt outfit, 3 = wedding dress
+"experience": puppet exp. used to determine level. see exp_for_level() in gamedata.cpp (libtpdp) for the exp algorithm. google will probably work too.
+"mark": 0 = none, 1 = red, 2 = blue, 3 = black, 4 = white, 5 = green
+"held_item": item id
+"ivs": 0-15. 0 = E-, 15 = S. in order: hp, f.atk, f.def, s.atk, s.def, speed
+"evs": exactly as in-game. order same as ivs
+
+
+---BINARY FORMAT---
+                         _
+0x0000: char name[32]     |
+0x0020: u16  trainer_id   |
+0x0022-0x002B: ???        |--0x42A
+0x002C: puppet[6]         | (0x95 per puppet)
+0x03AA: char title[128]  _|
+
+you will probably want to consult puppet.h, puppet.cpp, and binedit.cpp (encrypt_puppet(), decrypt_puppet(), convert_dod())
+see puppet.txt for a description of the puppet format

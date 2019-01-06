@@ -1,0 +1,6 @@
+You'll really just need to read the source code.
+The save file is hashed->compressed->encrypted->scrambled.
+The process is rather complicated and the source code probably documents it better than anything i could write up.
+See savefile.h and savefile.cpp in libtpdp.
+
+Note that the save file code is the oldest code in the entire project and is probably buggy/unfinished.

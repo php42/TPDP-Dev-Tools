@@ -68,6 +68,26 @@ static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)
     boost::property_tree::read_json(stream, tree);
 }
 
+static unsigned int element_to_uint(const std::string& name)
+{
+    auto tmp = utf_widen(name); // converting text form to integer representation
+    for(unsigned int i = libtpdp::ELEMENT_NONE; i < libtpdp::ELEMENT_MAX; ++i)
+        if(algo::iequals(tmp, libtpdp::element_string(i)))
+            return i;
+
+    return -1;
+}
+
+static unsigned int style_to_uint(const std::string& name)
+{
+    auto tmp = utf_widen(name); // converting text form to integer representation
+    for(unsigned int i = libtpdp::STYLE_NONE; i < libtpdp::STYLE_MAX; ++i)
+        if(algo::iequals(tmp, libtpdp::style_string(i)))
+            return i;
+
+    return -1;
+}
+
 /* convert the DollData.dbs file containing the definitions
  * of all the puppets to json */
 static void convert_nerds(const Path& in, const Path& out)
@@ -191,31 +211,22 @@ static void patch_nerds(const Path& data, const Path& json)
             auto& style_data = puppet.styles[style_index++];
 
             // style type
-            style_data.style_type = -1;
-            auto name = utf_widen(style.get<std::string>("type")); // converting text form to integer representation
-            for(unsigned int i = libtpdp::STYLE_NONE; i < libtpdp::STYLE_MAX; ++i)
-                if(algo::iequals(name, libtpdp::style_string(i)))
-                    style_data.style_type = i;
+            auto name = style.get<std::string>("type");
+            style_data.style_type = style_to_uint(name);
             if(style_data.style_type == -1)
-                throw BineditException("Invalid style type: " + utf_narrow(name) + " for puppet: " + std::to_string(id));
+                throw BineditException("Invalid style type: " + name + " for puppet: " + std::to_string(id));
 
             // element 1
-            style_data.element1 = -1;
-            name = utf_widen(style.get<std::string>("element1")); // converting text form to integer representation
-            for(unsigned int i = libtpdp::ELEMENT_NONE; i < libtpdp::ELEMENT_MAX; ++i)
-                if(algo::iequals(name, libtpdp::element_string(i)))
-                    style_data.element1 = i;
+            name = style.get<std::string>("element1");
+            style_data.element1 = element_to_uint(name);
             if(style_data.element1 == -1)
-                throw BineditException("Invalid element: " + utf_narrow(name) + " for puppet: " + std::to_string(id));
+                throw BineditException("Invalid element: " + name + " for puppet: " + std::to_string(id));
 
             // element 2
-            style_data.element2 = -1;
-            name = utf_widen(style.get<std::string>("element2")); // converting text form to integer representation
-            for(unsigned int i = libtpdp::ELEMENT_NONE; i < libtpdp::ELEMENT_MAX; ++i)
-                if(algo::iequals(name, libtpdp::element_string(i)))
-                    style_data.element2 = i;
+            name = style.get<std::string>("element2");
+            style_data.element2 = element_to_uint(name);
             if(style_data.element2 == -1)
-                throw BineditException("Invalid element: " + utf_narrow(name) + " for puppet: " + std::to_string(id));
+                throw BineditException("Invalid element: " + name + " for puppet: " + std::to_string(id));
 
             // level 100 skill
             style_data.lv100_skill = style.get<unsigned int>("lvl100_skill");
@@ -248,6 +259,8 @@ static void patch_nerds(const Path& data, const Path& json)
                 style_data.lv70_skills[index++] = it.second.get_value<unsigned int>();
 
             // skillcards
+            if(style.get_child("compatibility").size() > 128)
+                throw BineditException("Puppet " + std::to_string(id) + ": Too many skillcards!");
             std::vector<unsigned int> skillcards;
             skillcards.reserve(128);
             memset(style_data.skill_compat_table, 0, sizeof(style_data.skill_compat_table));
@@ -388,7 +401,7 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
 {
     std::size_t sz;
     auto file = read_file(in.wstring(), sz);
-    if(!file || (sz < 972))
+    if(!file || (sz < 0x42A))
         throw BineditException("Error reading file: " + in.string());
 
     boost::property_tree::ptree tree;

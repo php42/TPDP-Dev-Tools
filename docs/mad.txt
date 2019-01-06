@@ -1,0 +1,10 @@
+mad files contain wild trainer puppets and other map attributes
+the json should be pretty self-explanatory
+
+"weight": encounter rate relative to other puppets in the same encounter type
+percentage calculated by weight divided by sum of weights (within the same encounter type)
+
+"special" encounters are blue grass encounters
+
+binary format:
+http://thpp.supersanctuary.net/forum/index.php?topic=493.msg3141#msg3141

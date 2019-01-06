@@ -102,6 +102,7 @@ public:
     void set_puppet_nickname(const std::string& name);
 };
 
+/* 'rand_data' must be a pointer to the contents of Efile.bin */
 static inline void decrypt_puppet(void *src, const void *rand_data, std::size_t len = PUPPET_SIZE)
 {
     uint8_t *buf = (uint8_t*)src;
@@ -122,6 +123,7 @@ static inline void decrypt_puppet(void *src, const void *rand_data, std::size_t 
     }
 }
 
+/* 'rand_data' must be a pointer to the contents of Efile.bin */
 static inline void encrypt_puppet(void *src, const void *rand_data, std::size_t len = PUPPET_SIZE)
 {
     uint8_t *buf = (uint8_t*)src;

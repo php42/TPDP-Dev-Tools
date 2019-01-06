@@ -1,0 +1,49 @@
+puppets are encrypted. see decrypt_puppet() and encrypt_puppet() in puppet.h (libtpdp) for the algorithm.
+the contents of gn_dat1/common/Efile.bin are used as a source of random data (seed) to perform the encryption.
+
+---BINARY FORMAT---
+                                     _
+0x00: u32  trainer_id                 |
+0x04: u32  secret_id                  |
+0x08: char trainer_name[32]           |
+0x28: u16  caught_location            |
+0x2A: u8   caught_year                |
+0x2B: u8   caught_month               |
+0x2C: u8   caught_day                 |
+0x2D: u8   caught_hour                |
+0x2E: u8   caught_minute              |
+0x2F: char puppet_nickname[32]        |
+0x4F: u16  puppet_id                  |
+0x51: u8   style_index                |
+0x52: u8   ability_index              |
+0x53: u8   mark                       |
+0x54: u8   ivs[3]                     |
+0x57: u8   ???                        |
+0x58: u32  experience                 |
+0x5C: u16  happiness(?)               |
+0x5E: u16  pp                         |
+0x60: u8   costume_index              |
+0x61: u8   evs[6]                     |
+0x67: u16  held_item_id               |
+0x69: u16  skills[4]                  |
+0x71: u8   heart_mark (bool)          |
+0x72-0x90: ???                       _|--0x91 (size of encrypted portion of puppet)
+0x91: u32  checksum (unused, IGNORE) _|--0x95 (puppet + checksum, used in .dod files and for box puppets in the save file)
+0x95: u8   level (display only)       |
+0x96: u16  hp (battle hp remaining)   |
+0x98: u8   sp[4] (remaining sp)       |
+0x9C: u8   status_effects[2]          |
+0x9E: u8   ???                       _|--0x9F (this portion is present only for party puppets in the save file)
+
+the 0x91 checksum is used to verify the integrity of a puppet.
+it does not seem to actually be used or enforced anywhere, so it is safe to ignore it completely.
+still, the checksum algorithm can be found in savefile.cpp (libtpdp) if you really want to use it.
+note that the checksum itself is NOT encrypted and the checksum applies to the unencrypted puppet.
+
+the catch date values seem to correspond to the C library date functions (e.g. localtime()).
+see the C standard library reference for details: https://en.cppreference.com/w/c/chrono/tm
+
+the last section after the checksum is present only for active party puppets in the save file.
+
+the IVs are packed in 2 per byte. the low order nibble is the first of each pair of IVs (i.e. given the value 0xBF, IV 0 is 0xF and IV 1 is 0xB).
+this also means that IV values are restricted to the range 0x0-0xF by the data type.
