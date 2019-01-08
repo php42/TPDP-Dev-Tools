@@ -48,7 +48,10 @@ static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree)
     boost::property_tree::write_json(stream, tree);
     auto outfile = buf.str();
     if(!write_file(out.wstring(), outfile.data(), outfile.size()))
-        throw BineditException("Error writing to file: " + out.string());
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Error writing to file: " << out.string() << std::endl;
+    }
 }
 
 static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)

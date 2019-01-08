@@ -454,7 +454,7 @@ bool extract(const Path& input, const Path& output)
             if(!write_file(out_path.wstring(), file.data(), file.size()))
             {
                 ScopedConsoleColorChanger color(COLOR_WARN);
-                std::cerr << "Failed to write to file: " + out_path.string();
+                std::cerr << "Failed to write to file: " << out_path.string() << std::endl;
             }
         }
     }
