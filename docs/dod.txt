@@ -7,7 +7,7 @@ if you're clever, you can defeat the encryption without the use of efile.bin, bu
 "ability": ability index (0 or 1). 0 = 1st ability, 1 = 2nd ability. check DollData.json.
 "costume": costume index (0-3 inclusive). 0 = normal, 1 = alt color, 2 = alt outfit, 3 = wedding dress
 "experience": puppet exp. used to determine level. see exp_for_level() in gamedata.cpp (libtpdp) for the exp algorithm. google will probably work too.
-"mark": 0 = none, 1 = red, 2 = blue, 3 = black, 4 = white, 5 = green
+"mark": 0 = none, 1 = red (F.Atk), 2 = blue (F.Def), 3 = black (S.Atk), 4 = white (S.Def), 5 = green (Speed)
 "held_item": item id
 "ivs": 0-15. 0 = E-, 15 = S. in order: hp, f.atk, f.def, s.atk, s.def, speed
 "evs": exactly as in-game. order same as ivs
