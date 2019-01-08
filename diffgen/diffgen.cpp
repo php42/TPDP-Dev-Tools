@@ -452,7 +452,10 @@ bool extract(const Path& input, const Path& output)
             }
 
             if(!write_file(out_path.wstring(), file.data(), file.size()))
-                throw DiffgenException("Failed to write to file: " + out_path.string());
+            {
+                ScopedConsoleColorChanger color(COLOR_WARN);
+                std::cerr << "Failed to write to file: " + out_path.string();
+            }
         }
     }
 
