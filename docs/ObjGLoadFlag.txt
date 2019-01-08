@@ -1,0 +1,8 @@
+Array of 1 byte bools indicating sprites to load.
+Just use a hex editor to set them.
+
+0x00: 000.png
+0x01: 001.png
+...
+
+and so on

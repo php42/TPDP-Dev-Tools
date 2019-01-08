@@ -1,0 +1,15 @@
+Array of 1 byte bools indicating which sprites should be loaded.
+They form groups of 4. one for each costume of each puppet, 4 per puppet.
+You will need to use a hex editor to set these accordingly if you add new puppets to the game.
+
+0x00: 000_000.png
+0x01: 000_001.png
+0x02: 000_002.png
+0x03: 000_003.png
+0x04: 001_000.png
+0x05: 001_001.png
+0x06: 001_002.png
+0x07: 001_003.png
+...
+
+and so on

@@ -88,6 +88,16 @@ static unsigned int style_to_uint(const std::string& name)
     return -1;
 }
 
+static unsigned int skill_type_to_uint(const std::string& name)
+{
+    auto tmp = utf_widen(name); // converting text form to integer representation
+    for(unsigned int i = libtpdp::SKILL_TYPE_FOCUS; i < libtpdp::SKILL_TYPE_MAX; ++i)
+        if(algo::iequals(tmp, libtpdp::skill_type_string(i)))
+            return i;
+
+    return -1;
+}
+
 /* convert the DollData.dbs file containing the definitions
  * of all the puppets to json */
 static void convert_nerds(const Path& in, const Path& out)
@@ -536,8 +546,8 @@ static void convert_skills(const Path& in, const Path& out)
 
         node.put("id", i / libtpdp::SKILL_DATA_SIZE);
         node.put("name", sjis_to_utf8(name));
-        node.put("element", skill.element);
-        node.put("type", skill.type);
+        node.put("element", utf_narrow(libtpdp::element_string(skill.element)));
+        node.put("type", utf_narrow(libtpdp::skill_type_string(skill.type)));
         node.put("sp", skill.sp);
         node.put("accuracy", skill.accuracy);
         node.put("power", skill.power);
@@ -581,8 +591,14 @@ static void patch_skills(const Path& data, const Path& json)
         memset(&file[pos], 0, 32);
         memcpy(&file[pos], name.data(), name.size());
 
-        skill.element = node.get<unsigned int>("element");
-        skill.type = node.get<unsigned int>("type");
+        skill.element = element_to_uint(node.get<std::string>("element"));
+        if(skill.element == -1)
+            throw BineditException("Invalid element for skill: " + std::to_string(pos / libtpdp::SKILL_DATA_SIZE));
+
+        skill.type = skill_type_to_uint(node.get<std::string>("type"));
+        if(skill.type == -1)
+            throw BineditException("Invalid type for skill: " + std::to_string(pos / libtpdp::SKILL_DATA_SIZE));
+
         skill.sp = node.get<unsigned int>("sp");
         skill.accuracy = node.get<unsigned int>("accuracy");
         skill.power = node.get<unsigned int>("power");
