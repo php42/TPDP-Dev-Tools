@@ -225,13 +225,20 @@ public:
 
     bool parse(const void *data, std::size_t len);
     const CSVEntry& get_line(int id) const { return value_map_[id]; }
+    CSVEntry& get_line(int id) { return value_map_[id]; }
     const CSVEntry& operator[](int id) const { return value_map_[id]; }
+    CSVEntry& operator[](int id) { return value_map_[id]; }
     void clear() { value_map_.clear(); }
 
     const std::vector<CSVEntry>& data() const { return value_map_; }
     std::vector<CSVEntry>& data() { return value_map_; }
     std::vector<CSVEntry>::const_iterator begin() const { return value_map_.cbegin(); }
     std::vector<CSVEntry>::const_iterator end() const { return value_map_.cend(); }
+
+    auto& front() { return value_map_.front(); }
+    const auto& front() const { return value_map_.front(); }
+    auto& back() { return value_map_.back(); }
+    const auto& back() const { return value_map_.back(); }
 
     std::size_t num_lines() const { return value_map_.size(); }
     std::size_t num_fields() const { return value_map_.empty() ? 0 : value_map_[0].size(); }

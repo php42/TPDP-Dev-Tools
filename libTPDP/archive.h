@@ -130,6 +130,7 @@ public:
     std::size_t index() const { return index_; }
 
     void reset() { buf_.reset(); len_ = 0; index_ = -1; }
+    void reset(char *buf, std::size_t sz, int index) { buf_.reset(buf); len_ = sz; index_ = index; }
 
     explicit operator bool() const { return ((bool)buf_ && len_ && (index_ != -1)); }
 };

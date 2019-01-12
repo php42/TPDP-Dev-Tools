@@ -3,10 +3,12 @@ Brief descriptions of the binaries are given for most formats, but for specific 
 For details on most of the binary formats, check gamedata.h and gamedata.cpp in libtpdp.
 For details on the encrypted puppet format, check puppet.h and puppet.cpp in libtpdp.
 For details on the encrypted save file, check savefile.h and savefile.cpp in libtpdp (note that these facilities are presently unfinished).
-Beyond that, use a hex editor and figure it out. Anything that isn't documented here or in the source code is unknown or irrelevant.
+Beyond that, use a hex editor and figure it out. Anything that isn't documented here or in the source code is unknown.
 
 note that ID 0 is typically used for None/Nothing where applicable
 for binary formats, the ID of an element is indicated by its position in the file. therefore most will have a NULL element at the beginning.
+
+Note that the game uses Shift-JIS encoded text EVERYWHERE. All text is shift-jis encoded, whether it's in a text file, binary file, or the executable itself.
 
 important files:
 Efile.bin (used for encryption of puppets and the save file)

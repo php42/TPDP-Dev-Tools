@@ -147,6 +147,7 @@ static void convert_nerds(const Path& in, const Path& out)
             for(auto i : style_data.lv70_skills)
                 style.add("lvl70_skills.", i);
 
+            style.add_child("compatibility", {});
             for(int i = 0; i < 16; ++i)
             {
                 for(int j = 0; j < 8; ++j)
@@ -309,7 +310,9 @@ static void convert_mad(const Path& in, const Path& out)
     libtpdp::MADData data(file.get());
     boost::property_tree::ptree tree;
 
-    data.location_name[31] = 0; // ensure null-terminated
+    if(memchr(data.location_name, 0, 32) == NULL)
+        throw BineditException("Missing null-terminator at offset: 0x1F");
+
     tree.put("location_name", sjis_to_utf8(std::string(data.location_name))); // needs to be UTF-8 or the parser complains when reading it back
 
     for(auto i = 0; i < 10; ++i)
@@ -353,8 +356,9 @@ static void patch_mad(const Path& data, const Path& json)
     std::string location_name = utf8_to_sjis(tree.get<std::string>("location_name"));
     if(location_name.size() >= 32)
         throw BineditException("Location name too long! must be less than 32 bytes");
-    memset(mad.location_name, 0, sizeof(mad.location_name));
+    //memset(mad.location_name, 0, sizeof(mad.location_name));
     memcpy(mad.location_name, location_name.data(), location_name.size());
+    mad.location_name[location_name.size()] = 0;
     mad.clear_encounters();
 
     if(tree.get_child("special_encounters").size() > 5)
@@ -419,8 +423,10 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
 
     boost::property_tree::ptree tree;
 
-    file[31] = 0; // ensure trainer name is null-terminated
-    file[0x429] = 0; // ensure trainer title is null-terminated
+    if(memchr(file.get(), 0, 32) == NULL)
+        throw BineditException("Missing null-terminator at offset: 0x1F");
+    if(memchr(&file[0x3AA], 0, 128) == NULL)
+        throw BineditException("Missing null-terminator at offset: 0x429");
 
     std::string trainer_name(file.get());
     std::string trainer_title(&file[0x3AA]);
@@ -477,10 +483,12 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
     if(trainer_title.size() >= 128)
         throw BineditException("Trainer title must be less than 128 bytes!");
 
-    memset(file.get(), 0, 32);
-    memset(&file[0x3AA], 0, 128);
+    //memset(file.get(), 0, 32);
+    //memset(&file[0x3AA], 0, 128);
     memcpy(file.get(), trainer_name.data(), trainer_name.size());
     memcpy(&file[0x3AA], trainer_title.data(), trainer_title.size());
+    file[0x3AA + trainer_title.size()] = 0;
+    file[trainer_name.size()] = 0;
 
     std::size_t pos = 0;
     auto buf = &file[0x2C];
@@ -544,8 +552,9 @@ static void convert_skills(const Path& in, const Path& out)
         libtpdp::SkillData skill(&file[i]);
         boost::property_tree::ptree node;
 
-        file[i + 31] = 0; // ensure null-terminated
-        std::string name = &file[i];
+        if(memchr(&file[i], 0, 32) == NULL)
+            throw BineditException("Missing null-terminator at offset: " + std::to_string(i + 31));
+        std::string name(&file[i]);
 
         node.put("id", i / libtpdp::SKILL_DATA_SIZE);
         node.put("name", sjis_to_utf8(name));
@@ -591,8 +600,9 @@ static void patch_skills(const Path& data, const Path& json)
         std::string name = utf8_to_sjis(node.get<std::string>("name"));
         if(name.size() >= 32)
             throw BineditException("Name must be less than 32 bytes: " + name);
-        memset(&file[pos], 0, 32);
+        //memset(&file[pos], 0, 32);
         memcpy(&file[pos], name.data(), name.size());
+        file[pos + name.size()] = 0;
 
         skill.element = element_to_uint(node.get<std::string>("element"));
         if(skill.element == -1)

@@ -64,7 +64,7 @@ void Puppet::read(const void *data, bool party)
 	trainer_id = read_le32(buf);
 	secret_id = read_le32(&buf[4]);
 	memcpy(trainer_name_raw_, &buf[8], sizeof(trainer_name_raw_));
-    trainer_name_raw_[31] = 0; // ensure null-terminated
+    //trainer_name_raw_[31] = 0; // ensure null-terminated
 	catch_location = read_le16(&buf[0x28]);
 	caught_year = buf[0x2a];
 	caught_month = buf[0x2b];
@@ -72,7 +72,7 @@ void Puppet::read(const void *data, bool party)
 	caught_hour = buf[0x2d];
 	caught_minute = buf[0x2e];
 	memcpy(puppet_nickname_raw_, &buf[0x2f], sizeof(puppet_nickname_raw_));
-    puppet_nickname_raw_[31] = 0; // ensure null-terminated
+    //puppet_nickname_raw_[31] = 0; // ensure null-terminated
 	puppet_id = read_le16(&buf[0x4f]);
 	style_index = buf[0x51];
 	ability_index = buf[0x52];
@@ -152,7 +152,10 @@ void Puppet::write(void *data, bool party) const
 
 std::wstring Puppet::trainer_name() const
 {
-	return sjis_to_utf(trainer_name_raw_);
+    if(memchr(trainer_name_raw_, 0, 32) != NULL) // check for null-terminator
+        return sjis_to_utf(trainer_name_raw_);
+    else
+        return {};
 }
 
 void Puppet::set_trainer_name(const std::wstring& name)
@@ -163,7 +166,10 @@ void Puppet::set_trainer_name(const std::wstring& name)
 
 std::wstring Puppet::puppet_nickname() const
 {
-	return sjis_to_utf(puppet_nickname_raw_);
+    if(memchr(puppet_nickname_raw_, 0, 32) != NULL) // check for null-terminator
+        return sjis_to_utf(puppet_nickname_raw_);
+    else
+        return {};
 }
 
 void Puppet::set_puppet_nickname(const std::wstring& name)
