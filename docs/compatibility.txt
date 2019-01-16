@@ -5,3 +5,5 @@ this is the type chart ( see http://en.tpdpwiki.net/wiki/Type_Chart )
 
 elements appear in the following order:
 Null, Void, Fire, Water, Nature, Earth, Steel, Wind, Electric, Light, Dark, Nether, Poison, Fight, Illusion, Sound, Dream, Warped
+
+Note that NULL is used as a second type for single-type puppets, don't touch it unless you want insanity to ensue

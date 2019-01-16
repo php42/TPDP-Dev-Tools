@@ -6,9 +6,10 @@ For details on the encrypted save file, check savefile.h and savefile.cpp in lib
 Beyond that, use a hex editor and figure it out. Anything that isn't documented here or in the source code is unknown.
 
 note that ID 0 is typically used for None/Nothing where applicable
-for binary formats, the ID of an element is indicated by its position in the file. therefore most will have a NULL element at the beginning.
+for binary formats, the ID of an element is indicated by its position in the file (this also applies to some text formats). therefore most will have a NULL element at the beginning.
 
 Note that the game uses Shift-JIS encoded text EVERYWHERE. All text is shift-jis encoded, whether it's in a text file, binary file, or the executable itself.
+The json files, however, are UTF-8 encoded with unix line endings. Please use a proper text editor (i.e. *NOT* MS Notepad).
 
 important files:
 Efile.bin (used for encryption of puppets and the save file)

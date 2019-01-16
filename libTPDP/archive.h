@@ -142,8 +142,7 @@ public:
  * note that all functions that return an iterator may return invalid iterators upon error.
  * you can check for validity with e.g. it < arc.end()
  * also note that the repack and insert methods invalidate all iterators.
- * use the return value of these functions to update your iterators.
- * also note that filenames are case sensitive */
+ * use the return value of these functions to update your iterators. */
 class Archive
 {
 public:
@@ -184,6 +183,7 @@ private:
      * so don't depend on this to uniquely identify a file.
      * used for the 'checksum' field of ArchiveFilenameHeader */
     unsigned int hash_filename(const std::string& filename) const;
+    unsigned int hash_filename(const std::wstring& filename) const;
 
     void reallocate(std::size_t sz);
 

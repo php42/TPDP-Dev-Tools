@@ -101,6 +101,16 @@ static unsigned int skill_type_to_uint(const std::string& name)
     return -1;
 }
 
+static unsigned int mark_to_uint(const std::string& name)
+{
+    auto tmp = utf_widen(name); // converting text form to integer representation
+    for(unsigned int i = libtpdp::MARK_NONE; i < libtpdp::MARK_MAX; ++i)
+        if(algo::iequals(tmp, libtpdp::puppet_mark_string(i)))
+            return i;
+
+    return -1;
+}
+
 /* convert the DollData.dbs file containing the definitions
  * of all the puppets to json */
 static void convert_nerds(const Path& in, const Path& out)
@@ -447,7 +457,7 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
         node.put("ability", puppet.ability_index);
         node.put("costume", puppet.costume_index);
         node.put("experience", puppet.exp);
-        node.put("mark", puppet.mark);
+        node.put("mark", utf_narrow(libtpdp::puppet_mark_string(puppet.mark)));
         node.put("held_item", puppet.held_item_id);
 
         for(auto i : puppet.skills)
@@ -507,8 +517,11 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         puppet.ability_index = node.get<unsigned int>("ability");
         puppet.costume_index = node.get<unsigned int>("costume");
         puppet.exp = node.get<unsigned int>("experience");
-        puppet.mark = node.get<unsigned int>("mark");
+        puppet.mark = mark_to_uint(node.get<std::string>("mark"));
         puppet.held_item_id = node.get<unsigned int>("held_item");
+
+        if(puppet.mark == -1)
+            throw BineditException("Invalid puppet mark: " + node.get<std::string>("mark"));
 
         if(node.get_child("evs").size() != 6)
             throw BineditException("Puppet must have 6 evs!");

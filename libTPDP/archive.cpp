@@ -808,18 +808,23 @@ std::size_t Archive::decompress(const void *src, void *dest) const
 	return bytes_written;
 }
 
-unsigned int Archive::hash_filename(const std::string& filename) const
+unsigned int Archive::hash_filename(const std::wstring& filename) const
 {
-    auto utf = sjis_to_utf(filename); // avoid character encoding problems
-    for(auto& i : utf)
+    auto temp = filename;
+    for(auto& i : temp)
         i = std::towupper(i);
 
-    auto upper = utf_to_sjis(utf);
+    auto upper = utf_to_sjis(temp);
 
     unsigned int ret = 0;
     for(auto i : upper)
         ret += (unsigned char)i;
     return ret;
+}
+
+unsigned int Archive::hash_filename(const std::string& filename) const
+{
+    return hash_filename(sjis_to_utf(filename)); // avoid character encoding problems
 }
 
 void Archive::reallocate(std::size_t sz)

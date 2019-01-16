@@ -40,19 +40,16 @@ std::wstring sjis_to_utf(const std::string& str)
 	return ret;
 }
 
-std::wstring sjis_to_utf(const char *begin, const char *end)
+std::wstring sjis_to_utf(const char *str, std::size_t sz)
 {
 	std::wstring ret;
 
-    if(end <= begin)
-        return ret;
-
-    auto len = MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, begin, (int)(end - begin), NULL, 0);
+    auto len = MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str, (int)sz, NULL, 0);
     if(!len)
         return ret;
 
     std::unique_ptr<wchar_t[]> buf(new wchar_t[len]);
-    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, begin, (int)(end - begin), buf.get(), len))
+    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str, (int)sz, buf.get(), len))
         return ret;
 
     ret.assign(buf.get(), len);
