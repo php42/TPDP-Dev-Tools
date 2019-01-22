@@ -22,7 +22,7 @@ Note that you *cannot create new directories* even in mode 2 as there is no legi
 This converts the games various binary file formats to human-readable json and back. The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).  
 Note that these are also patches in the sense that the json files are used to "patch" the extracted binary files.  
 The reason for this is that the entire file format is not always known, so this allows edits to be made to the known portions of existing files.  
-Be prepared to bust out some python scripts or something because some of these produce large quantities of json.
+Be prepared to bust out some python scripts or something because some of these produce large quantities of json.  
 Invoke with --help for syntax.
 
 Note that this tool *recursively scans the entire target directory tree* so be careful where you point it.
@@ -37,7 +37,7 @@ Its only dependency is windows.h.
 This is a C# GUI front-end for patching the game with a diffgen diff file.  
 It literally is just a wrapper that invokes diffgen.exe with appropriate arguments for the convenience of people who don't want to use the command-line.
 
-## Sample Session
+## Example Session
 ```batch
 ::extract the files
 diffgen.exe -i "C:\games\TPDP" -o "C:\extract" --extract
