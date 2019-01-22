@@ -1,10 +1,11 @@
-# TPDP-Dev-Tools
+#TPDP-Dev-Tools
 This is a set of "Romhacking" tools for TPDP.
 These are command-line tools, basic knowledge of the windows command prompt is required.
 An explanation of the individual tools follows below.
 
 ##Diffgen
 This is a patching utility, you don't need to use it if you'd prefer to use xdelta or whatever.
+Like most romhack patchers, it produces differential patches so that game assets need not be redistributed.
 It just provides TPDP specific functionality such as bypassing the encryption and compression on the archives which reduces diff sizes and allows file-level patching within the archive.
 It also provides a convenient way to extract all the files from the archives for editing.
 Invoke with --help for syntax.
@@ -23,6 +24,8 @@ Note that these are also patches in the sense that the json files are used to "p
 The reason for this is that the entire file format is not always known, so this allows edits to be made to the known portions of existing files.
 Be prepared to bust out some python scripts or something because some of these produce large quantities of json.
 Invoke with --help for syntax.
+
+Note that this tool *recursively scans the entire target directory tree* so be careful where you point it.
 
 ##LibTPDP
 This is a c++ static library that provides facilities for manipulating the games various binary formats, including the archives themselves.
@@ -63,17 +66,16 @@ diffgen.exe -i "C:\games\TPDP" -o "C:\diff\diff.bin" --patch
 Dependencies: [open-vcdiff](https://github.com/google/open-vcdiff) and [boost](https://www.boost.org/)
 A C++ 17 compatible compiler is required.
 
-installing dependencies:
-you may retarget the msvc project file include directories, or you may install them to the 'deps' folder such that the following paths are valid:
+Installing dependencies:
+You may retarget the msvc project file include directories, or you may install them to the 'deps' folder such that the following paths are valid:
 
-include:
+Include:
 TPDP-Dev-Tools/deps/boost/
 TPDP-Dev-Tools/deps/open-vcdiff/src/
 
-binaries:
+Binaries:
 TPDP-Dev-Tools/deps/boost/stage/lib/
 TPDP-Dev-Tools/deps/open-vcdiff/build/Release/
 TPDP-Dev-Tools/deps/open-vcdiff/build/Debug/
 
-you may also run `git submodule update --init --recursive`
-to obtain open-vcdiff
+You may also run `git submodule update --init --recursive` to obtain open-vcdiff.
