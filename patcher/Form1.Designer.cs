@@ -71,6 +71,10 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "C:\\game\\FocasLens\\幻想人形演舞";
             // 
+            // folderBrowserDialog1
+            // 
+            this.folderBrowserDialog1.Description = "Locate Game Folder";
+            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.textBox2);
@@ -122,7 +126,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Title = "Locate Romhack File";
             // 
             // Form1
             // 
