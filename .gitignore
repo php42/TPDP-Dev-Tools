@@ -51,6 +51,8 @@ Release/*
 binedit/x64/*
 binedit/Debug/*
 binedit/Release/*
+binedit/Release AVX2/*
 diffgen/x64/*
 diffgen/Debug/*
 diffgen/Release/*
+diffgen/Release AVX2/*
