@@ -31,7 +31,7 @@ valid values are 385 - 512 (inclusive)
 0x35-0x5C: ???                  |
 0x5D: style[4]                 _|
 
-NOTE: use index into the file as ID i.e. index of first byte divided by 0x1F1
+NOTE: use index into the file as ID i.e. offset of first byte divided by 0x1F1
 
 style format:
                                _

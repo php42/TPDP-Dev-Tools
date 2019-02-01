@@ -18,8 +18,6 @@
 #include <filesystem>
 #include <exception>
 
-#define VERSION_STRING "v1.0.0 ALPHA"
-
 struct DiffgenException : public std::runtime_error
 {
     using std::runtime_error::runtime_error;

@@ -18,6 +18,7 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 #include "../common/console.h"
+#include "../common/version.h"
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"

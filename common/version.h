@@ -1,5 +1,5 @@
 /*
-    Copyright 2018 php42
+    Copyright 2019 php42
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,15 +15,5 @@
 */
 
 #pragma once
-#include <filesystem>
-#include <exception>
 
-struct BineditException : public std::runtime_error
-{
-    using std::runtime_error::runtime_error;
-};
-
-typedef std::filesystem::path Path;
-
-bool convert(const Path& input);
-bool patch(const Path& input);
+#define VERSION_STRING "v0.1.0 ALPHA"

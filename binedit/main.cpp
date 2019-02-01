@@ -18,6 +18,7 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 #include "../common/console.h"
+#include "../common/version.h"
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
@@ -38,7 +39,7 @@ int wmain(int argc, wchar_t *argv[])
         desc.add_options()
             ("help,h", "Display this help text\n")
             ("version,v", "Display version info and exit\n")
-            ("input-path,i", boost::program_options::wvalue(&input_path), "path to the root folder of the input directory (the unmodified game folder)\n")
+            ("input-path,i", boost::program_options::wvalue(&input_path), "path to the root folder of the extracted game files (output of diffgen.exe --extract)\n")
             ("convert,c", "recusively convert data files located at input-path to json.\nnote that input-path must point to files extracted with diffgen --extract, not the original game folder.\nconverted files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder)")
             ("patch,p", "recusively patch the data files located at input-path with their json counterparts in the same folder");
 
