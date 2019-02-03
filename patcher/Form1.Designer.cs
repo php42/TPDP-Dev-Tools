@@ -84,7 +84,7 @@
             this.groupBox2.Size = new System.Drawing.Size(436, 48);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Diff/Patch File";
+            this.groupBox2.Text = "Diff/Patch/Romhack File";
             // 
             // textBox2
             // 
