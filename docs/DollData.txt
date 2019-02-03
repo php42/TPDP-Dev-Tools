@@ -1,5 +1,7 @@
-definitions for all the puppets in the game
-this one should be mostly self-explanatory, i'll document some of the less obvious things:
+TPDP: gn_dat3.arc/doll/DollData.dbs
+YnK: gn_dat6.arc/doll/DollData.dbs
+DollData.dbs contains definitions for all the puppets in the game.
+the json for this one should be mostly self-explanatory, i'll document some of the less obvious things:
 
 each puppet has 4 style slots. you can have less (type = None) but you can't add more than 4.
 

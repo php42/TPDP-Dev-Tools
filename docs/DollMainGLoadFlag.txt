@@ -1,4 +1,6 @@
-Array of 1 byte bools indicating which sprites should be loaded.
+TPDP: gn_dat3.arc/doll/img/DollMainGLoadFlag.bin
+YnK: gn_dat6.arc/dollImage/img/DollMainGLoadFlag.bin
+This file is an array of 1 byte bools indicating which sprites should be loaded.
 They form groups of 4. one for each costume of each puppet, 4 per puppet.
 You will need to use a hex editor to set these accordingly if you add new puppets to the game.
 

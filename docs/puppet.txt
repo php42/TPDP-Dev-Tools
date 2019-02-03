@@ -1,5 +1,6 @@
 puppets are encrypted. see decrypt_puppet() and encrypt_puppet() in puppet.h (libtpdp) for the algorithm.
 the contents of gn_dat1/common/Efile.bin are used as a source of random data (seed) to perform the encryption.
+this only applies to *instances* of puppets, e.g. those in a save file or trainer battle. DollData.dbs is unencrypted.
 
 ---BINARY FORMAT---
                                      _

@@ -1,4 +1,6 @@
-Array of 1 byte bools indicating sprites to load.
+TPDP: gn_dat3.arc/map/obj/ObjGLoadFlag.bin
+YnK: gn_dat5.arc/map/obj/ObjGLoadFlag.bin
+This file is an array of 1 byte bools indicating overworld sprites to load.
 Just use a hex editor to set them.
 
 0x00: 000.png

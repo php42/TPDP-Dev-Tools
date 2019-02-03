@@ -1,5 +1,5 @@
-mad files contain wild trainer puppets and other map attributes
-the json should be pretty self-explanatory
+.mad files contain wild puppets and other map attributes for a particular area.
+the json should be pretty self-explanatory.
 
 "weight": encounter rate relative to other puppets in the same encounter type
 percentage calculated by weight divided by sum of weights (within the same encounter type)

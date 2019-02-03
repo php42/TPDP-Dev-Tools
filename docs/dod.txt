@@ -1,5 +1,5 @@
-definition for a trainer battle.
-this file contains the name and title for a given trainer, as well as their party of puppets.
+.dod files contain a definition for a trainer battle.
+this file contains the name and title for a particular trainer, as well as their party of puppets.
 the puppets are encrypted, see puppet.h in libtpdp for the encryption algorithm. gn_dat1/common/Efile.bin is used as a source of random data (seed) to perform the encryption.
 if you're clever, you can defeat the encryption without the use of efile.bin, but since the algorithm is known and efile.bin is available i don't bother with that method.
 

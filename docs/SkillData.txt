@@ -1,4 +1,7 @@
-should be pretty obvious.
+TPDP: gn_dat3.arc/doll/skill/SkillData.sbs
+YnK: gn_dat6.arc/doll/SkillData.sbs
+This file contains definitions for all the skills in the game.
+The json should be mostly self-explanatory.
 
 the following fields are speculative and untested:
 "effect_chance": chance for an effect (e.g. burn) to be applied upon successful hit

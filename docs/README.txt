@@ -11,6 +11,8 @@ for binary formats, the ID of an element is indicated by its position in the fil
 Note that the game uses Shift-JIS encoded text EVERYWHERE. All text is shift-jis encoded, whether it's in a text file, binary file, or the executable itself.
 The json files, however, are UTF-8 encoded with unix line endings. Please use a proper text editor (i.e. *NOT* MS Notepad).
 
+.csv files are text configuration files, you can edit them with any text editor so long as you make sure to save as shift-jis encoding with windows (CRLF) line endings or the game will not be happy.
+
 important files:
 Efile.bin (used for encryption of puppets and the save file)
 DollData.dbs (puppet definitions)
