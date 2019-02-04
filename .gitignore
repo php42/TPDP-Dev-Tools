@@ -56,3 +56,4 @@ diffgen/x64/*
 diffgen/Debug/*
 diffgen/Release/*
 diffgen/Release AVX2/*
+patcher/bin/*
