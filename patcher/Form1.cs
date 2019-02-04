@@ -19,6 +19,46 @@ namespace patcher
         public Form1()
         {
             InitializeComponent();
+
+            // detect game folder location
+            var appdata_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var path = appdata_path + "/FocasLens/幻想人形演舞-ユメノカケラ-/install.ini";
+            if (!File.Exists(path))
+            {
+                path = appdata_path + "/FocasLens/幻想人形演舞/gn_enbu.ini";
+                if (File.Exists(path))
+                    return;
+            }
+
+            try
+            {
+                var enc = Encoding.GetEncoding(932);
+                var file = File.OpenRead(path);
+                if(!(file.Length > 0))
+                {
+                    file.Close();
+                    return;
+                }
+
+                var buf = new byte[file.Length];
+                file.Read(buf, 0, (int)file.Length);
+                file.Close();
+                var str = enc.GetString(buf);
+                if (String.IsNullOrEmpty(str))
+                    return;
+                var pos = str.IndexOf("InstallPath=");
+                if (pos < 0)
+                    return;
+                pos += "InstallPath=".Length;
+                var endpos = str.IndexOf("\r\n", pos);
+                if (endpos < 0)
+                    endpos = str.Length;
+                textBox1.Text = str.Substring(pos, endpos - pos);
+            }
+            catch
+            {
+                return;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
