@@ -145,7 +145,7 @@ public:
     int id, type, price;			/* type = junk, consumable, etc. type 255 = unimplemented (id 0 (nothing) also uses type 255) */
     bool combat;					/* can be used in battle (healing items etc.) */
     bool common;					/* item is considered to be common (?) */
-    bool can_discard;				/* player is able to discard this item from their inventory */
+    bool can_discard;				/* player is able to discard this item from their inventory (?) */
     bool held;						/* this item can be held by puppets */
     bool reincarnation;				/* this item is used for reincarnation */
     int skill_id;					/* (skill cards) id of the skill this item teaches */

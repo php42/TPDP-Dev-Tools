@@ -26,7 +26,7 @@ namespace patcher
             if (!File.Exists(path))
             {
                 path = appdata_path + "/FocasLens/幻想人形演舞/gn_enbu.ini";
-                if (File.Exists(path))
+                if (!File.Exists(path))
                     return;
             }
 
