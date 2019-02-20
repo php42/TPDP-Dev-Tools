@@ -62,7 +62,7 @@ struct DiffHeader
 /* below is some syncronization madness for whenever i feel like
  * implementing some sort of parallelism */
 
-/* synchronization for console access */
+/* synchronization for console access (scoped ownership) */
 class ScopedConsoleLock
 {
 private:
@@ -77,7 +77,8 @@ public:
 
 std::recursive_mutex ScopedConsoleLock::mtx_;
 
-class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger
+/* scoped ownership of the console + change console text color (color reverted at end of life) */
+class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed
 {
     using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
 };

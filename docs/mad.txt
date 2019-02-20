@@ -3,6 +3,8 @@ the json should be pretty self-explanatory.
 
 "weight": encounter rate relative to other puppets in the same encounter type
 percentage calculated by weight divided by sum of weights (within the same encounter type)
+Note that the sum of weights seems to determine (or at least influence) the frequency of encounters in general (i.e. how long it takes before you get an encounter while running around in the grass)
+If the sum of weights is very low (minimum in vanilla SoD is 28) you run the risk of encounters not spawning at all or taking an eternity to spawn
 
 "special" encounters are blue grass encounters
 

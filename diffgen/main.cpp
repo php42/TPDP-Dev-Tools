@@ -43,7 +43,7 @@ int wmain(int argc, wchar_t *argv[])
             ("input-path,i", boost::program_options::wvalue(&input_path), "path to the root folder of the input directory (the unmodified game folder)\n")
             ("output-path,o", boost::program_options::wvalue(&output_path), "path to the root folder of the output directory (the \"romhack\" folder)\n")
             ("extract,e", "extract data files from the game folder located at input-path to the directory specified by output-path\n")
-            ("diff,d", boost::program_options::wvalue(&diff_path)->implicit_value(L"diff.bin", "\"diff.bin\""), "Generate a diff between the original game data located at input-path and the modified version located at output-path\n")
+            ("diff,d", boost::program_options::wvalue(&diff_path)->implicit_value(L"diff.bin", "\"diff.bin\""), "Generate a diff between the original game data located at input-path and the extracted files located at output-path\n")
             ("patch,p", "Patch the original game data located at input-path with the diff file located at output-path\n")
             ("diff-mode,m", boost::program_options::wvalue(&diff_mode)->default_value(1), "mode to use when generating a diff\n1: default, diff applied on per-file basis\n2: diff applied on the whole archive\nmode 2 is required for adding files to the archive\n");
 
