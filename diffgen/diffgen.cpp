@@ -78,7 +78,7 @@ public:
 std::recursive_mutex ScopedConsoleLock::mtx_;
 
 /* scoped ownership of the console + change console text color (color reverted at end of life) */
-class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed
+class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed last
 {
     using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
 };
