@@ -17,6 +17,7 @@
 #include "diffgen.h"
 #include <boost/program_options.hpp>
 #include <iostream>
+#include <thread>
 #include "../common/console.h"
 #include "../common/version.h"
 
@@ -28,7 +29,7 @@
 int wmain(int argc, wchar_t *argv[])
 {
     std::wstring input_path, output_path, diff_path;
-    int diff_mode;
+    int diff_mode, threads;
     bool success;
 
     std::cout << "TPDP Dev-Tools " VERSION_STRING  " DiffGen"<< std::endl;
@@ -45,7 +46,9 @@ int wmain(int argc, wchar_t *argv[])
             ("extract,e", "extract data files from the game folder located at input-path to the directory specified by output-path\n")
             ("diff,d", boost::program_options::wvalue(&diff_path)->implicit_value(L"diff.bin", "\"diff.bin\""), "Generate a diff between the original game data located at input-path and the extracted files located at output-path\n")
             ("patch,p", "Patch the original game data located at input-path with the diff file located at output-path\n")
-            ("diff-mode,m", boost::program_options::wvalue(&diff_mode)->default_value(1), "mode to use when generating a diff\n1: default, diff applied on per-file basis\n2: diff applied on the whole archive\nmode 2 is required for adding files to the archive\n");
+            ("repack,r", "Insert files located at output-path into the original game data located at input-path (used to merge modifications back into the game without needing to generate a diff)\n")
+            ("diff-mode,m", boost::program_options::wvalue(&diff_mode)->default_value(1), "mode to use when generating a diff\n1: default, diff applied on per-file basis\n2: diff applied on the whole archive\nmode 2 is required for adding files to the archive\n")
+            ("threads,t", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use for compression\n");
 
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), opts);
         boost::program_options::notify(opts);
@@ -59,12 +62,12 @@ int wmain(int argc, wchar_t *argv[])
         if(opts.count("version"))
             return EXIT_SUCCESS;
 
-        auto num_options = opts.count("extract") + opts.count("diff") + opts.count("patch");
+        auto num_options = opts.count("extract") + opts.count("diff") + opts.count("patch") + opts.count("repack");
 
         if(num_options > 1)
         {
             std::cout << "Invalid argument: please specify only one operation." << std::endl;
-            std::cout << "--extract, --diff, and --patch are mutually exclusive.\n" << std::endl;
+            std::cout << "--extract, --diff, --repack, and --patch are mutually exclusive.\n" << std::endl;
             desc.print(std::cout);
             return EXIT_FAILURE;
         }
@@ -109,6 +112,8 @@ int wmain(int argc, wchar_t *argv[])
             success = diff(input_path, output_path, diff_path, diff_mode);
         else if(opts.count("patch"))
             success = patch(input_path, output_path);
+        else if(opts.count("repack"))
+            success = repack(input_path, output_path);
     }
     catch(const std::exception& ex)
     {

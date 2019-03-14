@@ -62,7 +62,7 @@ struct DiffHeader
 /* below is some syncronization madness for whenever i feel like
  * implementing some sort of parallelism */
 
-/* synchronization for console access (scoped ownership) */
+/* synchronization for console access (scoped ownership, recursion safe) */
 class ScopedConsoleLock
 {
 private:
@@ -85,9 +85,12 @@ class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public Sco
 
 typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
 
+typedef std::tuple<uint32_t, std::string, std::string, uint8_t> FileDiff;
+typedef std::pair<uint32_t, std::string> ArcDiff;
+
 static bool diff_files(const Path& input, const Path& output, const Path& diff_path)
 {
-    std::vector<std::tuple<uint32_t, std::string, std::string, uint8_t>> diffs;
+    std::vector<FileDiff> diffs;
     libtpdp::Archive arc;
     bool suppress_json_warning = false;
     bool ynk = false;
@@ -232,7 +235,7 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
 
 static bool diff_archive(const Path& input, const Path& output, const Path& diff_path)
 {
-    std::unordered_map<int, std::pair<uint32_t, std::string>> diffs;
+    std::unordered_map<int, ArcDiff> diffs;
     libtpdp::Archive arc;
     Path in_dir(input / L"dat");
     bool suppress_json_warning = false;
@@ -680,6 +683,126 @@ bool patch(const Path& input, const Path& output)
 
         if(!arc.save(arc_path.wstring()))
             throw DiffgenException("Failed to write to file: " + arc_path.string());
+    }
+
+    return true;
+}
+
+
+bool repack(const Path& input, const Path& output)
+{
+    libtpdp::Archive arc;
+    bool suppress_json_warning = false;
+
+    Path in_dir(input / L"dat");
+    for(int i = 1; i < 7; ++i)
+    {
+        auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
+        auto arc_path = in_dir / arc_name;
+        auto out_dir = output / arc_name;
+        bool dirty = false;
+
+        if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
+        {
+            std::cerr << "File not found: " << arc_path.string() << std::endl;
+            continue;
+        }
+
+        if(!fs::exists(out_dir) || !fs::is_directory(out_dir))
+        {
+            std::cerr << "Missing directory: " << out_dir.string() << std::endl;
+            continue;
+        }
+
+        try
+        {
+            std::cout << ">> " << arc_path.string() << std::endl;
+            arc.open(arc_path.wstring());
+        }
+        catch(const libtpdp::ArcError& ex)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Failed to open file: " << arc_path.string() << std::endl;
+            std::cerr << ex.what() << std::endl;
+            return false;
+        }
+
+        Path dir(output / arc_name);
+        for(auto& entry : fs::recursive_directory_iterator(dir))
+        {
+            if(!entry.is_regular_file())
+                continue;
+
+            if(algo::iequals(entry.path().extension().string(), ".json"))
+            {
+                if(!suppress_json_warning)
+                {
+                    ScopedConsoleColorChanger color(COLOR_WARN);
+                    std::cerr << "Skipping json files..." << std::endl;
+                    suppress_json_warning = true;
+                }
+                continue;
+            }
+
+            auto temp = entry.path().wstring();
+            temp = temp.substr(dir.wstring().size());
+
+            Path relative_path(temp);
+
+            auto it = arc.find(utf_to_sjis(relative_path.wstring()));
+            if(it >= arc.end())
+            {
+                {
+                    ScopedConsoleColorChanger color(COLOR_OK);
+                    std::cout << "Inserting new file: " << relative_path.string() << std::endl;
+                }
+
+                std::size_t sz;
+                auto dst_file = read_file(entry.path().wstring(), sz);
+                if(!dst_file)
+                    throw DiffgenException("Failed to read file: " + entry.path().string());
+
+                auto new_it = arc.insert(dst_file.get(), sz, utf_to_sjis(relative_path.wstring()));
+                if(new_it >= arc.end())
+                    throw DiffgenException("Failed to insert file: " + relative_path.string());
+
+                dirty = true;
+                continue;
+            }
+
+            auto src_file = arc.get_file(it);
+            if(!src_file)
+            {
+                ScopedConsoleColorChanger color(COLOR_CRITICAL);
+                std::cerr << "Error extracting file: " << relative_path.string() << std::endl;
+                std::cerr << "From archive: " << arc_path.string() << std::endl;
+                return false;
+            }
+
+            std::size_t sz;
+            auto dst_file = read_file(entry.path().wstring(), sz);
+            if(!dst_file)
+                throw DiffgenException("Failed to read file: " + entry.path().string());
+
+            if((src_file.size() != sz) || (std::memcmp(src_file.data(), dst_file.get(), sz) != 0))
+            {
+                src_file.reset(dst_file.release(), sz, src_file.index());
+                auto new_it = arc.repack_file(src_file);
+                if(new_it >= arc.end())
+                    throw DiffgenException("Failed to repack file: " + relative_path.string());
+                dirty = true;
+            }
+        }
+
+        if(dirty)
+        {
+            if(!arc.save(arc_path.wstring()))
+            {
+                ScopedConsoleColorChanger color(COLOR_CRITICAL);
+                std::cerr << "Error writing to archive: " << arc_path.string() << std::endl;
+                return false;
+            }
+        }
     }
 
     return true;

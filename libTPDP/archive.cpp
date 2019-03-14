@@ -101,9 +101,9 @@ void Archive::encrypt()
         auto block1 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos]), avxkey1);
         auto block2 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 32]), avxkey2);
         auto block3 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 64]), avxkey3);
-        _mm256_store_si256((__m256i*)&data[pos], block1);
-        _mm256_store_si256((__m256i*)&data[pos + 32], block2);
-        _mm256_store_si256((__m256i*)&data[pos + 64], block3);
+        _mm256_stream_si256((__m256i*)&data[pos], block1);
+        _mm256_stream_si256((__m256i*)&data[pos + 32], block2);
+        _mm256_stream_si256((__m256i*)&data[pos + 64], block3);
     }
 #elif !defined(ARC_NO_SSE)
 
@@ -122,9 +122,9 @@ void Archive::encrypt()
         auto block1 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos]), ssekey1);
         auto block2 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 16]), ssekey2);
         auto block3 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 32]), ssekey3);
-        _mm_store_si128((__m128i*)&data[pos], block1);
-        _mm_store_si128((__m128i*)&data[pos + 16], block2);
-        _mm_store_si128((__m128i*)&data[pos + 32], block3);
+        _mm_stream_si128((__m128i*)&data[pos], block1);
+        _mm_stream_si128((__m128i*)&data[pos + 16], block2);
+        _mm_stream_si128((__m128i*)&data[pos + 32], block3);
     }
 #else
     uint32_t k1 = *(uint32_t*)(key);
@@ -148,6 +148,10 @@ void Archive::encrypt()
         if(j >= sizeof(KEY))
             j = 0;
     }
+
+#ifndef ARC_NO_SSE
+    _mm_sfence(); // serialization of streaming stores
+#endif
 }
 
 void Archive::open(const std::string& filename)
