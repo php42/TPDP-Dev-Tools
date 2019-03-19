@@ -27,9 +27,10 @@
 #include <boost/crc.hpp>
 #include <tuple>
 #include <fstream>
-#include <unordered_map>
 #include <thread>
+#include <future>
 #include <mutex>
+#include <optional>
 
 constexpr uint8_t DIFF_FILE_VERSION = 1;
 static const char DIFF_FILE_MAGIC[] = { 'T','P','D','P','D','i','f','f' };
@@ -38,9 +39,6 @@ namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
 
 /* enter the spaghetti zone */
-
-/* TODO: try to combine the diff_archive() and diff_files() methods into one,
- * as they share a lot of common logic */
 
 #pragma pack(push, 1)
 struct DiffFileHeader
@@ -59,10 +57,7 @@ struct DiffHeader
 };
 #pragma pack(pop)
 
-/* below is some syncronization madness for whenever i feel like
- * implementing some sort of parallelism */
-
-/* synchronization for console access (scoped ownership, recursion safe) */
+/* synchronization for console access (scoped ownership, recursive) */
 class ScopedConsoleLock
 {
 private:
@@ -86,7 +81,297 @@ class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public Sco
 typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
 
 typedef std::tuple<uint32_t, std::string, std::string, uint8_t> FileDiff;
-typedef std::pair<uint32_t, std::string> ArcDiff;
+typedef std::tuple<uint32_t, std::string, uint8_t, bool> ArcDiff;
+
+static std::vector<FileDiff> fileworker(const Path *input, const std::vector<Path> *rel_paths, const libtpdp::Archive *arc, int arc_num, std::size_t begin, std::size_t end)
+{
+    std::vector<FileDiff> diffs;
+
+    for(auto i = begin; i < end; ++i)
+    {
+        const Path& relative_path = (*rel_paths)[i];
+        Path path = (*input) / relative_path;
+
+        auto it = arc->find(utf_to_sjis(relative_path.wstring()));
+        if(it >= arc->end())
+        {
+            ScopedConsoleColorMT color(COLOR_WARN);
+            std::cerr << "Skipping file: " << relative_path.string() << std::endl;
+            std::cerr << "File not present in archive. Adding files is not supported in mode 1." << std::endl;
+            continue;
+        }
+
+        auto src_file = arc->get_file(it);
+        if(!src_file)
+            throw DiffgenException("Error extracting file: " + relative_path.string());
+
+        std::size_t sz;
+        auto dst_file = read_file(path.wstring(), sz);
+        if(!dst_file)
+            throw DiffgenException("Failed to read file: " + path.string());
+
+        boost::crc_32_type src_crc, dst_crc;
+
+        src_crc.process_bytes(src_file.data(), src_file.size());
+        dst_crc.process_bytes(dst_file.get(), sz);
+
+        if(src_crc.checksum() == dst_crc.checksum())
+            continue;
+
+        std::string diff_output;
+        open_vcdiff::VCDiffEncoder encoder(src_file.data(), src_file.size());
+        if(!encoder.Encode(dst_file.get(), sz, &diff_output))
+            throw DiffgenException("Error generating diff for file: " + relative_path.string());
+
+        diffs.emplace_back((uint32_t)src_crc.checksum(), relative_path.string() + '\0', std::move(diff_output), arc_num);
+    }
+
+    return diffs;
+}
+
+static std::optional<ArcDiff> arcworker(Path input, Path output, int arc_num)
+{
+    libtpdp::Archive arc, new_arc;
+    bool suppress_json_warning = false;
+
+    try
+    {
+        {
+            ScopedConsoleLock lock;
+            std::cout << ">> " << input.string() << std::endl;
+        }
+        arc.open(input.wstring());
+    }
+    catch(const libtpdp::ArcError& ex)
+    {
+        throw DiffgenException("Failed to open file: " + input.string() + "\r\n" + ex.what());
+    }
+
+    for(auto& entry : fs::recursive_directory_iterator(output))
+    {
+        if(!entry.is_regular_file())
+            continue;
+
+        if(algo::iequals(entry.path().extension().string(), ".json"))
+        {
+            if(!suppress_json_warning)
+            {
+                ScopedConsoleColorMT color(COLOR_WARN);
+                std::cerr << "Skipping json files..." << std::endl;
+                suppress_json_warning = true;
+            }
+            continue;
+        }
+
+        auto temp = entry.path().wstring();
+        temp = temp.substr(output.wstring().size());
+        while(temp.find_first_of(L"\\/") == 0)
+            temp.erase(0, 1);
+
+        Path relative_path(temp);
+
+        auto it = arc.find(utf_to_sjis(relative_path.wstring()));
+        if(it >= arc.end())
+        {
+            {
+                ScopedConsoleColorMT color(COLOR_OK);
+                std::cout << "Inserting new file: " << entry.path().string() << std::endl;
+            }
+
+            std::size_t sz;
+            auto dst_file = read_file(entry.path().wstring(), sz);
+            if(!dst_file)
+                throw DiffgenException("Failed to read file: " + entry.path().string());
+
+            if(!new_arc)
+                new_arc = libtpdp::Archive(arc.data(), arc.size(), arc.is_ynk());
+
+            auto new_it = new_arc.insert(dst_file.get(), sz, utf_to_sjis(relative_path.wstring()));
+            if(new_it >= new_arc.end())
+                throw DiffgenException("Failed to insert file: " + entry.path().string());
+
+            continue;
+        }
+
+        auto src_file = arc.get_file(it);
+        if(!src_file)
+            throw DiffgenException("Error extracting file: " + relative_path.string() + "\r\nFrom archive: " + input.string());
+
+        std::size_t sz;
+        auto dst_file = read_file(entry.path().wstring(), sz);
+        if(!dst_file)
+            throw DiffgenException("Failed to read file: " + entry.path().string());
+
+        if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
+            continue;
+
+        if(!new_arc)
+            new_arc = libtpdp::Archive(arc.data(), arc.size(), arc.is_ynk());
+
+        auto new_it = new_arc.repack_file(utf_to_sjis(relative_path.wstring()), dst_file.get(), sz);
+        if(new_it >= new_arc.end())
+            throw DiffgenException("Error repacking file: " + relative_path.string());
+    }
+
+    if(!new_arc)
+        return {};
+
+    boost::crc_32_type crc;
+    crc.process_bytes(arc.data(), arc.size());
+
+    std::string diff_output;
+    open_vcdiff::VCDiffEncoder encoder(arc.data(), arc.size());
+    if(!encoder.Encode(new_arc.data(), new_arc.size(), &diff_output))
+        throw DiffgenException("Error generating diff for file: " + input.string());
+
+    return ArcDiff(crc.checksum(), std::move(diff_output), arc_num, arc.is_ynk());
+}
+
+static bool diff_files_mt(const Path& input, const Path& output, const Path& diff_path, int threads)
+{
+    std::vector<FileDiff> diffs;
+    libtpdp::Archive arc;
+    bool suppress_json_warning = false;
+    bool ynk = false;
+    if(threads < 1)
+        threads = 1;
+
+    if(threads > 1)
+        std::cout << "Using up to " << threads << " concurrent threads" << std::endl;
+
+    Path in_dir(input / L"dat");
+    for(int i = 1; i < 7; ++i)
+    {
+        auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
+        auto arc_path = in_dir / arc_name;
+        auto out_dir = output / arc_name;
+        std::vector<Path> rel_paths;
+
+        if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
+        {
+            std::cerr << "File not found: " << arc_path.string() << std::endl;
+            continue;
+        }
+
+        if(!fs::exists(out_dir) || !fs::is_directory(out_dir))
+        {
+            std::cerr << "Missing directory: " << out_dir.string() << std::endl;
+            continue;
+        }
+
+        try
+        {
+            std::cout << ">> " << arc_path.string() << std::endl;
+            arc.open(arc_path.wstring());
+        }
+        catch(const libtpdp::ArcError& ex)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Failed to open file: " << arc_path.string() << std::endl;
+            std::cerr << ex.what() << std::endl;
+            return false;
+        }
+
+        ynk = arc.is_ynk();
+
+        for(auto& entry : fs::recursive_directory_iterator(out_dir))
+        {
+            if(!entry.is_regular_file())
+                continue;
+
+            if(algo::iequals(entry.path().extension().string(), ".json"))
+            {
+                if(!suppress_json_warning)
+                {
+                    ScopedConsoleColorChanger color(COLOR_WARN);
+                    std::cerr << "Skipping json files..." << std::endl;
+                    suppress_json_warning = true;
+                }
+                continue;
+            }
+
+            auto temp = entry.path().wstring();
+            temp = temp.substr(out_dir.wstring().size());
+            while(temp.find_first_of(L"\\/") == 0)
+                temp.erase(0, 1);
+
+            rel_paths.emplace_back(temp);
+        }
+
+        std::vector<std::future<std::vector<FileDiff>>> futures;
+        auto arc_threads = threads;
+        auto files_per_thread = rel_paths.size() / arc_threads;
+        if(files_per_thread < 2)
+            arc_threads = 1;
+
+        auto flags = (arc_threads > 1) ? std::launch::async : std::launch::deferred;
+
+        std::size_t begin = 0;
+        for(int j = 0; j < arc_threads; ++j)
+        {
+            auto end = (j == (arc_threads - 1)) ? rel_paths.size() : (begin + files_per_thread);
+            futures.emplace_back(std::async(flags, fileworker, &out_dir, &rel_paths, &arc, i, begin, end));
+            begin = end;
+        }
+
+        try
+        {
+            for(auto& j : futures)
+            {
+                auto val = j.get();
+                for(auto& k : val)
+                    diffs.emplace_back(std::move(k));
+            }
+        }
+        catch(const std::exception& ex)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::cerr << arc_path.string() << ": Exception" << std::endl;
+            std::cerr << ex.what() << std::endl;
+            for(auto& j : futures)
+                if(j.valid())
+                    j.wait();
+
+            return false;
+        }
+    }
+
+    if(diffs.empty())
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Source and target are identical, no diffs to output!" << std::endl;
+        return false;
+    }
+
+    DiffFileHeader header;
+    header.mode = 1;
+    header.version = DIFF_FILE_VERSION;
+    header.ynk = ynk ? 1 : 0;
+    memcpy(header.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC));
+
+    std::ofstream diff_file(diff_path, std::ios::binary | std::ios::trunc);
+    diff_file.write((char*)&header, sizeof(header));
+
+    /* XXX: this is a disaster pls fix */
+    for(auto& i : diffs)
+    {
+        auto&[crc, name, data, arc_num] = i;
+        std::size_t total_size = 9 + name.size() + data.size();
+
+        auto buf = std::make_unique<char[]>(total_size);
+
+        write_le32(buf.get(), crc);
+        write_le32(buf.get() + 4, (uint32_t)data.size());
+        *(buf.get() + 8) = arc_num;
+        memcpy(buf.get() + 9, name.data(), name.size());
+        memcpy(buf.get() + 9 + name.size(), data.data(), data.size());
+
+        if(!diff_file.write(buf.get(), total_size))
+            throw DiffgenException("Failed to write to file: " + diff_path.string());
+    }
+
+    return true;
+}
 
 static bool diff_files(const Path& input, const Path& output, const Path& diff_path)
 {
@@ -129,8 +414,7 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
 
         ynk = arc.is_ynk();
 
-        Path dir(output / arc_name);
-        for(auto& entry : fs::recursive_directory_iterator(dir))
+        for(auto& entry : fs::recursive_directory_iterator(out_dir))
         {
             if(!entry.is_regular_file())
                 continue;
@@ -147,7 +431,9 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
             }
 
             auto temp = entry.path().wstring();
-            temp = temp.substr(dir.wstring().size());
+            temp = temp.substr(out_dir.wstring().size());
+            while(temp.find_first_of(L"\\/") == 0)
+                temp.erase(0, 1);
 
             Path relative_path(temp);
 
@@ -233,9 +519,108 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
     return true;
 }
 
+static bool diff_archive_mt(const Path& input, const Path& output, const Path& diff_path, int threads)
+{
+    std::vector<ArcDiff> diffs;
+    std::vector<std::future<std::optional<ArcDiff>>> futures;
+    Path in_dir(input / L"dat");
+    if(threads < 1)
+        threads = 1;
+    if(threads > 6)
+        threads = 6;
+
+    if(threads > 1)
+        std::cout << "Using up to " << threads << " concurrent threads" << std::endl;
+
+    auto flags = (threads > 1) ? std::launch::async : std::launch::deferred;
+
+    try
+    {
+        for(int i = 1; i < 7; ++i)
+        {
+            libtpdp::Archive new_arc;
+            auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
+            auto arc_path = in_dir / arc_name;
+            auto out_dir = output / arc_name;
+
+            if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
+            {
+                std::cerr << "File not found: " << arc_path.string() << std::endl;
+                continue;
+            }
+
+            if(!fs::exists(out_dir) || !fs::is_directory(out_dir))
+            {
+                std::cerr << "Missing directory: " << out_dir.string() << std::endl;
+                continue;
+            }
+
+            if(futures.size() >= threads)
+            {
+                while(!futures.empty())
+                {
+                    auto temp = futures.back().get();
+                    if(temp)
+                        diffs.push_back(std::move(temp.value()));
+                    futures.pop_back();
+                }
+            }
+
+            futures.push_back(std::async(flags, arcworker, arc_path, out_dir, i));
+        }
+
+        while(!futures.empty())
+        {
+            auto temp = futures.back().get();
+            if(temp)
+                diffs.push_back(std::move(temp.value()));
+            futures.pop_back();
+        }
+    }
+    catch(const std::exception&)
+    {
+        for(auto& i : futures)
+        {
+            if(i.valid())
+                i.wait();
+        }
+
+        throw;
+    }
+
+    if(diffs.empty())
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Source and target are identical, no diffs to output!" << std::endl;
+        return false;
+    }
+
+    DiffFileHeader header;
+    header.mode = 2;
+    header.version = DIFF_FILE_VERSION;
+    header.ynk = std::get<3>(diffs[0]) ? 1 : 0;
+    memcpy(header.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC));
+
+    std::ofstream diff_file(diff_path, std::ios::binary | std::ios::trunc);
+    diff_file.write((char*)&header, sizeof(header));
+
+    for(auto& i : diffs)
+    {
+        auto&[crc, data, arc_num, ynk] = i;
+        DiffHeader diff_header;
+        diff_header.arc_num = arc_num;
+        diff_header.crc = crc;
+        diff_header.data_len = (uint32_t)data.size();
+        diff_file.write((char*)&diff_header, sizeof(diff_header));
+        diff_file.write(data.data(), data.size());
+    }
+
+    return true;
+}
+
 static bool diff_archive(const Path& input, const Path& output, const Path& diff_path)
 {
-    std::unordered_map<int, ArcDiff> diffs;
+    std::vector<ArcDiff> diffs;
     libtpdp::Archive arc;
     Path in_dir(input / L"dat");
     bool suppress_json_warning = false;
@@ -264,7 +649,6 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
         {
             std::cout << ">> " << arc_path.string() << std::endl;
             arc.open(arc_path.wstring());
-            new_arc.open(arc_path.wstring());
         }
         catch(const libtpdp::ArcError& ex)
         {
@@ -276,8 +660,7 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
 
         ynk = arc.is_ynk();
 
-        Path dir(output / arc_name);
-        for(auto& entry : fs::recursive_directory_iterator(dir))
+        for(auto& entry : fs::recursive_directory_iterator(out_dir))
         {
             if(!entry.is_regular_file())
                 continue;
@@ -294,7 +677,9 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
             }
 
             auto temp = entry.path().wstring();
-            temp = temp.substr(dir.wstring().size());
+            temp = temp.substr(out_dir.wstring().size());
+            while(temp.find_first_of(L"\\/") == 0)
+                temp.erase(0, 1);
 
             Path relative_path(temp);
 
@@ -310,6 +695,9 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
                 auto dst_file = read_file(entry.path().wstring(), sz);
                 if(!dst_file)
                     throw DiffgenException("Failed to read file: " + entry.path().string());
+
+                if(!new_arc)
+                    new_arc = libtpdp::Archive(arc.data(), arc.size(), arc.is_ynk());
 
                 auto new_it = new_arc.insert(dst_file.get(), sz, utf_to_sjis(relative_path.wstring()));
                 if(new_it >= new_arc.end())
@@ -330,35 +718,31 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
             std::size_t sz;
             auto dst_file = read_file(entry.path().wstring(), sz);
             if(!dst_file)
-                DiffgenException("Failed to read file: " + entry.path().string());
+                throw DiffgenException("Failed to read file: " + entry.path().string());
 
-            boost::crc_32_type src_crc, dst_crc;
-
-            src_crc.process_bytes(src_file.data(), src_file.size());
-            dst_crc.process_bytes(dst_file.get(), sz);
-
-            if(src_crc.checksum() == dst_crc.checksum())
+            if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
                 continue;
+
+            if(!new_arc)
+                new_arc = libtpdp::Archive(arc.data(), arc.size(), arc.is_ynk());
 
             auto new_it = new_arc.repack_file(utf_to_sjis(relative_path.wstring()), dst_file.get(), sz);
             if(new_it >= new_arc.end())
                 throw DiffgenException("Error repacking file: " + relative_path.string());
         }
 
-        boost::crc_32_type src_crc, dst_crc;
-
-        src_crc.process_bytes(arc.data(), arc.size());
-        dst_crc.process_bytes(new_arc.data(), new_arc.size());
-
-        if(src_crc.checksum() == dst_crc.checksum())
+        if(!new_arc)
             continue;
+
+        boost::crc_32_type crc;
+        crc.process_bytes(arc.data(), arc.size());
 
         std::string diff_output;
         open_vcdiff::VCDiffEncoder encoder(arc.data(), arc.size());
         if(!encoder.Encode(new_arc.data(), new_arc.size(), &diff_output))
             throw DiffgenException("Error generating diff for file: " + arc_path.string());
 
-        diffs[i] = { src_crc.checksum(), std::move(diff_output) };
+        diffs.emplace_back(crc.checksum(), std::move(diff_output), i, arc.is_ynk());
     }
 
     if(diffs.empty())
@@ -377,14 +761,15 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
     std::ofstream diff_file(diff_path, std::ios::binary | std::ios::trunc);
     diff_file.write((char*)&header, sizeof(header));
 
-    for(auto& it : diffs)
+    for(auto& i : diffs)
     {
+        auto&[crc, data, arc_num, ynk] = i;
         DiffHeader diff_header;
-        diff_header.arc_num = it.first;
-        diff_header.crc = it.second.first;
-        diff_header.data_len = (uint32_t)it.second.second.size();
+        diff_header.arc_num = arc_num;
+        diff_header.crc = crc;
+        diff_header.data_len = (uint32_t)data.size();
         diff_file.write((char*)&diff_header, sizeof(diff_header));
-        diff_file.write(it.second.second.data(), it.second.second.size());
+        diff_file.write(data.data(), data.size());
     }
 
     return true;
@@ -466,15 +851,24 @@ bool extract(const Path& input, const Path& output)
     return true;
 }
 
-bool diff(const Path& input, const Path& output, const Path& diff_path, int diff_mode)
+bool diff(const Path& input, const Path& output, const Path& diff_path, int diff_mode, int threads)
 {
-    if(diff_mode == 1)
-        return diff_files(input, output, diff_path);
-    else if(diff_mode == 2)
-        return diff_archive(input, output, diff_path);
+    switch(diff_mode)
+    {
+    case 1:
+        if(threads <= 1)
+            return diff_files(input, output, diff_path);
+        return diff_files_mt(input, output, diff_path, threads);
 
-    std::cerr << "Error: Invalid diff-mode." << std::endl;
-    return false;
+    case 2:
+        if(threads <= 1)
+            return diff_archive(input, output, diff_path);
+        return diff_archive_mt(input, output, diff_path, threads);
+
+    default:
+        std::cerr << "Error: Invalid diff-mode." << std::endl;
+        return false;
+    }
 }
 
 bool patch(const Path& input, const Path& output)
@@ -786,8 +1180,7 @@ bool repack(const Path& input, const Path& output)
 
             if((src_file.size() != sz) || (std::memcmp(src_file.data(), dst_file.get(), sz) != 0))
             {
-                src_file.reset(dst_file.release(), sz, src_file.index());
-                auto new_it = arc.repack_file(src_file);
+                auto new_it = arc.repack_file(it, dst_file.get(), sz);
                 if(new_it >= arc.end())
                     throw DiffgenException("Failed to repack file: " + relative_path.string());
                 dirty = true;

@@ -20,6 +20,7 @@
 #include <thread>
 #include "../common/console.h"
 #include "../common/version.h"
+#include <chrono>
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
@@ -106,14 +107,23 @@ int wmain(int argc, wchar_t *argv[])
             return EXIT_FAILURE;
         }
 
+        auto begin = std::chrono::high_resolution_clock::now();
         if(opts.count("extract"))
             success = extract(input_path, output_path);
         else if(opts.count("diff"))
-            success = diff(input_path, output_path, diff_path, diff_mode);
+            success = diff(input_path, output_path, diff_path, diff_mode, threads);
         else if(opts.count("patch"))
             success = patch(input_path, output_path);
         else if(opts.count("repack"))
             success = repack(input_path, output_path);
+
+        if(success)
+        {
+            auto end = std::chrono::high_resolution_clock::now();
+            auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
+            std::cout << "Done." << std::endl;
+            std::cout << "Finished in " << seconds.count() << " seconds." << std::endl;
+        }
     }
     catch(const std::exception& ex)
     {
@@ -127,9 +137,6 @@ int wmain(int argc, wchar_t *argv[])
         std::cout << "An unknown error occurred" << std::endl;
         return EXIT_FAILURE;
     }
-
-    if(success)
-        std::cout << "Done." << std::endl;
 
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

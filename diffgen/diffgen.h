@@ -26,6 +26,6 @@ struct DiffgenException : public std::runtime_error
 typedef std::filesystem::path Path;
 
 bool extract(const Path& input, const Path& output);
-bool diff(const Path& input, const Path& output, const Path& diff_path, int diff_mode);
+bool diff(const Path& input, const Path& output, const Path& diff_path, int diff_mode, int threads);
 bool patch(const Path& input, const Path& output);
 bool repack(const Path& input, const Path& output);
