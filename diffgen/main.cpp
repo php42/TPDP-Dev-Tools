@@ -124,6 +124,11 @@ int wmain(int argc, wchar_t *argv[])
             std::cout << "Done." << std::endl;
             std::cout << "Finished in " << seconds.count() << " seconds." << std::endl;
         }
+        else
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Operation aborted." << std::endl;
+        }
     }
     catch(const std::exception& ex)
     {
