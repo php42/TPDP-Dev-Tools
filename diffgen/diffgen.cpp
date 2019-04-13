@@ -31,6 +31,7 @@
 #include <future>
 #include <mutex>
 #include <optional>
+#include <unordered_map>
 
 constexpr uint8_t DIFF_FILE_VERSION = 1;
 static const char DIFF_FILE_MAGIC[] = { 'T','P','D','P','D','i','f','f' };

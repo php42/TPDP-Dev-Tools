@@ -31,7 +31,7 @@ int wmain(int argc, wchar_t *argv[])
 {
     std::wstring input_path, output_path, diff_path;
     int diff_mode, threads;
-    bool success;
+    bool success = false;
 
     std::cout << "TPDP Dev-Tools " VERSION_STRING  " DiffGen"<< std::endl;
 
@@ -49,7 +49,7 @@ int wmain(int argc, wchar_t *argv[])
             ("patch,p", "Patch the original game data located at input-path with the diff file located at output-path\n")
             ("repack,r", "Insert files located at output-path into the original game data located at input-path (used to merge modifications back into the game without needing to generate a diff)\n")
             ("diff-mode,m", boost::program_options::wvalue(&diff_mode)->default_value(1), "mode to use when generating a diff\n1: default, diff applied on per-file basis\n2: diff applied on the whole archive\nmode 2 is required for adding files to the archive\n")
-            ("threads,t", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use for compression\n");
+            ("threads,j", boost::program_options::wvalue(&threads)->implicit_value(std::thread::hardware_concurrency())->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use for compression\n");
 
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), opts);
         boost::program_options::notify(opts);

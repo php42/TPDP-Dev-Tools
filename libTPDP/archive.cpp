@@ -150,7 +150,7 @@ void Archive::encrypt()
     }
 
 #ifndef ARC_NO_SSE
-    _mm_sfence(); // serialization of streaming stores
+    _mm_mfence(); // serialization of streaming stores
 #endif
 }
 
