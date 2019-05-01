@@ -17,7 +17,6 @@
 #pragma once
 #include <string>
 #include <cstdint>
-#include <memory>
 #include "typedefs.h"
 
 bool copy_file(const std::string& src, const std::string& dest);

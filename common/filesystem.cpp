@@ -15,7 +15,7 @@
 */
 
 #include "filesystem.h"
-#include <functional>
+#include <cassert>
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -168,6 +168,10 @@ AlignedFileBuf aligned_read_file(const std::wstring& file, std::size_t& size, st
 {
     HANDLE infile;
 
+    assert((alignment != 0) && ((alignment & (alignment - 1)) == 0)); // alignment must be power of 2
+    if((alignment == 0) || ((alignment & (alignment - 1)) != 0))
+        return AlignedFileBuf();
+
     infile = CreateFileW(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if(infile == INVALID_HANDLE_VALUE)
         return AlignedFileBuf();
@@ -180,7 +184,11 @@ AlignedFileBuf aligned_read_file(const std::wstring& file, std::size_t& size, st
         return AlignedFileBuf();
     }
 
-    AlignedFileBuf buf((char*)_aligned_malloc((std::size_t)len.QuadPart, alignment), _aligned_free);
+    auto ptr = _aligned_malloc((std::size_t)len.QuadPart, alignment);
+    if(ptr == nullptr)
+        return AlignedFileBuf();
+
+    AlignedFileBuf buf((char*)ptr, _aligned_free);
 
     if(!ReadFile(infile, buf.get(), (DWORD)len.QuadPart, &bytes_read, NULL))
     {
@@ -203,6 +211,10 @@ AlignedFileBuf aligned_read_file(const std::string& file, std::size_t& size, std
 {
     HANDLE infile;
 
+    assert((alignment != 0) && ((alignment & (alignment - 1)) == 0)); // alignment must be power of 2
+    if((alignment == 0) || ((alignment & (alignment - 1)) != 0))
+        return AlignedFileBuf();
+
     infile = CreateFileA(file.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if(infile == INVALID_HANDLE_VALUE)
         return AlignedFileBuf();
@@ -215,7 +227,11 @@ AlignedFileBuf aligned_read_file(const std::string& file, std::size_t& size, std
         return AlignedFileBuf();
     }
 
-    AlignedFileBuf buf((char*)_aligned_malloc((std::size_t)len.QuadPart, alignment), _aligned_free);
+    auto ptr = _aligned_malloc((std::size_t)len.QuadPart, alignment);
+    if(ptr == nullptr)
+        return AlignedFileBuf();
+
+    AlignedFileBuf buf((char*)ptr, _aligned_free);
 
     if(!ReadFile(infile, buf.get(), (DWORD)len.QuadPart, &bytes_read, NULL))
     {
