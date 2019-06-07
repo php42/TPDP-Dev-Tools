@@ -15,6 +15,7 @@
 */
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #define CP_SJIS 932
 #include <Windows.h>
 #include "textconvert.h"

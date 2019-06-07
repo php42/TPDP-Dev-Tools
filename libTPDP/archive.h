@@ -19,6 +19,7 @@
 #include <string>
 #include <memory>
 #include <exception>
+#include <limits>
 #include "../common/typedefs.h"
 
 namespace libtpdp
@@ -123,7 +124,7 @@ public:
     class iterator;
     class directory_iterator;
 
-    static const std::size_t npos;
+    static constexpr auto npos = std::numeric_limits<std::size_t>::max();
 
 private:
 	ArchiveHeader header_;

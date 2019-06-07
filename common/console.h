@@ -17,6 +17,7 @@
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 
 #define COLOR_OK (FOREGROUND_GREEN)

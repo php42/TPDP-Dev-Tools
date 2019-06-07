@@ -28,7 +28,6 @@
 #include <cstring>
 #include <cassert>
 #include <algorithm>
-#include <limits>
 
 #ifndef ARC_NO_SSE
 #include <intrin.h>
@@ -39,7 +38,6 @@ namespace libtpdp
 
 static const uint8_t KEY[] = {0x9B, 0x16, 0xFE, 0x3A, 0xB9, 0xE0, 0xA3, 0x17, 0x9A, 0x23, 0x20, 0xAE};
 static const uint8_t KEY_YNK[] = {0x9B, 0x16, 0xFE, 0x3A, 0x98, 0xC2, 0xA0, 0x73, 0x0B, 0x0B, 0xB5, 0x90};
-const std::size_t Archive::npos = std::numeric_limits<std::size_t>::max();
 
 /* venture forth into madness */
 
