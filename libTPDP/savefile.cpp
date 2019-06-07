@@ -251,7 +251,7 @@ char *SaveFile::generate_save(std::size_t& size)
 std::size_t SaveFile::get_puppet_offset(unsigned int index)
 {
 	if(!(index < (30 * num_boxes_) + 6))
-		return -1;
+		return (unsigned int)-1;
 
 	if(index < 6)
 		return index * PUPPET_SIZE_PARTY;
@@ -413,7 +413,7 @@ bool SaveFile::set_item_id(unsigned int pocket, unsigned int index, unsigned int
 	for(unsigned int i = 0; i <= pocket; ++i)
 		offset += pocket_offsets[i];
 
-	write_le16(&savebuf_[offset + (index * 2)], item_id);
+	write_le16(&savebuf_[offset + (index * 2)], (uint16_t)item_id);
 
 	return true;
 }
@@ -719,7 +719,7 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 	for(unsigned int i = 0; i < 256; ++i)
 	{
 		if(frequency_table[i] < frequency_table[key])
-			key = i;
+			key = (uint8_t)i;
 	}
 
 	write_le32(&outptr[0], (uint32_t)src_len);
@@ -777,8 +777,8 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 
 				if(j > len)
 				{
-					offset = i;
-					len = j;
+					offset = (uint8_t)i;
+					len = (uint8_t)j;
 				}
 			}
 		}

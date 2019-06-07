@@ -107,33 +107,7 @@ static_assert(sizeof(ArchiveFilenameHeader) == ARCHIVE_FILENAME_HEADER_SIZE);
 static_assert(sizeof(ArchiveFileHeader) == ARCHIVE_FILE_HEADER_SIZE);
 static_assert(sizeof(ArchiveDirHeader) == ARCHIVE_DIR_HEADER_SIZE);
 
-/* container for files extracted from an Archive */
-class ArcFile
-{
-private:
-    std::unique_ptr<char[]> buf_;
-    std::size_t len_;
-    std::size_t index_;
-
-public:
-    ArcFile() : buf_(), len_(0), index_(-1) {};
-    ArcFile(char *buf, std::size_t len, std::size_t index) : buf_(buf), len_(len), index_(index) {};
-    ArcFile(std::unique_ptr<char[]>&& buf, std::size_t len, std::size_t index) : buf_(std::move(buf)), len_(len), index_(index) {};
-    ArcFile(const ArcFile&) = delete;
-    ArcFile(ArcFile&& other) : buf_(std::move(other.buf_)), len_(other.len_), index_(other.index_) { other.reset(); };
-
-    ArcFile& operator =(const ArcFile&) = delete;
-    ArcFile& operator =(ArcFile&& other) { buf_ = std::move(other.buf_); len_ = other.len_; index_ = other.index_; other.reset(); return *this; }
-
-    char *data() const { return buf_.get(); }
-    std::size_t size() const { return len_; }
-    std::size_t index() const { return index_; }
-
-    void reset() { buf_.reset(); len_ = 0; index_ = -1; }
-    void reset(char *buf, std::size_t sz, std::size_t index) { buf_.reset(buf); len_ = sz; index_ = index; }
-
-    explicit operator bool() const { return ((bool)buf_ && len_ && (index_ != -1)); }
-};
+class ArcFile;
 
 /* TODO: implement const_iterators and fix const qualification of iterator methods */
 
@@ -149,11 +123,13 @@ public:
     class iterator;
     class directory_iterator;
 
+    static const std::size_t npos;
+
 private:
 	ArchiveHeader header_;
 
 	std::size_t data_used_, data_max_;
-    AlignedFileBuf data_; // file buffer aligned to 32 byte boundary for AVX/SSE (encryption)
+    FileBuf data_; // file buffer
 
     std::size_t file_table_offset_;
     std::size_t dir_table_offset_;
@@ -275,6 +251,34 @@ public:
     void close() { data_.reset(); data_used_ = 0; data_max_ = 0; is_ynk_ = false; }
 };
 
+/* container for files extracted from an Archive */
+class ArcFile
+{
+private:
+    std::unique_ptr<char[]> buf_;
+    std::size_t len_;
+    std::size_t index_;
+
+public:
+    ArcFile() : buf_(), len_(0), index_(Archive::npos) {};
+    ArcFile(char *buf, std::size_t len, std::size_t index) : buf_(buf), len_(len), index_(index) {};
+    ArcFile(std::unique_ptr<char[]>&& buf, std::size_t len, std::size_t index) : buf_(std::move(buf)), len_(len), index_(index) {};
+    ArcFile(const ArcFile&) = delete;
+    ArcFile(ArcFile&& other) : buf_(std::move(other.buf_)), len_(other.len_), index_(other.index_) { other.reset(); };
+
+    ArcFile& operator =(const ArcFile&) = delete;
+    ArcFile& operator =(ArcFile&& other) { buf_ = std::move(other.buf_); len_ = other.len_; index_ = other.index_; other.reset(); return *this; }
+
+    char *data() const { return buf_.get(); }
+    std::size_t size() const { return len_; }
+    std::size_t index() const { return index_; }
+
+    void reset() { buf_.reset(); len_ = 0; index_ = Archive::npos; }
+    void reset(char *buf, std::size_t sz, std::size_t index) { buf_.reset(buf); len_ = sz; index_ = index; }
+
+    explicit operator bool() const { return ((bool)buf_ && len_ && (index_ != Archive::npos)); }
+};
+
 /* points to a filesystem object inside an Archive
  * may point to either a file or a folder */
 class Archive::iterator
@@ -285,7 +289,7 @@ private:
     std::size_t offset_;
 
 public:
-    iterator() : data_(nullptr), index_(-1), offset_(-1) {};
+    iterator() : data_(nullptr), index_(Archive::npos), offset_(Archive::npos) {};
     iterator(char *data, std::size_t index, std::size_t offset) : data_(data), index_(index), offset_(offset) {};
     iterator(const iterator&) = default;
     iterator& operator=(const iterator&) = default;
@@ -337,7 +341,7 @@ private:
     std::size_t offset_;
 
 public:
-    directory_iterator() : data_(nullptr), index_(-1), offset_(-1) {};
+    directory_iterator() : data_(nullptr), index_(Archive::npos), offset_(Archive::npos) {};
     directory_iterator(char *data, std::size_t index, std::size_t offset) : data_(data), index_(index), offset_(offset) {};
     directory_iterator(const directory_iterator&) = default;
     directory_iterator& operator=(const directory_iterator&) = default;

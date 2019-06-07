@@ -183,7 +183,7 @@ static std::vector<FileDiff> fileworker(const Path *input, const std::vector<Pat
         if(!encoder.Encode(dst_file.get(), sz, &diff_output))
             throw DiffgenException("Error generating diff for file: " + relative_path.string());
 
-        diffs.emplace_back((uint32_t)src_crc.checksum(), relative_path.string() + '\0', std::move(diff_output), arc_num);
+        diffs.emplace_back((uint32_t)src_crc.checksum(), relative_path.string() + '\0', std::move(diff_output), (uint8_t)arc_num);
     }
 
     return diffs;
@@ -287,7 +287,7 @@ static std::optional<ArcDiff> arcworker(Path input, Path output, int arc_num)
     if(!encoder.Encode(new_arc.data(), new_arc.size(), &diff_output))
         throw DiffgenException("Error generating diff for file: " + input.string());
 
-    return ArcDiff(crc.checksum(), std::move(diff_output), arc_num, arc.is_ynk());
+    return ArcDiff(crc.checksum(), std::move(diff_output), (uint8_t)arc_num, arc.is_ynk());
 }
 
 static bool diff_files(const Path& input, const Path& output, const Path& diff_path, int threads)

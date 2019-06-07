@@ -15,6 +15,7 @@
 */
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 
 #include "archive.h"
@@ -26,13 +27,19 @@
 #include <cwctype>
 #include <cstring>
 #include <cassert>
+#include <algorithm>
+#include <limits>
+
+#ifndef ARC_NO_SSE
 #include <intrin.h>
+#endif // !ARC_NO_SSE
 
 namespace libtpdp
 {
 
 static const uint8_t KEY[] = {0x9B, 0x16, 0xFE, 0x3A, 0xB9, 0xE0, 0xA3, 0x17, 0x9A, 0x23, 0x20, 0xAE};
 static const uint8_t KEY_YNK[] = {0x9B, 0x16, 0xFE, 0x3A, 0x98, 0xC2, 0xA0, 0x73, 0x0B, 0x0B, 0xB5, 0x90};
+const std::size_t Archive::npos = std::numeric_limits<std::size_t>::max();
 
 /* venture forth into madness */
 
@@ -92,18 +99,18 @@ void Archive::encrypt()
     for(unsigned int i = 0; i < 8; ++i)
         memcpy(&avx_key_buf[i * 12], key, 12);
 
-    __m256i avxkey1 = _mm256_load_si256((__m256i*)&avx_key_buf[0]);
-    __m256i avxkey2 = _mm256_load_si256((__m256i*)&avx_key_buf[32]);
-    __m256i avxkey3 = _mm256_load_si256((__m256i*)&avx_key_buf[64]);
+    __m256i avxkey1 = _mm256_loadu_si256((__m256i*)&avx_key_buf[0]);
+    __m256i avxkey2 = _mm256_loadu_si256((__m256i*)&avx_key_buf[32]);
+    __m256i avxkey3 = _mm256_loadu_si256((__m256i*)&avx_key_buf[64]);
 
     for(; (data_used_ - pos) >= 96; pos += 96)
     {
-        auto block1 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos]), avxkey1);
-        auto block2 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 32]), avxkey2);
-        auto block3 = _mm256_xor_si256(_mm256_load_si256((__m256i*)&data[pos + 64]), avxkey3);
-        _mm256_stream_si256((__m256i*)&data[pos], block1);
-        _mm256_stream_si256((__m256i*)&data[pos + 32], block2);
-        _mm256_stream_si256((__m256i*)&data[pos + 64], block3);
+        auto block1 = _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos]), avxkey1);
+        _mm256_storeu_si256((__m256i*)&data[pos], block1);
+        auto block2 = _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos + 32]), avxkey2);
+        _mm256_storeu_si256((__m256i*)&data[pos + 32], block2);
+        auto block3 = _mm256_xor_si256(_mm256_loadu_si256((__m256i*)&data[pos + 64]), avxkey3);
+        _mm256_storeu_si256((__m256i*)&data[pos + 64], block3);
     }
 #elif !defined(ARC_NO_SSE)
 
@@ -113,18 +120,18 @@ void Archive::encrypt()
     for(unsigned int i = 0; i < 4; ++i)
         memcpy(&sse_key_buf[i * 12], key, 12);
 
-    __m128i ssekey1 = _mm_load_si128((__m128i*)&sse_key_buf[0]);
-    __m128i ssekey2 = _mm_load_si128((__m128i*)&sse_key_buf[16]);
-    __m128i ssekey3 = _mm_load_si128((__m128i*)&sse_key_buf[32]);
+    __m128i ssekey1 = _mm_loadu_si128((__m128i*)&sse_key_buf[0]);
+    __m128i ssekey2 = _mm_loadu_si128((__m128i*)&sse_key_buf[16]);
+    __m128i ssekey3 = _mm_loadu_si128((__m128i*)&sse_key_buf[32]);
 
     for(; (data_used_ - pos) >= 48; pos += 48)
     {
-        auto block1 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos]), ssekey1);
-        auto block2 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 16]), ssekey2);
-        auto block3 = _mm_xor_si128(_mm_load_si128((__m128i*)&data[pos + 32]), ssekey3);
-        _mm_stream_si128((__m128i*)&data[pos], block1);
-        _mm_stream_si128((__m128i*)&data[pos + 16], block2);
-        _mm_stream_si128((__m128i*)&data[pos + 32], block3);
+        auto block1 = _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos]), ssekey1);
+        _mm_storeu_si128((__m128i*)&data[pos], block1);
+        auto block2 = _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos + 16]), ssekey2);
+        _mm_storeu_si128((__m128i*)&data[pos + 16], block2);
+        auto block3 = _mm_xor_si128(_mm_loadu_si128((__m128i*)&data[pos + 32]), ssekey3);
+        _mm_storeu_si128((__m128i*)&data[pos + 32], block3);
     }
 #else
     uint32_t k1 = *(uint32_t*)(key);
@@ -148,10 +155,6 @@ void Archive::encrypt()
         if(j >= sizeof(KEY))
             j = 0;
     }
-
-#ifndef ARC_NO_SSE
-    _mm_mfence(); // serialization of streaming stores
-#endif
 }
 
 void Archive::open(const std::string& filename)
@@ -159,7 +162,7 @@ void Archive::open(const std::string& filename)
 	close();
 
     std::size_t sz;
-	auto buf = aligned_read_file(filename, sz, 32);
+	auto buf = read_file(filename, sz);
     if(buf == nullptr)
         throw ArcError("File I/O read error.");
 
@@ -183,7 +186,7 @@ void Archive::open(const std::wstring& filename)
 	close();
 
     std::size_t sz;
-    auto buf = aligned_read_file(filename, sz, 32);
+    auto buf = read_file(filename, sz);
     if(buf == nullptr)
         throw ArcError("File I/O read error.");
 
@@ -279,7 +282,7 @@ std::size_t Archive::get_header_offset(const std::string& filepath) const
             }
         }
         if(!found)
-            return -1;
+            return npos;
 
         pos = upper_path.find_first_of("/\\");
     }
@@ -289,17 +292,17 @@ std::size_t Archive::get_header_offset(const std::string& filepath) const
 
 std::size_t Archive::get_dir_header_offset(std::size_t file_header_offset) const
 {
-    if(file_header_offset == -1)
-        return -1;
+    if(file_header_offset == npos)
+        return npos;
 
     assert(file_header_offset >= file_table_offset_ && file_header_offset <= dir_table_offset_);
     if(file_header_offset < file_table_offset_ || file_header_offset > dir_table_offset_)
-        return -1;
+        return npos;
 
     /* alignment check */
     assert(((file_header_offset - file_table_offset_) % ARCHIVE_FILE_HEADER_SIZE) == 0);
     if(((file_header_offset - file_table_offset_) % ARCHIVE_FILE_HEADER_SIZE) != 0)
-        return -1;
+        return npos;
 
     for(auto offset = dir_table_offset_; offset < data_used_; offset += ARCHIVE_DIR_HEADER_SIZE)
     {
@@ -307,12 +310,12 @@ std::size_t Archive::get_dir_header_offset(std::size_t file_header_offset) const
             return offset;
     }
 
-    return -1;
+    return npos;
 }
 
 Archive::iterator Archive::make_iterator(std::size_t offset) const
 {
-    assert((offset >= file_table_offset_ && offset <= dir_table_offset_) || offset == -1);
+    assert((offset >= file_table_offset_ && offset <= dir_table_offset_) || offset == npos);
     if(offset < file_table_offset_ || offset > dir_table_offset_)
         return end();
 
@@ -326,7 +329,7 @@ Archive::iterator Archive::make_iterator(std::size_t offset) const
 
 Archive::directory_iterator Archive::make_dir_iterator(std::size_t offset) const
 {
-    assert((offset >= dir_table_offset_ && offset <= data_used_) || offset == -1);
+    assert((offset >= dir_table_offset_ && offset <= data_used_) || offset == npos);
     if(offset < dir_table_offset_ || offset > data_used_)
         return dir_end();
 
@@ -436,9 +439,9 @@ Archive::iterator Archive::repack_file(const iterator& it, const void * src, siz
     dir_table_offset_ += diff;
 
     /* adjust the offsets of all files after the repacked file */
-    for(size_t i = file_table_offset_; i < dir_table_offset_; i += ARCHIVE_FILE_HEADER_SIZE)
+    for(size_t k = file_table_offset_; k < dir_table_offset_; k += ARCHIVE_FILE_HEADER_SIZE)
     {
-        uint32_t *off = (uint32_t*)&data_[i + 32];
+        uint32_t *off = (uint32_t*)&data_[k + 32];
         if(*off > file_header.data_offset)
             *off += (uint32_t)diff;
     }
@@ -617,7 +620,7 @@ Archive::iterator Archive::insert(const void *file, std::size_t size, const std:
     std::string dir = filepath.substr(0, pos);
     std::string name;
 
-    if(get_header_offset(filepath) != -1) // file already exists
+    if(get_header_offset(filepath) != npos) // file already exists
         return end();
 
     if(pos == std::string::npos)
@@ -709,7 +712,7 @@ std::size_t Archive::insert_filename_header(const std::string& filename)
 
 bool Archive::is_dir(iterator it) const
 {
-    //return (get_dir_header_offset(it.offset()) != -1);
+    //return (get_dir_header_offset(it.offset()) != npos);
     return (it->attributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
@@ -833,13 +836,16 @@ unsigned int Archive::hash_filename(const std::string& filename) const
 
 void Archive::reallocate(std::size_t sz)
 {
-    data_.reset((char*)_aligned_realloc(data_.release(), sz, 32));
+    auto tmp = std::make_unique<char[]>(sz);
+    std::memcpy(tmp.get(), data_.get(), std::min(sz, data_used_));
+    data_ = std::move(tmp);
     data_max_ = sz;
+    data_used_ = std::min(sz, data_used_);
 }
 
 Archive::Archive(const void *data, std::size_t len, bool is_ynk) : data_used_(len), data_max_(len), is_ynk_(is_ynk)
 {
-    data_ = AlignedFileBuf((char*)_aligned_malloc(len, 32), _aligned_free);
+    data_ = std::make_unique<char[]>(len);
     memcpy(data_.get(), data, len);
     header_.read(data_.get());
 

@@ -30,13 +30,6 @@ bool create_directory(const std::wstring& dir);
 FileBuf read_file(const std::string& file, std::size_t& size);
 FileBuf read_file(const std::wstring& file, std::size_t& size);
 
-/* read an entire file into memory. returns a unique_ptr to the memory block, or NULL on failure.
- * after a successful call, 'size' will contain the size of the returned memory block.
- * allocated with _aligned_malloc, deleter is _aligned_free
- * this is micro-optimazation nonsense for SSE/AVX routines */
-AlignedFileBuf aligned_read_file(const std::string& file, std::size_t& size, std::size_t alignment);
-AlignedFileBuf aligned_read_file(const std::wstring& file, std::size_t& size, std::size_t alignment);
-
 bool write_file(const std::string& file, const void *buf, std::size_t len);
 bool write_file(const std::wstring& file, const void *buf, std::size_t len);
 

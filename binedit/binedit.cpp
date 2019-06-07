@@ -78,7 +78,7 @@ static unsigned int element_to_uint(const std::string& name)
         if(algo::iequals(tmp, libtpdp::element_string(i)))
             return i;
 
-    return -1;
+    return (unsigned int)-1;
 }
 
 static unsigned int style_to_uint(const std::string& name)
@@ -88,7 +88,7 @@ static unsigned int style_to_uint(const std::string& name)
         if(algo::iequals(tmp, libtpdp::style_string(i)))
             return i;
 
-    return -1;
+    return (unsigned int)-1;
 }
 
 static unsigned int skill_type_to_uint(const std::string& name)
@@ -98,7 +98,7 @@ static unsigned int skill_type_to_uint(const std::string& name)
         if(algo::iequals(tmp, libtpdp::skill_type_string(i)))
             return i;
 
-    return -1;
+    return (unsigned int)-1;
 }
 
 static unsigned int mark_to_uint(const std::string& name)
@@ -108,7 +108,7 @@ static unsigned int mark_to_uint(const std::string& name)
         if(algo::iequals(tmp, libtpdp::puppet_mark_string(i)))
             return i;
 
-    return -1;
+    return (unsigned int)-1;
 }
 
 /* convert the DollData.dbs file containing the definitions
@@ -200,10 +200,10 @@ static void patch_nerds(const Path& data, const Path& json)
             throw BineditException("Puppet ID too large: " + std::to_string(id));
 
         libtpdp::PuppetData puppet(&file[offset]);
-        puppet.id = id;
+        puppet.id = (uint16_t)id;
 
         // puppet cost
-        auto cost = node.get<unsigned int>("cost");
+        auto cost = node.get<uint8_t>("cost");
         if(cost > 4)
             throw BineditException("Invalid cost value: " + std::to_string(cost) + "\r\nAcceptable values are 0-4.");
 
@@ -214,73 +214,73 @@ static void patch_nerds(const Path& data, const Path& json)
         // puppet base skills
         if(node.get_child("base_skills").size() != 5)
             throw BineditException("puppet " + std::to_string(id) + " must have 5 base skills");
-        for(auto& it : node.get_child("base_skills"))
-            puppet.base_skills[index++] = it.second.get_value<unsigned int>();
+        for(auto& c : node.get_child("base_skills"))
+            puppet.base_skills[index++] = c.second.get_value<uint16_t>();
         index = 0;
 
         // item drops
         if(node.get_child("item_drop_table").size() != 4)
             throw BineditException("puppet " + std::to_string(id) + " must have 4 drop items");
-        for(auto& it : node.get_child("item_drop_table"))
-            puppet.item_drop_table[index++] = it.second.get_value<unsigned int>();
+        for(auto& c : node.get_child("item_drop_table"))
+            puppet.item_drop_table[index++] = c.second.get_value<uint16_t>();
         index = 0;
 
         // styles
         if(node.get_child("styles").size() != 4)
             throw BineditException("puppet " + std::to_string(id) + " must have 4 styles");
         auto style_index = 0;
-        for(auto& it : node.get_child("styles"))
+        for(auto& s : node.get_child("styles"))
         {
-            auto& style = it.second;
+            auto& style = s.second;
             auto& style_data = puppet.styles[style_index++];
 
             // style type
             auto name = style.get<std::string>("type");
-            style_data.style_type = style_to_uint(name);
+            style_data.style_type = (uint8_t)style_to_uint(name);
             if(style_data.style_type == -1)
                 throw BineditException("Invalid style type: " + name + " for puppet: " + std::to_string(id));
 
             // element 1
             name = style.get<std::string>("element1");
-            style_data.element1 = element_to_uint(name);
+            style_data.element1 = (uint8_t)element_to_uint(name);
             if(style_data.element1 == -1)
                 throw BineditException("Invalid element: " + name + " for puppet: " + std::to_string(id));
 
             // element 2
             name = style.get<std::string>("element2");
-            style_data.element2 = element_to_uint(name);
+            style_data.element2 = (uint8_t)element_to_uint(name);
             if(style_data.element2 == -1)
                 throw BineditException("Invalid element: " + name + " for puppet: " + std::to_string(id));
 
             // level 100 skill
-            style_data.lv100_skill = style.get<unsigned int>("lvl100_skill");
+            style_data.lv100_skill = style.get<uint16_t>("lvl100_skill");
 
             // stats
             if(style.get_child("base_stats").size() != 6)
                 throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": must have 6 base stats");
-            for(auto& it : style.get_child("base_stats"))
-                style_data.base_stats[index++] = it.second.get_value<unsigned int>();
+            for(auto& c : style.get_child("base_stats"))
+                style_data.base_stats[index++] = c.second.get_value<uint8_t>();
             index = 0;
 
             // abilities
             if(style.get_child("abilities").size() != 2)
                 throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": must have 2 abilities");
-            for(auto& it : style.get_child("abilities"))
-                style_data.abilities[index++] = it.second.get_value<unsigned int>();
+            for(auto& c : style.get_child("abilities"))
+                style_data.abilities[index++] = c.second.get_value<uint16_t>();
             index = 0;
 
             // style skills
             if(style.get_child("style_skills").size() != 11)
                 throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": must have 11 style skills");
-            for(auto& it : style.get_child("style_skills"))
-                style_data.style_skills[index++] = it.second.get_value<unsigned int>();
+            for(auto& c : style.get_child("style_skills"))
+                style_data.style_skills[index++] = c.second.get_value<uint16_t>();
             index = 0;
 
             // level 70 skills
             if(style.get_child("lvl70_skills").size() != 8)
                 throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": must have 8 level 70 skills");
-            for(auto& it : style.get_child("lvl70_skills"))
-                style_data.lv70_skills[index++] = it.second.get_value<unsigned int>();
+            for(auto& c : style.get_child("lvl70_skills"))
+                style_data.lv70_skills[index++] = c.second.get_value<uint16_t>();
 
             // skillcards
             if(style.get_child("compatibility").size() > 128)
@@ -288,8 +288,8 @@ static void patch_nerds(const Path& data, const Path& json)
             std::vector<unsigned int> skillcards;
             skillcards.reserve(128);
             memset(style_data.skill_compat_table, 0, sizeof(style_data.skill_compat_table));
-            for(auto& it : style.get_child("compatibility"))
-                skillcards.push_back(it.second.get_value<unsigned int>());
+            for(auto& c : style.get_child("compatibility"))
+                skillcards.push_back(c.second.get_value<unsigned int>());
             for(auto i : skillcards)
             {
                 if(i > 512 || i < 385)
@@ -381,10 +381,10 @@ static void patch_mad(const Path& data, const Path& json)
     {
         libtpdp::MADEncounter encounter;
         encounter.index = index;
-        encounter.id = it.second.get<unsigned int>("id");
-        encounter.level = it.second.get<unsigned int>("level");
-        encounter.style = it.second.get<unsigned int>("style");
-        encounter.weight = it.second.get<unsigned int>("weight");
+        encounter.id = it.second.get<uint16_t>("id");
+        encounter.level = it.second.get<uint8_t>("level");
+        encounter.style = it.second.get<uint8_t>("style");
+        encounter.weight = it.second.get<uint8_t>("weight");
 
         if(encounter.level > 100)
         {
@@ -402,10 +402,10 @@ static void patch_mad(const Path& data, const Path& json)
     {
         libtpdp::MADEncounter encounter;
         encounter.index = index;
-        encounter.id = it.second.get<unsigned int>("id");
-        encounter.level = it.second.get<unsigned int>("level");
-        encounter.style = it.second.get<unsigned int>("style");
-        encounter.weight = it.second.get<unsigned int>("weight");
+        encounter.id = it.second.get<uint16_t>("id");
+        encounter.level = it.second.get<uint8_t>("level");
+        encounter.style = it.second.get<uint8_t>("style");
+        encounter.weight = it.second.get<uint8_t>("weight");
 
         if(encounter.level > 100)
         {
@@ -460,14 +460,14 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
         node.put("mark", utf_narrow(libtpdp::puppet_mark_string(puppet.mark)));
         node.put("held_item", puppet.held_item_id);
 
-        for(auto i : puppet.skills)
-            node.add("skills.", i);
+        for(auto j : puppet.skills)
+            node.add("skills.", j);
 
-        for(auto i : puppet.ivs)
-            node.add("ivs.", i);
+        for(auto j : puppet.ivs)
+            node.add("ivs.", j);
 
-        for(auto i : puppet.evs)
-            node.add("evs.", i);
+        for(auto j : puppet.evs)
+            node.add("evs.", j);
 
         tree.add_child("puppets.", node);
     }
@@ -512,13 +512,13 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         libtpdp::Puppet puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
 
         puppet.set_puppet_nickname(utf_widen(node.get<std::string>("nickname")));
-        puppet.puppet_id = node.get<unsigned int>("id");
-        puppet.style_index = node.get<unsigned int>("style");
-        puppet.ability_index = node.get<unsigned int>("ability");
-        puppet.costume_index = node.get<unsigned int>("costume");
-        puppet.exp = node.get<unsigned int>("experience");
-        puppet.mark = mark_to_uint(node.get<std::string>("mark"));
-        puppet.held_item_id = node.get<unsigned int>("held_item");
+        puppet.puppet_id = node.get<uint16_t>("id");
+        puppet.style_index = node.get<uint8_t>("style");
+        puppet.ability_index = node.get<uint8_t>("ability");
+        puppet.costume_index = node.get<uint8_t>("costume");
+        puppet.exp = node.get<uint32_t>("experience");
+        puppet.mark = (uint8_t)mark_to_uint(node.get<std::string>("mark"));
+        puppet.held_item_id = node.get<uint16_t>("held_item");
 
         if(puppet.mark == -1)
             throw BineditException("Invalid puppet mark: " + node.get<std::string>("mark"));
@@ -532,13 +532,13 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
 
         auto index = 0;
         for(auto& child : node.get_child("evs"))
-            puppet.evs[index++] = child.second.get_value<unsigned int>();
+            puppet.evs[index++] = child.second.get_value<uint8_t>();
         index = 0;
         for(auto& child : node.get_child("ivs"))
-            puppet.ivs[index++] = child.second.get_value<unsigned int>();
+            puppet.ivs[index++] = child.second.get_value<uint8_t>();
         index = 0;
         for(auto& child : node.get_child("skills"))
-            puppet.skills[index++] = child.second.get_value<unsigned int>();
+            puppet.skills[index++] = child.second.get_value<uint16_t>();
 
         puppet.write(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
         libtpdp::encrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
@@ -617,23 +617,23 @@ static void patch_skills(const Path& data, const Path& json)
         memcpy(&file[pos], name.data(), name.size());
         file[pos + name.size()] = 0;
 
-        skill.element = element_to_uint(node.get<std::string>("element"));
+        skill.element = (uint8_t)element_to_uint(node.get<std::string>("element"));
         if(skill.element == -1)
             throw BineditException("Invalid element for skill: " + std::to_string(pos / libtpdp::SKILL_DATA_SIZE));
 
-        skill.type = skill_type_to_uint(node.get<std::string>("type"));
+        skill.type = (uint8_t)skill_type_to_uint(node.get<std::string>("type"));
         if(skill.type == -1)
             throw BineditException("Invalid type for skill: " + std::to_string(pos / libtpdp::SKILL_DATA_SIZE));
 
-        skill.sp = node.get<unsigned int>("sp");
-        skill.accuracy = node.get<unsigned int>("accuracy");
-        skill.power = node.get<unsigned int>("power");
-        skill.priority = node.get<int>("priority");
-        skill.effect_chance = node.get<unsigned int>("effect_chance");
-        skill.effect_id = node.get<unsigned int>("effect_id");
-        skill.effect_target = node.get<unsigned int>("effect_target");
-        skill.effect_type = node.get<unsigned int>("ynk_effect_type");
-        skill.ynk_id = node.get<unsigned int>("ynk_id");
+        skill.sp = node.get<uint8_t>("sp");
+        skill.accuracy = node.get<uint8_t>("accuracy");
+        skill.power = node.get<uint8_t>("power");
+        skill.priority = node.get<int8_t>("priority");
+        skill.effect_chance = node.get<uint8_t>("effect_chance");
+        skill.effect_id = node.get<uint16_t>("effect_id");
+        skill.effect_target = node.get<uint8_t>("effect_target");
+        skill.effect_type = node.get<uint8_t>("ynk_effect_type");
+        skill.ynk_id = node.get<uint8_t>("ynk_id");
 
         skill.write(&file[pos]);
     }

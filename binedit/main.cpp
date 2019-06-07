@@ -28,7 +28,7 @@
 int wmain(int argc, wchar_t *argv[])
 {
     std::wstring input_path;
-    bool success;
+    bool success = false;
 
     std::cout << "TPDP Dev-Tools " VERSION_STRING  " BinEdit" << std::endl;
 
