@@ -5,8 +5,8 @@ An explanation of the individual tools follows below.
 
 ## Diffgen
 This is a patching utility, you don't need to use it if you'd prefer to use xdelta or whatever.  
-Like most romhack patchers, it produces differential patches so that game assets need not be redistributed.  
-It just provides TPDP specific functionality such as bypassing the encryption and compression on the archives which reduces diff sizes and allows file-level patching within the archive.  
+Like most romhack patchers, it produces differential patches so that the original game assets need not be redistributed.  
+It provides TPDP specific functionality such as bypassing the encryption and compression on the archives which reduces diff sizes and allows file-level patching within the archive.  
 It also provides a convenient way to extract all the files from the archives for editing.  
 Invoke with --help for syntax.
 
@@ -16,7 +16,8 @@ Files that fail the CRC check are simply skipped, i.e. the first mod applied is 
 This does not apply to -m 2 (mode 2) which applies the diff to the entire archive (used to add new files to the archive).  
 This means that only one mode 2 patch can be applied and it needs to be applied first. Mode 1 patches can still be applied afterward.  
 
-Note that you *cannot create new directories* even in mode 2 as there is no legitimate need to do so.
+Note that you *cannot create new directories* even in mode 2 as there is no legitimate need to do so.  
+Also, _deleting_ files from the archive is presently unsupported.
 
 ## BinEdit
 This converts the games various binary file formats to human-readable json and back. The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).  
@@ -35,7 +36,8 @@ Its only dependency is windows.h.
 
 ## Patcher
 This is a C# GUI front-end for patching the game with a diffgen diff file.  
-It literally is just a wrapper that invokes diffgen.exe with appropriate arguments for the convenience of people who don't want to use the command-line.
+It literally is just a wrapper that invokes diffgen.exe with appropriate arguments for the convenience of people who don't want to use the command-line.  
+This is intended to make it easy for end-users to apply a mod to their game
 
 ## Example Session
 ```batch
@@ -48,7 +50,7 @@ binedit.exe -i "C:\extract" --convert
 ::edit files in C:\extract as you please
 ::you can also add new files, the directory tree mirrors the layout of the archives
 
-::use the json files to patch the binaries
+::use the json files to patch the binaries (convert json back to binary)
 binedit.exe -i "C:\extract" --patch
 
 ::generate a diff file using the modified directory tree
@@ -59,23 +61,26 @@ diffgen.exe -i "C:\games\TPDP" -o "C:\extract" --diff="C:\diff\diff.bin"
 
 ::patch the game files using the generated diff file (mode 2 is detected automatically)
 diffgen.exe -i "C:\games\TPDP" -o "C:\diff\diff.bin" --patch
+
+::Alternatively, instead of using --diff and --patch, you can use --repack
+::which applies the current working directory directly to the game data.
+::This is intended for the testing and development cycle where you just
+::want to verify that your changes work correctly in-game.
+diffgen.exe -i "C:\games\TPDP" -o "C:\extract" --repack
 ```
 
 
 ## Compiling
-Dependencies: [open-vcdiff](https://github.com/google/open-vcdiff) and [boost](https://www.boost.org/)  
-A C++ 17 compatible compiler is required.
+Prerequisites:  
+[CMake](https://cmake.org/), [boost](https://www.boost.org/), and Visual Studio 2017 or newer
 
-Installing dependencies:  
-You may retarget the msvc project file include directories, or you may install them to the 'deps' folder such that the following paths are valid:
+Cloning the repo:  
+Make sure to clone with submodules: `git clone --recurse-submodules https://github.com/php42/TPDP-Dev-Tools.git`  
+If you already cloned without submodules, you can get them like so: `git submodule update --init --recursive`
 
-Include:  
-TPDP-Dev-Tools/deps/boost/  
-TPDP-Dev-Tools/deps/open-vcdiff/src/  
-
-Binaries:  
-TPDP-Dev-Tools/deps/boost/stage/lib/  
-TPDP-Dev-Tools/deps/open-vcdiff/build/Release/  
-TPDP-Dev-Tools/deps/open-vcdiff/build/Debug/
-
-You may also run `git submodule update --init --recursive` to obtain open-vcdiff.
+Installing Boost:  
+Download boost from [here](https://www.boost.org/users/download/)  
+You can use the prebuilt binaries if they are provided for your version of Visual Studio, or you can follow
+the [instructions](https://www.boost.org/doc/libs/1_70_0/more/getting_started/windows.html) and build them from source.  
+CMake will attempt to find boost automatically (if you installed prebuilt binaries), but you may need to help it by setting the BOOST_ROOT variable.
+This can be done from the GUI or from the command line with `cmake -DBOOST_ROOT="path/to/boost"`.

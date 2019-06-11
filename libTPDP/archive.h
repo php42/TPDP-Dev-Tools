@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <string>
 #include <memory>
-#include <exception>
+#include <stdexcept>
 #include <limits>
 #include "../common/typedefs.h"
 
