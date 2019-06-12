@@ -42,8 +42,8 @@ add_executable(diffgen
 target_link_libraries(diffgen PRIVATE libtpdp vcdcom vcddec vcdenc Boost::boost Boost::program_options)
 target_include_directories(diffgen PRIVATE "../common" "../deps/open-vcdiff/src")
 
-# Specify Windows 7 compatibility
-target_compile_definitions(diffgen PRIVATE _WIN32_WINNT=0x0601)
+# Specify Windows 7 compatibility and unicode support
+target_compile_definitions(diffgen PRIVATE _WIN32_WINNT=0x0601 UNICODE _UNICODE)
 
 if(MSVC)
     target_compile_options(diffgen PRIVATE "/W4")

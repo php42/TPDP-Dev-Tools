@@ -39,8 +39,8 @@ add_subdirectory(binedit)
 add_subdirectory(diffgen)
 
 if(MSVC)
-    # Suppress open-vcdiff compiler warnings
-    set_property(DIRECTORY deps/open-vcdiff APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
+    # Suppress open-vcdiff compiler warnings and set config definitions
+    set_property(DIRECTORY deps/open-vcdiff APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS _WIN32_WINNT=0x0601 UNICODE _UNICODE)
     # Needed for open-vcdiff to compile as C++17
     target_compile_options(vcdcom_STATIC PRIVATE "/Zc:__cplusplus")
     target_compile_options(vcddec_STATIC PRIVATE "/Zc:__cplusplus")
