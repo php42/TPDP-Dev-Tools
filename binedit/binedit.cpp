@@ -42,13 +42,8 @@ static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree)
 {
     try
     {
-        // use MSVC extension for passing wstring filenames to fstream
-#ifdef _MSC_VER
-        std::ofstream stream(out.wstring(), std::ios::binary | std::ios::trunc);
+        std::ofstream stream(out, std::ios::binary | std::ios::trunc);
         boost::property_tree::write_json(stream, tree);
-#else
-        boost::property_tree::write_json(out.string(), tree);
-#endif // _MSC_VER
     }
     catch(const boost::property_tree::json_parser_error& ex)
     {
@@ -62,13 +57,8 @@ static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)
 {
     try
     {
-        // use MSVC extension for passing wstring filenames to fstream
-#ifdef _MSC_VER
-        std::ifstream stream(in.wstring(), std::ios::binary);
+        std::ifstream stream(in, std::ios::binary);
         boost::property_tree::read_json(stream, tree);
-#else
-        boost::property_tree::read_json(in.string(), tree);
-#endif // _MSC_VER
     }
     catch(const boost::property_tree::json_parser_error& ex)
     {
