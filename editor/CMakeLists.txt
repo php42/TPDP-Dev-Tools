@@ -23,5 +23,6 @@ add_executable(editor WIN32 ${editor_sources})
 set_target_properties(editor PROPERTIES VS_DOTNET_REFERENCES "System;System.Data;System.Drawing;System.Windows.Forms;System.Xml;System.Runtime.Serialization")
 set_target_properties(editor PROPERTIES DOTNET_TARGET_FRAMEWORK_VERSION "v4.0")
 csharp_set_windows_forms_properties(${editor_sources})
+target_compile_options(editor PRIVATE "/warn:4")
 
 install(TARGETS editor)

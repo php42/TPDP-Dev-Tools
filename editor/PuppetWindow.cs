@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using editor.json;
 
 // Puppet tab of MainWindow
 
@@ -431,6 +432,34 @@ namespace editor
 
             var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
             puppets_[id].styles[styleindex].compatibility = ids;
+        }
+
+        private void NewPuppetButton_Click(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(working_dir_) || puppets_.Count == 0)
+            {
+                ErrMsg("No data loaded!");
+                return;
+            }
+
+            uint id = 0;
+            foreach(var it in puppets_)
+            {
+                if(it.Key > id)
+                    id = it.Key;
+            }
+
+            ++id;
+            if(id >= puppet_names_.Length)
+            {
+                ErrMsg("No free puppet IDs!\r\nAdd more names to DollName.csv or manually edit DollData.json");
+                return;
+            }
+
+            var puppet = new DollData() { id = id };
+            puppets_[id] = puppet;
+            PuppetLB.Items.Add(new Tuple<string, uint>(puppet_names_[id], puppet.id));
+            PuppetLB.SelectedIndex = PuppetLB.FindStringExact(puppet_names_[id]);
         }
     }
 }

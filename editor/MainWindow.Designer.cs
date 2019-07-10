@@ -50,6 +50,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.NewPuppetButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.StatSPDSC = new System.Windows.Forms.NumericUpDown();
             this.label32 = new System.Windows.Forms.Label();
@@ -350,6 +351,7 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.NewPuppetButton);
             this.PuppetsTabPage.Controls.Add(this.groupBox5);
             this.PuppetsTabPage.Controls.Add(this.groupBox4);
             this.PuppetsTabPage.Controls.Add(this.PuppetAbility2CB);
@@ -379,6 +381,16 @@
             this.PuppetsTabPage.TabIndex = 1;
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // NewPuppetButton
+            // 
+            this.NewPuppetButton.Location = new System.Drawing.Point(120, 452);
+            this.NewPuppetButton.Name = "NewPuppetButton";
+            this.NewPuppetButton.Size = new System.Drawing.Size(75, 23);
+            this.NewPuppetButton.TabIndex = 24;
+            this.NewPuppetButton.Text = "New Puppet";
+            this.NewPuppetButton.UseVisualStyleBackColor = true;
+            this.NewPuppetButton.Click += new System.EventHandler(this.NewPuppetButton_Click);
             // 
             // groupBox5
             // 
@@ -433,7 +445,7 @@
             0});
             this.StatSDSC.Name = "StatSDSC";
             this.StatSDSC.Size = new System.Drawing.Size(47, 20);
-            this.StatSDSC.TabIndex = 23;
+            this.StatSDSC.TabIndex = 22;
             this.StatSDSC.ValueChanged += new System.EventHandler(this.StatSC_ValueChanged);
             // 
             // label31
@@ -455,7 +467,7 @@
             0});
             this.StatSASC.Name = "StatSASC";
             this.StatSASC.Size = new System.Drawing.Size(47, 20);
-            this.StatSASC.TabIndex = 23;
+            this.StatSASC.TabIndex = 21;
             this.StatSASC.ValueChanged += new System.EventHandler(this.StatSC_ValueChanged);
             // 
             // label30
@@ -477,7 +489,7 @@
             0});
             this.StatFDSC.Name = "StatFDSC";
             this.StatFDSC.Size = new System.Drawing.Size(47, 20);
-            this.StatFDSC.TabIndex = 23;
+            this.StatFDSC.TabIndex = 20;
             this.StatFDSC.ValueChanged += new System.EventHandler(this.StatSC_ValueChanged);
             // 
             // label29
@@ -499,7 +511,7 @@
             0});
             this.StatFASC.Name = "StatFASC";
             this.StatFASC.Size = new System.Drawing.Size(47, 20);
-            this.StatFASC.TabIndex = 23;
+            this.StatFASC.TabIndex = 19;
             this.StatFASC.ValueChanged += new System.EventHandler(this.StatSC_ValueChanged);
             // 
             // label28
@@ -521,7 +533,7 @@
             0});
             this.StatHPSC.Name = "StatHPSC";
             this.StatHPSC.Size = new System.Drawing.Size(47, 20);
-            this.StatHPSC.TabIndex = 1;
+            this.StatHPSC.TabIndex = 18;
             this.StatHPSC.ValueChanged += new System.EventHandler(this.StatSC_ValueChanged);
             // 
             // label27
@@ -549,7 +561,7 @@
             this.SkillCardLB.Location = new System.Drawing.Point(6, 19);
             this.SkillCardLB.Name = "SkillCardLB";
             this.SkillCardLB.Size = new System.Drawing.Size(188, 109);
-            this.SkillCardLB.TabIndex = 0;
+            this.SkillCardLB.TabIndex = 17;
             this.SkillCardLB.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.SkillCardLB_ItemCheck);
             // 
             // PuppetAbility2CB
@@ -560,7 +572,7 @@
             this.PuppetAbility2CB.Location = new System.Drawing.Point(371, 87);
             this.PuppetAbility2CB.Name = "PuppetAbility2CB";
             this.PuppetAbility2CB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetAbility2CB.TabIndex = 19;
+            this.PuppetAbility2CB.TabIndex = 8;
             this.PuppetAbility2CB.Text = "Ability";
             this.PuppetAbility2CB.SelectedIndexChanged += new System.EventHandler(this.PuppetAbility2CB_SelectedIndexChanged);
             // 
@@ -572,7 +584,7 @@
             this.PuppetAbility1CB.Location = new System.Drawing.Point(371, 60);
             this.PuppetAbility1CB.Name = "PuppetAbility1CB";
             this.PuppetAbility1CB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetAbility1CB.TabIndex = 18;
+            this.PuppetAbility1CB.TabIndex = 7;
             this.PuppetAbility1CB.Text = "Ability";
             this.PuppetAbility1CB.SelectedIndexChanged += new System.EventHandler(this.PuppetAbility1CB_SelectedIndexChanged);
             // 
@@ -621,7 +633,7 @@
             this.PuppetElement2CB.Location = new System.Drawing.Point(370, 33);
             this.PuppetElement2CB.Name = "PuppetElement2CB";
             this.PuppetElement2CB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetElement2CB.TabIndex = 15;
+            this.PuppetElement2CB.TabIndex = 6;
             this.PuppetElement2CB.Text = "Element";
             this.PuppetElement2CB.SelectedIndexChanged += new System.EventHandler(this.PuppetElement2CB_SelectedIndexChanged);
             // 
@@ -652,7 +664,7 @@
             this.PuppetElement1CB.Location = new System.Drawing.Point(370, 6);
             this.PuppetElement1CB.Name = "PuppetElement1CB";
             this.PuppetElement1CB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetElement1CB.TabIndex = 14;
+            this.PuppetElement1CB.TabIndex = 5;
             this.PuppetElement1CB.Text = "Element";
             this.PuppetElement1CB.SelectedIndexChanged += new System.EventHandler(this.PuppetElement1CB_SelectedIndexChanged);
             // 
@@ -695,7 +707,7 @@
             this.StyleSkillCB.Location = new System.Drawing.Point(45, 46);
             this.StyleSkillCB.Name = "StyleSkillCB";
             this.StyleSkillCB.Size = new System.Drawing.Size(121, 21);
-            this.StyleSkillCB.TabIndex = 15;
+            this.StyleSkillCB.TabIndex = 12;
             this.StyleSkillCB.Text = "Skill";
             this.StyleSkillCB.SelectedIndexChanged += new System.EventHandler(this.StyleSkillCB_SelectedIndexChanged);
             // 
@@ -726,7 +738,7 @@
             this.StyleSkillLvlCB.Location = new System.Drawing.Point(45, 19);
             this.StyleSkillLvlCB.Name = "StyleSkillLvlCB";
             this.StyleSkillLvlCB.Size = new System.Drawing.Size(121, 21);
-            this.StyleSkillLvlCB.TabIndex = 13;
+            this.StyleSkillLvlCB.TabIndex = 11;
             this.StyleSkillLvlCB.Text = "Level";
             this.StyleSkillLvlCB.SelectedIndexChanged += new System.EventHandler(this.StyleSkillLvlCB_SelectedIndexChanged);
             // 
@@ -769,7 +781,7 @@
             this.Item4CB.Location = new System.Drawing.Point(6, 100);
             this.Item4CB.Name = "Item4CB";
             this.Item4CB.Size = new System.Drawing.Size(121, 21);
-            this.Item4CB.TabIndex = 3;
+            this.Item4CB.TabIndex = 16;
             this.Item4CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
             // Item3CB
@@ -780,7 +792,7 @@
             this.Item3CB.Location = new System.Drawing.Point(6, 73);
             this.Item3CB.Name = "Item3CB";
             this.Item3CB.Size = new System.Drawing.Size(121, 21);
-            this.Item3CB.TabIndex = 2;
+            this.Item3CB.TabIndex = 15;
             this.Item3CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
             // Item2CB
@@ -791,7 +803,7 @@
             this.Item2CB.Location = new System.Drawing.Point(6, 46);
             this.Item2CB.Name = "Item2CB";
             this.Item2CB.Size = new System.Drawing.Size(121, 21);
-            this.Item2CB.TabIndex = 1;
+            this.Item2CB.TabIndex = 14;
             this.Item2CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
             // Item1CB
@@ -802,7 +814,7 @@
             this.Item1CB.Location = new System.Drawing.Point(6, 19);
             this.Item1CB.Name = "Item1CB";
             this.Item1CB.Size = new System.Drawing.Size(121, 21);
-            this.Item1CB.TabIndex = 0;
+            this.Item1CB.TabIndex = 13;
             this.Item1CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
             // groupBox1
@@ -826,7 +838,7 @@
             this.BaseSkillCB.Location = new System.Drawing.Point(45, 46);
             this.BaseSkillCB.Name = "BaseSkillCB";
             this.BaseSkillCB.Size = new System.Drawing.Size(121, 21);
-            this.BaseSkillCB.TabIndex = 3;
+            this.BaseSkillCB.TabIndex = 10;
             this.BaseSkillCB.Text = "Skill";
             this.BaseSkillCB.SelectedIndexChanged += new System.EventHandler(this.BaseSkillCB_SelectedIndexChanged);
             // 
@@ -851,7 +863,7 @@
             this.BaseSkillLvlCB.Location = new System.Drawing.Point(45, 19);
             this.BaseSkillLvlCB.Name = "BaseSkillLvlCB";
             this.BaseSkillLvlCB.Size = new System.Drawing.Size(121, 21);
-            this.BaseSkillLvlCB.TabIndex = 1;
+            this.BaseSkillLvlCB.TabIndex = 9;
             this.BaseSkillLvlCB.Text = "Level";
             this.BaseSkillLvlCB.SelectedIndexChanged += new System.EventHandler(this.BaseSkillLvlCB_SelectedIndexChanged);
             // 
@@ -874,7 +886,7 @@
             0});
             this.PuppetCostSC.Name = "PuppetCostSC";
             this.PuppetCostSC.Size = new System.Drawing.Size(56, 20);
-            this.PuppetCostSC.TabIndex = 8;
+            this.PuppetCostSC.TabIndex = 4;
             this.PuppetCostSC.ValueChanged += new System.EventHandler(this.PuppetCostSC_ValueChanged);
             // 
             // label18
@@ -897,6 +909,7 @@
             // 
             // PuppetIDSC
             // 
+            this.PuppetIDSC.Enabled = false;
             this.PuppetIDSC.Location = new System.Drawing.Point(183, 60);
             this.PuppetIDSC.Maximum = new decimal(new int[] {
             511,
@@ -906,7 +919,7 @@
             this.PuppetIDSC.Name = "PuppetIDSC";
             this.PuppetIDSC.ReadOnly = true;
             this.PuppetIDSC.Size = new System.Drawing.Size(56, 20);
-            this.PuppetIDSC.TabIndex = 5;
+            this.PuppetIDSC.TabIndex = 3;
             // 
             // PuppetStyleTypeCB
             // 
@@ -922,7 +935,7 @@
             this.PuppetStyleTypeCB.Location = new System.Drawing.Point(183, 33);
             this.PuppetStyleTypeCB.Name = "PuppetStyleTypeCB";
             this.PuppetStyleTypeCB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetStyleTypeCB.TabIndex = 4;
+            this.PuppetStyleTypeCB.TabIndex = 2;
             this.PuppetStyleTypeCB.Text = "Style Type";
             this.PuppetStyleTypeCB.SelectedIndexChanged += new System.EventHandler(this.PuppetStyleTypeCB_SelectedIndexChanged);
             // 
@@ -946,7 +959,7 @@
             this.PuppetStyleCB.Location = new System.Drawing.Point(183, 6);
             this.PuppetStyleCB.Name = "PuppetStyleCB";
             this.PuppetStyleCB.Size = new System.Drawing.Size(121, 21);
-            this.PuppetStyleCB.TabIndex = 2;
+            this.PuppetStyleCB.TabIndex = 1;
             this.PuppetStyleCB.Text = "Style";
             this.PuppetStyleCB.SelectedIndexChanged += new System.EventHandler(this.PuppetStyleCB_SelectedIndexChanged);
             // 
@@ -1326,6 +1339,7 @@
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.NumericUpDown StatHPSC;
         private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Button NewPuppetButton;
     }
 }
 

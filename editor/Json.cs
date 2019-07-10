@@ -24,19 +24,20 @@ namespace editor.json
         public uint weight;
     }
 
-// shush
-#pragma warning disable 0649
     [DataContract]
     class MadJson
     {
         [DataMember]
         public string location_name;
 
+        // shush
+#pragma warning disable CS0649
         [DataMember]
         public MadEncounter[] special_encounters;
 
         [DataMember]
         public MadEncounter[] normal_encounters;
+#pragma warning restore CS0649
 
         public string filepath;
         public int id;
@@ -46,52 +47,51 @@ namespace editor.json
     class StyleData
     {
         [DataMember]
-        public string type;
+        public string type = "None";
 
         [DataMember]
-        public string element1;
+        public string element1 = "None";
 
         [DataMember]
-        public string element2;
+        public string element2 = "None";
 
         [DataMember]
-        public uint lvl100_skill;
+        public uint lvl100_skill = 0;
 
         [DataMember]
-        public uint[] abilities;
+        public uint[] abilities = new uint[2];
 
         [DataMember]
-        public uint[] base_stats;
+        public uint[] base_stats = new uint[6];
 
         [DataMember]
-        public uint[] style_skills;
+        public uint[] style_skills = new uint[11];
 
         [DataMember]
-        public uint[] lvl70_skills;
+        public uint[] lvl70_skills = new uint[8];
 
         [DataMember]
-        public uint[] compatibility;
+        public uint[] compatibility = new uint[0];
     }
 
     [DataContract]
     class DollData
     {
         [DataMember]
-        public uint id;
+        public uint id = 0;
 
         [DataMember]
-        public uint cost;
+        public uint cost = 0;
 
         [DataMember]
-        public uint[] base_skills;
+        public uint[] base_skills = new uint[5];
 
         [DataMember]
-        public uint[] item_drop_table;
+        public uint[] item_drop_table = new uint[4];
 
         [DataMember]
-        public StyleData[] styles;
+        public StyleData[] styles = { new StyleData(), new StyleData(), new StyleData(), new StyleData() };
     }
-#pragma warning restore 0649
 
     [DataContract]
     class DollDataJson
