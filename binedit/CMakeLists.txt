@@ -50,3 +50,5 @@ if(MSVC)
 else()
     target_compile_options(binedit PRIVATE "-Wall")
 endif()
+
+install(TARGETS binedit)

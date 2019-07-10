@@ -39,6 +39,10 @@ This is a C# GUI front-end for patching the game with a diffgen diff file.
 It literally is just a wrapper that invokes diffgen.exe with appropriate arguments for the convenience of people who don't want to use the command-line.  
 This is intended to make it easy for end-users to apply a mod to their game
 
+## Editor
+This is a C# GUI front-end for diffgen and binedit.  
+It also helps with some of the editing, providing cross-referencing of names and IDs and similar quality of life features.
+
 ## Example Session
 ```batch
 ::extract the files

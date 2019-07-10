@@ -47,7 +47,6 @@ add_library(libtpdp STATIC
     "../common/textconvert.h"
     "../common/textconvert.cpp"
     "../common/typedefs.h"
-    "../common/version.h"
 )
 
 target_include_directories(libtpdp PUBLIC ".")
@@ -61,3 +60,5 @@ if(MSVC)
 else()
     target_compile_options(libtpdp PRIVATE "-Wall")
 endif()
+
+install(TARGETS libtpdp LIBRARY)

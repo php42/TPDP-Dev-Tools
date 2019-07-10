@@ -50,3 +50,5 @@ if(MSVC)
 else()
     target_compile_options(diffgen PRIVATE "-Wall")
 endif()
+
+install(TARGETS diffgen)

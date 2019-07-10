@@ -20,3 +20,5 @@ add_executable(patcher WIN32 ${patcher_sources})
 set_target_properties(patcher PROPERTIES VS_DOTNET_REFERENCES "System;System.Data;System.Drawing;System.Windows.Forms")
 set_target_properties(patcher PROPERTIES DOTNET_TARGET_FRAMEWORK_VERSION "v4.0")
 csharp_set_windows_forms_properties(${patcher_sources})
+
+install(TARGETS patcher)

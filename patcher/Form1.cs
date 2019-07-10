@@ -48,18 +48,7 @@ namespace patcher
 
             try
             {
-                var enc = Encoding.GetEncoding(932);
-                var file = File.OpenRead(path);
-                if(!(file.Length > 0))
-                {
-                    file.Close();
-                    return;
-                }
-
-                var buf = new byte[file.Length];
-                file.Read(buf, 0, (int)file.Length);
-                file.Close();
-                var str = enc.GetString(buf);
+                var str = File.ReadAllText(path, Encoding.GetEncoding(932));
                 if (String.IsNullOrEmpty(str))
                     return;
                 var pos = str.IndexOf("InstallPath=");
@@ -73,6 +62,7 @@ namespace patcher
             }
             catch
             {
+                textBox1.Text = "";
                 return;
             }
         }
@@ -108,10 +98,18 @@ namespace patcher
         public void onexit(Object source, EventArgs e)
         {
             proc_.Close();
+            proc_ = null;
+            button3.Enabled = true;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if(proc_ != null)
+            {
+                MessageBox.Show("Please wait for the current operation to complete.");
+                return;
+            }
+
             if(!File.Exists("diffgen.exe"))
             {
                 MessageBox.Show("Could not find diffgen.exe, please make sure it is in the same folder as this program", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -157,7 +155,11 @@ namespace patcher
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                proc_.Close();
+                proc_ = null;
             }
+
+            button3.Enabled = false;
         }
     }
 }
