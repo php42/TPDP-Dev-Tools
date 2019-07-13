@@ -139,7 +139,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TPDP \"Romhack\" Patcher v0.1.1 ALPHA";
+            this.Text = "TPDP \"Romhack\" Patcher v0.2.0 ALPHA";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
