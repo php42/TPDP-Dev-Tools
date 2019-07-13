@@ -84,6 +84,15 @@ namespace patcher
             textBox3.AppendText(msg);
         }
 
+        private void append_err(string msg)
+        {
+            textBox3.SelectionStart = textBox3.TextLength;
+            textBox3.SelectionLength = 0;
+            textBox3.SelectionColor = Color.Red;
+            textBox3.AppendText(msg);
+            textBox3.SelectionColor = textBox3.ForeColor;
+        }
+
         public void stdout_handler(object proc, DataReceivedEventArgs data)
         {
             if(!String.IsNullOrEmpty(data.Data))
@@ -92,6 +101,17 @@ namespace patcher
                     textBox3.Invoke(new do_the_thing(append_msg), new object[] { (data.Data + "\r\n") });
                 else
                     textBox3.AppendText(data.Data + "\r\n");
+            }
+        }
+
+        public void stderr_handler(object proc, DataReceivedEventArgs data)
+        {
+            if(!String.IsNullOrEmpty(data.Data))
+            {
+                if(textBox3.InvokeRequired)
+                    textBox3.Invoke(new do_the_thing(append_err), new object[] { (data.Data + "\r\n") });
+                else
+                    append_err(data.Data + "\r\n");
             }
         }
 
@@ -142,7 +162,7 @@ namespace patcher
             proc_.StartInfo.CreateNoWindow = true;
             proc_.EnableRaisingEvents = true;
             proc_.OutputDataReceived += new DataReceivedEventHandler(stdout_handler);
-            proc_.ErrorDataReceived += new DataReceivedEventHandler(stdout_handler);
+            proc_.ErrorDataReceived += new DataReceivedEventHandler(stderr_handler);
             proc_.Exited += new EventHandler(onexit);
             proc_.SynchronizingObject = this;
 

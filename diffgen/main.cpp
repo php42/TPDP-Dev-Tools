@@ -133,13 +133,13 @@ int wmain(int argc, wchar_t *argv[])
     catch(const std::exception& ex)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cout << "Error: " << ex.what() << std::endl;
+        std::cerr << "Error: " << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
     catch(...)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cout << "An unknown error occurred" << std::endl;
+        std::cerr << "An unknown error occurred" << std::endl;
         return EXIT_FAILURE;
     }
 

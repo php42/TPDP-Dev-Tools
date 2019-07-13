@@ -262,6 +262,7 @@ namespace editor
             string app = "binedit.exe";
             var wkdir = working_dir_;
 
+            /*
             // Save puppet names
             string puppetnames = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/DollName.csv" : "/gn_dat3.arc/name/DollName.csv");
             try
@@ -273,6 +274,7 @@ namespace editor
                 ErrMsg("Error writing file: " + puppetnames + "\r\n" + ex.Message);
                 return;
             }
+            */
 
             // Save map names
             string mapnames = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/MapName.csv" : "/gn_dat3.arc/name/MapName.csv");
@@ -317,6 +319,17 @@ namespace editor
             catch(Exception ex)
             {
                 ErrMsg("Failed to save maps: " + ex.Message);
+                return;
+            }
+
+            // Save Trainers
+            try
+            {
+                SaveTrainers();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Failed to save trainers: " + ex.Message);
                 return;
             }
 

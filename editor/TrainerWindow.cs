@@ -135,6 +135,24 @@ namespace editor
             }
         }
 
+        private void SaveTrainers()
+        {
+            foreach(var dod in dods_)
+            {
+                try
+                {
+                    var ser = new DataContractJsonSerializer(typeof(DodJson));
+                    var s = new MemoryStream();
+                    ser.WriteObject(s, dod);
+                    File.WriteAllBytes(dod.filepath, s.ToArray());
+                }
+                catch(Exception e)
+                {
+                    throw new Exception("Error saving trainer: " + dod.filepath + "\r\n" + e.Message);
+                }
+            }
+        }
+
         private void IVSC_ValueChanged(object sender, EventArgs e)
         {
             int statindex;
