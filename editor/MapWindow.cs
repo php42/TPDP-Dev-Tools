@@ -169,7 +169,7 @@ namespace editor
             {
                 var map = maps_[index];
                 MapNameTextBox.Text = map.location_name;
-                MapFilenameTextBox.Text = map.filepath.Replace(".json", ".mad");
+                MapFilenameTextBox.Text = map.filepath;
                 if(map.id > 0 && map.id < map_names_.Length)
                     MapDispNameBox.Text = map_names_[map.id];
                 else

@@ -41,7 +41,8 @@ This is intended to make it easy for end-users to apply a mod to their game
 
 ## Editor
 This is a C# GUI front-end for diffgen and binedit.  
-It also helps with some of the editing, providing cross-referencing of names and IDs and similar quality of life features.
+It also helps with some of the editing, providing cross-referencing of names and IDs and similar quality of life features.  
+Note that it is _not_ a complete substitute for manual editing and is provided as a convenience for certain tasks.
 
 ## Example Session
 ```batch

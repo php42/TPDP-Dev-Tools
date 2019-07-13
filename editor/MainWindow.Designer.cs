@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
+            this.DiffModeCB = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.ConsoleOutput = new System.Windows.Forms.RichTextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -99,6 +100,62 @@
             this.label15 = new System.Windows.Forms.Label();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.TrainerExpSC = new System.Windows.Forms.NumericUpDown();
+            this.label56 = new System.Windows.Forms.Label();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.EV6SC = new System.Windows.Forms.NumericUpDown();
+            this.label50 = new System.Windows.Forms.Label();
+            this.EV5SC = new System.Windows.Forms.NumericUpDown();
+            this.label51 = new System.Windows.Forms.Label();
+            this.EV4SC = new System.Windows.Forms.NumericUpDown();
+            this.label52 = new System.Windows.Forms.Label();
+            this.EV3SC = new System.Windows.Forms.NumericUpDown();
+            this.label53 = new System.Windows.Forms.Label();
+            this.EV2SC = new System.Windows.Forms.NumericUpDown();
+            this.label54 = new System.Windows.Forms.Label();
+            this.EV1SC = new System.Windows.Forms.NumericUpDown();
+            this.label55 = new System.Windows.Forms.Label();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.IV6SC = new System.Windows.Forms.NumericUpDown();
+            this.label44 = new System.Windows.Forms.Label();
+            this.IV5SC = new System.Windows.Forms.NumericUpDown();
+            this.label45 = new System.Windows.Forms.Label();
+            this.IV4SC = new System.Windows.Forms.NumericUpDown();
+            this.label46 = new System.Windows.Forms.Label();
+            this.IV3SC = new System.Windows.Forms.NumericUpDown();
+            this.label47 = new System.Windows.Forms.Label();
+            this.IV2SC = new System.Windows.Forms.NumericUpDown();
+            this.label48 = new System.Windows.Forms.Label();
+            this.IV1SC = new System.Windows.Forms.NumericUpDown();
+            this.label49 = new System.Windows.Forms.Label();
+            this.TrainerItemCB = new System.Windows.Forms.ComboBox();
+            this.TrainerPuppetNickTB = new System.Windows.Forms.TextBox();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.TrainerSkill4CB = new System.Windows.Forms.ComboBox();
+            this.TrainerSkill3CB = new System.Windows.Forms.ComboBox();
+            this.TrainerSkill2CB = new System.Windows.Forms.ComboBox();
+            this.TrainerSkill1CB = new System.Windows.Forms.ComboBox();
+            this.TrainerCostumeCB = new System.Windows.Forms.ComboBox();
+            this.label41 = new System.Windows.Forms.Label();
+            this.TrainerMarkCB = new System.Windows.Forms.ComboBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.TrainerAbilityCB = new System.Windows.Forms.ComboBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.TrainerStyleCB = new System.Windows.Forms.ComboBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.TrainerPuppetCB = new System.Windows.Forms.ComboBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.TrainerSlotCB = new System.Windows.Forms.ComboBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
+            this.label33 = new System.Windows.Forms.Label();
+            this.DodFilepathTB = new System.Windows.Forms.TextBox();
+            this.TrainerTitleTB = new System.Windows.Forms.TextBox();
+            this.TrainerNameTB = new System.Windows.Forms.TextBox();
+            this.TrainerLB = new System.Windows.Forms.ListBox();
             this.MapsTabPage = new System.Windows.Forms.TabPage();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -137,6 +194,23 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).BeginInit();
+            this.TrainersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).BeginInit();
+            this.groupBox8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EV6SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV5SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV4SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV1SC)).BeginInit();
+            this.groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IV6SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV5SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV4SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV1SC)).BeginInit();
+            this.groupBox6.SuspendLayout();
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
@@ -156,6 +230,7 @@
             // 
             // FilesTabPage
             // 
+            this.FilesTabPage.Controls.Add(this.DiffModeCB);
             this.FilesTabPage.Controls.Add(this.label6);
             this.FilesTabPage.Controls.Add(this.ConsoleOutput);
             this.FilesTabPage.Controls.Add(this.label5);
@@ -181,6 +256,17 @@
             this.FilesTabPage.Text = "Files";
             this.FilesTabPage.UseVisualStyleBackColor = true;
             // 
+            // DiffModeCB
+            // 
+            this.DiffModeCB.AutoSize = true;
+            this.DiffModeCB.Location = new System.Drawing.Point(112, 280);
+            this.DiffModeCB.Name = "DiffModeCB";
+            this.DiffModeCB.Size = new System.Drawing.Size(81, 17);
+            this.DiffModeCB.TabIndex = 17;
+            this.DiffModeCB.Text = "Mode 2 Diff";
+            this.toolTip1.SetToolTip(this.DiffModeCB, "Enable this if you need to add new files to the game");
+            this.DiffModeCB.UseVisualStyleBackColor = true;
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -203,7 +289,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(112, 281);
+            this.label5.Location = new System.Drawing.Point(199, 281);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(393, 13);
             this.label5.TabIndex = 14;
@@ -983,6 +1069,34 @@
             // 
             // TrainersTabPage
             // 
+            this.TrainersTabPage.Controls.Add(this.TrainerExpSC);
+            this.TrainersTabPage.Controls.Add(this.label56);
+            this.TrainersTabPage.Controls.Add(this.groupBox8);
+            this.TrainersTabPage.Controls.Add(this.groupBox7);
+            this.TrainersTabPage.Controls.Add(this.TrainerItemCB);
+            this.TrainersTabPage.Controls.Add(this.TrainerPuppetNickTB);
+            this.TrainersTabPage.Controls.Add(this.label43);
+            this.TrainersTabPage.Controls.Add(this.label42);
+            this.TrainersTabPage.Controls.Add(this.groupBox6);
+            this.TrainersTabPage.Controls.Add(this.TrainerCostumeCB);
+            this.TrainersTabPage.Controls.Add(this.label41);
+            this.TrainersTabPage.Controls.Add(this.TrainerMarkCB);
+            this.TrainersTabPage.Controls.Add(this.label40);
+            this.TrainersTabPage.Controls.Add(this.TrainerAbilityCB);
+            this.TrainersTabPage.Controls.Add(this.label39);
+            this.TrainersTabPage.Controls.Add(this.label38);
+            this.TrainersTabPage.Controls.Add(this.TrainerStyleCB);
+            this.TrainersTabPage.Controls.Add(this.label37);
+            this.TrainersTabPage.Controls.Add(this.TrainerPuppetCB);
+            this.TrainersTabPage.Controls.Add(this.label36);
+            this.TrainersTabPage.Controls.Add(this.TrainerSlotCB);
+            this.TrainersTabPage.Controls.Add(this.label35);
+            this.TrainersTabPage.Controls.Add(this.label34);
+            this.TrainersTabPage.Controls.Add(this.label33);
+            this.TrainersTabPage.Controls.Add(this.DodFilepathTB);
+            this.TrainersTabPage.Controls.Add(this.TrainerTitleTB);
+            this.TrainersTabPage.Controls.Add(this.TrainerNameTB);
+            this.TrainersTabPage.Controls.Add(this.TrainerLB);
             this.TrainersTabPage.Location = new System.Drawing.Point(4, 22);
             this.TrainersTabPage.Name = "TrainersTabPage";
             this.TrainersTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -990,6 +1104,614 @@
             this.TrainersTabPage.TabIndex = 3;
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
+            // 
+            // TrainerExpSC
+            // 
+            this.TrainerExpSC.Location = new System.Drawing.Point(386, 165);
+            this.TrainerExpSC.Maximum = new decimal(new int[] {
+            1300000,
+            0,
+            0,
+            0});
+            this.TrainerExpSC.Name = "TrainerExpSC";
+            this.TrainerExpSC.Size = new System.Drawing.Size(120, 20);
+            this.TrainerExpSC.TabIndex = 29;
+            this.TrainerExpSC.ValueChanged += new System.EventHandler(this.TrainerExpSC_ValueChanged);
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(324, 167);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(25, 13);
+            this.label56.TabIndex = 28;
+            this.label56.Text = "Exp";
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.EV6SC);
+            this.groupBox8.Controls.Add(this.label50);
+            this.groupBox8.Controls.Add(this.EV5SC);
+            this.groupBox8.Controls.Add(this.label51);
+            this.groupBox8.Controls.Add(this.EV4SC);
+            this.groupBox8.Controls.Add(this.label52);
+            this.groupBox8.Controls.Add(this.EV3SC);
+            this.groupBox8.Controls.Add(this.label53);
+            this.groupBox8.Controls.Add(this.EV2SC);
+            this.groupBox8.Controls.Add(this.label54);
+            this.groupBox8.Controls.Add(this.EV1SC);
+            this.groupBox8.Controls.Add(this.label55);
+            this.groupBox8.Location = new System.Drawing.Point(326, 384);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(200, 108);
+            this.groupBox8.TabIndex = 26;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "EVs";
+            // 
+            // EV6SC
+            // 
+            this.EV6SC.Location = new System.Drawing.Point(123, 71);
+            this.EV6SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV6SC.Name = "EV6SC";
+            this.EV6SC.Size = new System.Drawing.Size(47, 20);
+            this.EV6SC.TabIndex = 23;
+            this.EV6SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(90, 73);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(29, 13);
+            this.label50.TabIndex = 22;
+            this.label50.Text = "SPD";
+            // 
+            // EV5SC
+            // 
+            this.EV5SC.Location = new System.Drawing.Point(37, 71);
+            this.EV5SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV5SC.Name = "EV5SC";
+            this.EV5SC.Size = new System.Drawing.Size(47, 20);
+            this.EV5SC.TabIndex = 22;
+            this.EV5SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(6, 73);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(25, 13);
+            this.label51.TabIndex = 22;
+            this.label51.Text = "S.D";
+            // 
+            // EV4SC
+            // 
+            this.EV4SC.Location = new System.Drawing.Point(123, 45);
+            this.EV4SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV4SC.Name = "EV4SC";
+            this.EV4SC.Size = new System.Drawing.Size(47, 20);
+            this.EV4SC.TabIndex = 21;
+            this.EV4SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(93, 47);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(24, 13);
+            this.label52.TabIndex = 22;
+            this.label52.Text = "S.A";
+            // 
+            // EV3SC
+            // 
+            this.EV3SC.Location = new System.Drawing.Point(37, 45);
+            this.EV3SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV3SC.Name = "EV3SC";
+            this.EV3SC.Size = new System.Drawing.Size(47, 20);
+            this.EV3SC.TabIndex = 20;
+            this.EV3SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(7, 47);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(24, 13);
+            this.label53.TabIndex = 22;
+            this.label53.Text = "F.D";
+            // 
+            // EV2SC
+            // 
+            this.EV2SC.Location = new System.Drawing.Point(123, 19);
+            this.EV2SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV2SC.Name = "EV2SC";
+            this.EV2SC.Size = new System.Drawing.Size(47, 20);
+            this.EV2SC.TabIndex = 19;
+            this.EV2SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(94, 21);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(23, 13);
+            this.label54.TabIndex = 22;
+            this.label54.Text = "F.A";
+            // 
+            // EV1SC
+            // 
+            this.EV1SC.Location = new System.Drawing.Point(37, 19);
+            this.EV1SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.EV1SC.Name = "EV1SC";
+            this.EV1SC.Size = new System.Drawing.Size(47, 20);
+            this.EV1SC.TabIndex = 18;
+            this.EV1SC.ValueChanged += new System.EventHandler(this.EVSC_ValueChanged);
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(9, 21);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(22, 13);
+            this.label55.TabIndex = 0;
+            this.label55.Text = "HP";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.IV6SC);
+            this.groupBox7.Controls.Add(this.label44);
+            this.groupBox7.Controls.Add(this.IV5SC);
+            this.groupBox7.Controls.Add(this.label45);
+            this.groupBox7.Controls.Add(this.IV4SC);
+            this.groupBox7.Controls.Add(this.label46);
+            this.groupBox7.Controls.Add(this.IV3SC);
+            this.groupBox7.Controls.Add(this.label47);
+            this.groupBox7.Controls.Add(this.IV2SC);
+            this.groupBox7.Controls.Add(this.label48);
+            this.groupBox7.Controls.Add(this.IV1SC);
+            this.groupBox7.Controls.Add(this.label49);
+            this.groupBox7.Location = new System.Drawing.Point(120, 384);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(200, 108);
+            this.groupBox7.TabIndex = 25;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "IVs";
+            // 
+            // IV6SC
+            // 
+            this.IV6SC.Location = new System.Drawing.Point(123, 71);
+            this.IV6SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV6SC.Name = "IV6SC";
+            this.IV6SC.Size = new System.Drawing.Size(47, 20);
+            this.IV6SC.TabIndex = 23;
+            this.IV6SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(90, 73);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(29, 13);
+            this.label44.TabIndex = 22;
+            this.label44.Text = "SPD";
+            // 
+            // IV5SC
+            // 
+            this.IV5SC.Location = new System.Drawing.Point(37, 71);
+            this.IV5SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV5SC.Name = "IV5SC";
+            this.IV5SC.Size = new System.Drawing.Size(47, 20);
+            this.IV5SC.TabIndex = 22;
+            this.IV5SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(6, 73);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(25, 13);
+            this.label45.TabIndex = 22;
+            this.label45.Text = "S.D";
+            // 
+            // IV4SC
+            // 
+            this.IV4SC.Location = new System.Drawing.Point(123, 45);
+            this.IV4SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV4SC.Name = "IV4SC";
+            this.IV4SC.Size = new System.Drawing.Size(47, 20);
+            this.IV4SC.TabIndex = 21;
+            this.IV4SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(93, 47);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(24, 13);
+            this.label46.TabIndex = 22;
+            this.label46.Text = "S.A";
+            // 
+            // IV3SC
+            // 
+            this.IV3SC.Location = new System.Drawing.Point(37, 45);
+            this.IV3SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV3SC.Name = "IV3SC";
+            this.IV3SC.Size = new System.Drawing.Size(47, 20);
+            this.IV3SC.TabIndex = 20;
+            this.IV3SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(7, 47);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(24, 13);
+            this.label47.TabIndex = 22;
+            this.label47.Text = "F.D";
+            // 
+            // IV2SC
+            // 
+            this.IV2SC.Location = new System.Drawing.Point(123, 19);
+            this.IV2SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV2SC.Name = "IV2SC";
+            this.IV2SC.Size = new System.Drawing.Size(47, 20);
+            this.IV2SC.TabIndex = 19;
+            this.IV2SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(94, 21);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(23, 13);
+            this.label48.TabIndex = 22;
+            this.label48.Text = "F.A";
+            // 
+            // IV1SC
+            // 
+            this.IV1SC.Location = new System.Drawing.Point(37, 19);
+            this.IV1SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.IV1SC.Name = "IV1SC";
+            this.IV1SC.Size = new System.Drawing.Size(47, 20);
+            this.IV1SC.TabIndex = 18;
+            this.IV1SC.ValueChanged += new System.EventHandler(this.IVSC_ValueChanged);
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(9, 21);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(22, 13);
+            this.label49.TabIndex = 0;
+            this.label49.Text = "HP";
+            // 
+            // TrainerItemCB
+            // 
+            this.TrainerItemCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerItemCB.FormattingEnabled = true;
+            this.TrainerItemCB.Location = new System.Drawing.Point(385, 138);
+            this.TrainerItemCB.Name = "TrainerItemCB";
+            this.TrainerItemCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerItemCB.TabIndex = 24;
+            this.TrainerItemCB.SelectedIndexChanged += new System.EventHandler(this.TrainerItemCB_SelectedIndexChanged);
+            // 
+            // TrainerPuppetNickTB
+            // 
+            this.TrainerPuppetNickTB.Location = new System.Drawing.Point(385, 111);
+            this.TrainerPuppetNickTB.MaxLength = 31;
+            this.TrainerPuppetNickTB.Name = "TrainerPuppetNickTB";
+            this.TrainerPuppetNickTB.Size = new System.Drawing.Size(121, 20);
+            this.TrainerPuppetNickTB.TabIndex = 23;
+            this.TrainerPuppetNickTB.TextChanged += new System.EventHandler(this.TrainerPuppetNickTB_TextChanged);
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(324, 141);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(52, 13);
+            this.label43.TabIndex = 22;
+            this.label43.Text = "Held Item";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(324, 114);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(55, 13);
+            this.label42.TabIndex = 21;
+            this.label42.Text = "Nickname";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.TrainerSkill4CB);
+            this.groupBox6.Controls.Add(this.TrainerSkill3CB);
+            this.groupBox6.Controls.Add(this.TrainerSkill2CB);
+            this.groupBox6.Controls.Add(this.TrainerSkill1CB);
+            this.groupBox6.Location = new System.Drawing.Point(123, 246);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(135, 132);
+            this.groupBox6.TabIndex = 20;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Skills";
+            // 
+            // TrainerSkill4CB
+            // 
+            this.TrainerSkill4CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerSkill4CB.FormattingEnabled = true;
+            this.TrainerSkill4CB.Location = new System.Drawing.Point(6, 100);
+            this.TrainerSkill4CB.Name = "TrainerSkill4CB";
+            this.TrainerSkill4CB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerSkill4CB.TabIndex = 21;
+            this.TrainerSkill4CB.SelectedIndexChanged += new System.EventHandler(this.TrainerSkill_SelectedIndexChanged);
+            // 
+            // TrainerSkill3CB
+            // 
+            this.TrainerSkill3CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerSkill3CB.FormattingEnabled = true;
+            this.TrainerSkill3CB.Location = new System.Drawing.Point(6, 73);
+            this.TrainerSkill3CB.Name = "TrainerSkill3CB";
+            this.TrainerSkill3CB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerSkill3CB.TabIndex = 21;
+            this.TrainerSkill3CB.SelectedIndexChanged += new System.EventHandler(this.TrainerSkill_SelectedIndexChanged);
+            // 
+            // TrainerSkill2CB
+            // 
+            this.TrainerSkill2CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerSkill2CB.FormattingEnabled = true;
+            this.TrainerSkill2CB.Location = new System.Drawing.Point(6, 46);
+            this.TrainerSkill2CB.Name = "TrainerSkill2CB";
+            this.TrainerSkill2CB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerSkill2CB.TabIndex = 21;
+            this.TrainerSkill2CB.SelectedIndexChanged += new System.EventHandler(this.TrainerSkill_SelectedIndexChanged);
+            // 
+            // TrainerSkill1CB
+            // 
+            this.TrainerSkill1CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerSkill1CB.FormattingEnabled = true;
+            this.TrainerSkill1CB.Location = new System.Drawing.Point(6, 19);
+            this.TrainerSkill1CB.Name = "TrainerSkill1CB";
+            this.TrainerSkill1CB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerSkill1CB.TabIndex = 0;
+            this.TrainerSkill1CB.SelectedIndexChanged += new System.EventHandler(this.TrainerSkill_SelectedIndexChanged);
+            // 
+            // TrainerCostumeCB
+            // 
+            this.TrainerCostumeCB.FormattingEnabled = true;
+            this.TrainerCostumeCB.Items.AddRange(new object[] {
+            "Normal",
+            "Alt Color",
+            "Alt Costume",
+            "Wedding Dress"});
+            this.TrainerCostumeCB.Location = new System.Drawing.Point(197, 219);
+            this.TrainerCostumeCB.Name = "TrainerCostumeCB";
+            this.TrainerCostumeCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerCostumeCB.TabIndex = 19;
+            this.TrainerCostumeCB.SelectedIndexChanged += new System.EventHandler(this.TrainerCostumeCB_SelectedIndexChanged);
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(120, 195);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(31, 13);
+            this.label41.TabIndex = 18;
+            this.label41.Text = "Mark";
+            // 
+            // TrainerMarkCB
+            // 
+            this.TrainerMarkCB.FormattingEnabled = true;
+            this.TrainerMarkCB.Items.AddRange(new object[] {
+            "None",
+            "Red",
+            "Blue",
+            "Black",
+            "White",
+            "Green"});
+            this.TrainerMarkCB.Location = new System.Drawing.Point(197, 192);
+            this.TrainerMarkCB.Name = "TrainerMarkCB";
+            this.TrainerMarkCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerMarkCB.TabIndex = 17;
+            this.TrainerMarkCB.SelectedIndexChanged += new System.EventHandler(this.TrainerMarkCB_SelectedIndexChanged);
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(120, 168);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(34, 13);
+            this.label40.TabIndex = 16;
+            this.label40.Text = "Ability";
+            // 
+            // TrainerAbilityCB
+            // 
+            this.TrainerAbilityCB.FormattingEnabled = true;
+            this.TrainerAbilityCB.Location = new System.Drawing.Point(197, 165);
+            this.TrainerAbilityCB.Name = "TrainerAbilityCB";
+            this.TrainerAbilityCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerAbilityCB.TabIndex = 13;
+            this.TrainerAbilityCB.SelectedIndexChanged += new System.EventHandler(this.TrainerAbilityCB_SelectedIndexChanged);
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(120, 222);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(48, 13);
+            this.label39.TabIndex = 14;
+            this.label39.Text = "Costume";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(120, 141);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(30, 13);
+            this.label38.TabIndex = 12;
+            this.label38.Text = "Style";
+            // 
+            // TrainerStyleCB
+            // 
+            this.TrainerStyleCB.FormattingEnabled = true;
+            this.TrainerStyleCB.Location = new System.Drawing.Point(197, 138);
+            this.TrainerStyleCB.Name = "TrainerStyleCB";
+            this.TrainerStyleCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerStyleCB.TabIndex = 11;
+            this.TrainerStyleCB.SelectedIndexChanged += new System.EventHandler(this.TrainerStyleCB_SelectedIndexChanged);
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(120, 114);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(41, 13);
+            this.label37.TabIndex = 10;
+            this.label37.Text = "Puppet";
+            // 
+            // TrainerPuppetCB
+            // 
+            this.TrainerPuppetCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.TrainerPuppetCB.FormattingEnabled = true;
+            this.TrainerPuppetCB.Location = new System.Drawing.Point(197, 111);
+            this.TrainerPuppetCB.Name = "TrainerPuppetCB";
+            this.TrainerPuppetCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerPuppetCB.TabIndex = 9;
+            this.TrainerPuppetCB.SelectedIndexChanged += new System.EventHandler(this.TrainerPuppetCB_SelectedIndexChanged);
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(120, 87);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(62, 13);
+            this.label36.TabIndex = 8;
+            this.label36.Text = "Puppet Slot";
+            // 
+            // TrainerSlotCB
+            // 
+            this.TrainerSlotCB.FormattingEnabled = true;
+            this.TrainerSlotCB.Items.AddRange(new object[] {
+            "Puppet 1",
+            "Puppet 2",
+            "Puppet 3",
+            "Puppet 4",
+            "Puppet 5",
+            "Puppet 6"});
+            this.TrainerSlotCB.Location = new System.Drawing.Point(197, 84);
+            this.TrainerSlotCB.Name = "TrainerSlotCB";
+            this.TrainerSlotCB.Size = new System.Drawing.Size(121, 21);
+            this.TrainerSlotCB.TabIndex = 7;
+            this.TrainerSlotCB.SelectedIndexChanged += new System.EventHandler(this.TrainerSlotCB_SelectedIndexChanged);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(120, 61);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(44, 13);
+            this.label35.TabIndex = 6;
+            this.label35.Text = "Filepath";
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(120, 35);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(63, 13);
+            this.label34.TabIndex = 5;
+            this.label34.Text = "Trainer Title";
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(120, 9);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(71, 13);
+            this.label33.TabIndex = 4;
+            this.label33.Text = "Trainer Name";
+            // 
+            // DodFilepathTB
+            // 
+            this.DodFilepathTB.Location = new System.Drawing.Point(197, 58);
+            this.DodFilepathTB.Name = "DodFilepathTB";
+            this.DodFilepathTB.ReadOnly = true;
+            this.DodFilepathTB.Size = new System.Drawing.Size(434, 20);
+            this.DodFilepathTB.TabIndex = 3;
+            // 
+            // TrainerTitleTB
+            // 
+            this.TrainerTitleTB.Location = new System.Drawing.Point(197, 32);
+            this.TrainerTitleTB.MaxLength = 127;
+            this.TrainerTitleTB.Name = "TrainerTitleTB";
+            this.TrainerTitleTB.Size = new System.Drawing.Size(434, 20);
+            this.TrainerTitleTB.TabIndex = 2;
+            this.TrainerTitleTB.TextChanged += new System.EventHandler(this.TrainerTitleTB_TextChanged);
+            // 
+            // TrainerNameTB
+            // 
+            this.TrainerNameTB.Location = new System.Drawing.Point(197, 6);
+            this.TrainerNameTB.MaxLength = 31;
+            this.TrainerNameTB.Name = "TrainerNameTB";
+            this.TrainerNameTB.Size = new System.Drawing.Size(434, 20);
+            this.TrainerNameTB.TabIndex = 1;
+            this.TrainerNameTB.TextChanged += new System.EventHandler(this.TrainerNameTB_TextChanged);
+            // 
+            // TrainerLB
+            // 
+            this.TrainerLB.FormattingEnabled = true;
+            this.TrainerLB.Location = new System.Drawing.Point(6, 6);
+            this.TrainerLB.Name = "TrainerLB";
+            this.TrainerLB.Size = new System.Drawing.Size(108, 537);
+            this.TrainerLB.TabIndex = 0;
+            this.TrainerLB.SelectedIndexChanged += new System.EventHandler(this.TrainerLB_SelectedIndexChanged);
             // 
             // MapsTabPage
             // 
@@ -1240,6 +1962,26 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).EndInit();
+            this.TrainersTabPage.ResumeLayout(false);
+            this.TrainersTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).EndInit();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EV6SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV5SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV4SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EV1SC)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IV6SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV5SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV4SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IV1SC)).EndInit();
+            this.groupBox6.ResumeLayout(false);
             this.MapsTabPage.ResumeLayout(false);
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
@@ -1340,6 +2082,63 @@
         private System.Windows.Forms.NumericUpDown StatHPSC;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Button NewPuppetButton;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.ComboBox TrainerSlotCB;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.TextBox DodFilepathTB;
+        private System.Windows.Forms.TextBox TrainerTitleTB;
+        private System.Windows.Forms.TextBox TrainerNameTB;
+        private System.Windows.Forms.ListBox TrainerLB;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.ComboBox TrainerMarkCB;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.ComboBox TrainerAbilityCB;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.ComboBox TrainerStyleCB;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.ComboBox TrainerPuppetCB;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.ComboBox TrainerSkill4CB;
+        private System.Windows.Forms.ComboBox TrainerSkill3CB;
+        private System.Windows.Forms.ComboBox TrainerSkill2CB;
+        private System.Windows.Forms.ComboBox TrainerSkill1CB;
+        private System.Windows.Forms.ComboBox TrainerCostumeCB;
+        private System.Windows.Forms.ComboBox TrainerItemCB;
+        private System.Windows.Forms.TextBox TrainerPuppetNickTB;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.NumericUpDown EV6SC;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.NumericUpDown EV5SC;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.NumericUpDown EV4SC;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.NumericUpDown EV3SC;
+        private System.Windows.Forms.Label label53;
+        private System.Windows.Forms.NumericUpDown EV2SC;
+        private System.Windows.Forms.Label label54;
+        private System.Windows.Forms.NumericUpDown EV1SC;
+        private System.Windows.Forms.Label label55;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.NumericUpDown IV6SC;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.NumericUpDown IV5SC;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.NumericUpDown IV4SC;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.NumericUpDown IV3SC;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.NumericUpDown IV2SC;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.NumericUpDown IV1SC;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.NumericUpDown TrainerExpSC;
+        private System.Windows.Forms.CheckBox DiffModeCB;
     }
 }
 

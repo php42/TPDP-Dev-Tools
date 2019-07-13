@@ -12,6 +12,7 @@ set(editor_sources
     "MapWindow.cs"
     "Program.cs"
     "PuppetWindow.cs"
+    "TrainerWindow.cs"
     "Properties/AssemblyInfo.cs"
     "Properties/Resources.Designer.cs"
     "Properties/Resources.resx"

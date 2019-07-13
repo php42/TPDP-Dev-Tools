@@ -84,10 +84,12 @@ namespace editor
             // Skills
             BaseSkillLvlCB.SelectedIndex = -1;
             BaseSkillCB.SelectedIndex = -1;
+            BaseSkillCB.Items.Clear();
             BaseSkillCB.DisplayMember = "Item1";
             BaseSkillCB.ValueMember = "Item2";
             StyleSkillLvlCB.SelectedIndex = -1;
             StyleSkillCB.SelectedIndex = -1;
+            StyleSkillCB.Items.Clear();
             StyleSkillCB.DisplayMember = "Item1";
             StyleSkillCB.ValueMember = "Item2";
             BaseSkillCB.Items.Add(new Tuple<string, uint>("None", 0));

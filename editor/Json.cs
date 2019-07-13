@@ -3,9 +3,56 @@
 namespace editor.json
 {
     [DataContract]
+    class PuppetJson
+    {
+        [DataMember]
+        public string nickname = "";
+
+        [DataMember]
+        public uint id;
+
+        [DataMember]
+        public uint style;
+
+        [DataMember]
+        public uint ability;
+
+        [DataMember]
+        public uint costume;
+
+        [DataMember]
+        public uint experience;
+
+        [DataMember]
+        public string mark = "None";
+
+        [DataMember]
+        public uint held_item;
+
+        [DataMember]
+        public uint[] skills = new uint[4];
+
+        [DataMember]
+        public uint[] ivs = new uint[6];
+
+        [DataMember]
+        public uint[] evs = new uint[6];
+    }
+
+    [DataContract]
     class DodJson
     {
+        [DataMember]
+        public string trainer_name = "";
 
+        [DataMember]
+        public string trainer_title = "";
+
+        [DataMember]
+        public PuppetJson[] puppets = { new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson() };
+
+        public string filepath = "";
+        public int id;
     }
 
     [DataContract]

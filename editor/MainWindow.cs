@@ -21,6 +21,7 @@ namespace editor
         private delegate void ConOutDelegate(string msg);
         private bool is_ynk_ = false;
         private List<MadJson> maps_ = new List<MadJson>();
+        private List<DodJson> dods_ = new List<DodJson>();
         private Dictionary<uint, DollData> puppets_ = new Dictionary<uint, DollData>();
         private Dictionary<uint, string> ability_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> skill_names_ = new Dictionary<uint, string>();
@@ -374,6 +375,8 @@ namespace editor
             }
 
             String args = "-i \"" + GameDirTextBox.Text + "\" -o \"" + WorkingDirTextBox.Text + "\" --diff=\"" + path + "\"";
+            if(DiffModeCB.CheckState == CheckState.Checked)
+                args += " -m 2";
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
@@ -574,6 +577,19 @@ namespace editor
             try
             {
                 LoadPuppets();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Failed to load puppets: " + ex.Message);
+                Reset();
+                return;
+            }
+
+            // Populate Trainers tab
+            string dods = wkdir + (is_ynk_ ? "/gn_dat5.arc/script/dollOperator" : "/gn_dat3.arc/script/dollOperator");
+            try
+            {
+                LoadTrainers(dods);
             }
             catch(Exception ex)
             {
