@@ -48,18 +48,7 @@ namespace patcher
 
             try
             {
-                var enc = Encoding.GetEncoding(932);
-                var file = File.OpenRead(path);
-                if(!(file.Length > 0))
-                {
-                    file.Close();
-                    return;
-                }
-
-                var buf = new byte[file.Length];
-                file.Read(buf, 0, (int)file.Length);
-                file.Close();
-                var str = enc.GetString(buf);
+                var str = File.ReadAllText(path, Encoding.GetEncoding(932));
                 if (String.IsNullOrEmpty(str))
                     return;
                 var pos = str.IndexOf("InstallPath=");
@@ -73,6 +62,7 @@ namespace patcher
             }
             catch
             {
+                textBox1.Text = "";
                 return;
             }
         }
@@ -94,6 +84,15 @@ namespace patcher
             textBox3.AppendText(msg);
         }
 
+        private void append_err(string msg)
+        {
+            textBox3.SelectionStart = textBox3.TextLength;
+            textBox3.SelectionLength = 0;
+            textBox3.SelectionColor = Color.Red;
+            textBox3.AppendText(msg);
+            textBox3.SelectionColor = textBox3.ForeColor;
+        }
+
         public void stdout_handler(object proc, DataReceivedEventArgs data)
         {
             if(!String.IsNullOrEmpty(data.Data))
@@ -105,13 +104,32 @@ namespace patcher
             }
         }
 
+        public void stderr_handler(object proc, DataReceivedEventArgs data)
+        {
+            if(!String.IsNullOrEmpty(data.Data))
+            {
+                if(textBox3.InvokeRequired)
+                    textBox3.Invoke(new do_the_thing(append_err), new object[] { (data.Data + "\r\n") });
+                else
+                    append_err(data.Data + "\r\n");
+            }
+        }
+
         public void onexit(Object source, EventArgs e)
         {
             proc_.Close();
+            proc_ = null;
+            button3.Enabled = true;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if(proc_ != null)
+            {
+                MessageBox.Show("Please wait for the current operation to complete.");
+                return;
+            }
+
             if(!File.Exists("diffgen.exe"))
             {
                 MessageBox.Show("Could not find diffgen.exe, please make sure it is in the same folder as this program", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -144,7 +162,7 @@ namespace patcher
             proc_.StartInfo.CreateNoWindow = true;
             proc_.EnableRaisingEvents = true;
             proc_.OutputDataReceived += new DataReceivedEventHandler(stdout_handler);
-            proc_.ErrorDataReceived += new DataReceivedEventHandler(stdout_handler);
+            proc_.ErrorDataReceived += new DataReceivedEventHandler(stderr_handler);
             proc_.Exited += new EventHandler(onexit);
             proc_.SynchronizingObject = this;
 
@@ -157,7 +175,11 @@ namespace patcher
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                proc_.Close();
+                proc_ = null;
             }
+
+            button3.Enabled = false;
         }
     }
 }

@@ -40,35 +40,30 @@ namespace fs = std::filesystem;
 
 static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree)
 {
-    /* we now need to do some f***ery to append a UTF-8 BOM to the front of the file as a safety measure
-     * to try to force text editors into UTF-8 mode */
-    std::stringbuf buf("\xEF\xBB\xBF"); // UTF-8 BOM
-    std::ostream stream(&buf);
-    stream.seekp(0, stream.end);
-    boost::property_tree::write_json(stream, tree);
-    auto outfile = buf.str();
-    if(!write_file(out.wstring(), outfile.data(), outfile.size()))
+    try
+    {
+        std::ofstream stream(out, std::ios::binary | std::ios::trunc);
+        boost::property_tree::write_json(stream, tree);
+    }
+    catch(const boost::property_tree::json_parser_error& ex)
     {
         ScopedConsoleColorChanger color(COLOR_WARN);
         std::cerr << "Error writing to file: " << out.string() << std::endl;
+        std::cerr << ex.what() << std::endl;
     }
 }
 
 static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)
 {
-    /* this is a wrapper to avoid using boost::property_tree::json_parser for I/O because
-     * it doesn't have wstring methods */
-    std::size_t sz;
-    std::string str;
-    auto file = read_file(in.wstring(), sz);
-    if(!file)
-        throw BineditException("Error reading file: " + in.string());
-    str.assign(file.get(), sz);
-    file.reset();
-
-    std::stringbuf buf(std::move(str));
-    std::istream stream(&buf);
-    boost::property_tree::read_json(stream, tree);
+    try
+    {
+        std::ifstream stream(in, std::ios::binary);
+        boost::property_tree::read_json(stream, tree);
+    }
+    catch(const boost::property_tree::json_parser_error& ex)
+    {
+        throw BineditException("Error reading file: " + in.string() + "\n" + ex.what());
+    }
 }
 
 static unsigned int element_to_uint(const std::string& name)
