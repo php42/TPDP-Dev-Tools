@@ -522,7 +522,7 @@ namespace editor
                     {
                         continue;
                     }
-                    var name = fields[1];
+                    var name = is_ynk_ ? fields[1] : fields[0];
 
                     if(id == 0 || string.IsNullOrEmpty(name))
                         continue;
