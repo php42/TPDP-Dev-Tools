@@ -218,7 +218,6 @@ static void patch_nerds(const Path& data, const Path& json)
             throw BineditException("puppet " + std::to_string(id) + " must have 4 drop items");
         for(auto& c : node.get_child("item_drop_table"))
             puppet.item_drop_table[index++] = c.second.get_value<uint16_t>();
-        index = 0;
 
         // styles
         if(node.get_child("styles").size() != 4)
@@ -228,6 +227,7 @@ static void patch_nerds(const Path& data, const Path& json)
         {
             auto& style = s.second;
             auto& style_data = puppet.styles[style_index++];
+            index = 0;
 
             // style type
             auto name = style.get<std::string>("type");
