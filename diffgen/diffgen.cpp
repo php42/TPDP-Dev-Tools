@@ -170,13 +170,12 @@ static std::vector<FileDiff> fileworker(const Path *input, const std::vector<Pat
         if(!dst_file)
             throw DiffgenException("Failed to read file: " + path.string());
 
-        boost::crc_32_type src_crc, dst_crc;
+        if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
+            continue;
+
+        boost::crc_32_type src_crc;
 
         src_crc.process_bytes(src_file.data(), src_file.size());
-        dst_crc.process_bytes(dst_file.get(), sz);
-
-        if(src_crc.checksum() == dst_crc.checksum())
-            continue;
 
         std::string diff_output;
         open_vcdiff::VCDiffEncoder encoder(src_file.data(), src_file.size());
