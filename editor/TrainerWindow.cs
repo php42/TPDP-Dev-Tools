@@ -18,6 +18,29 @@ namespace editor
 {
     public partial class EditorMainWindow : Form
     {
+        private uint ExpForLevel(uint cost, uint level)
+        {
+            if(level <= 1)
+                return 0;
+
+            uint[] mods = is_ynk_ ? new uint[] { 85, 92, 100, 107, 115 } : new uint[] { 70, 85, 100, 115, 130 };
+
+            uint ret = level * level * level * mods[cost] / 100u;
+
+            return ret;
+        }
+
+        private uint LevelFromExp(uint cost, uint exp)
+        {
+            uint ret = 1;
+            while(ExpForLevel(cost, ret + 1) <= exp)
+                ++ret;
+
+            if(ret > 100)
+                ret = 100;
+            return ret;
+        }
+
         private void LoadTrainers(string dir)
         {
             DirectoryInfo di = new DirectoryInfo(dir);
@@ -409,6 +432,28 @@ namespace editor
                 return;
 
             dods_[dodindex].puppets[slotindex].experience = (uint)value;
+
+            var id = ((Tuple<string, uint>)TrainerPuppetCB.SelectedItem).Item2;
+            DollData data = puppets_.ContainsKey(id) ? puppets_[id] : new DollData();
+
+            TrainerLevelSC.ValueChanged -= TrainerLevelSC_ValueChanged;
+            TrainerLevelSC.Value = LevelFromExp(data.cost, (uint)value);
+            TrainerLevelSC.ValueChanged += TrainerLevelSC_ValueChanged;
+        }
+
+        private void TrainerLevelSC_ValueChanged(object sender, EventArgs e)
+        {
+            var value = TrainerLevelSC.Value;
+            var puppetindex = TrainerPuppetCB.SelectedIndex;
+            var slotindex = TrainerSlotCB.SelectedIndex;
+            var dodindex = TrainerLB.SelectedIndex;
+            if(puppetindex < 0 || slotindex < 0 || dodindex < 0)
+                return;
+
+            var id = ((Tuple<string, uint>)TrainerPuppetCB.SelectedItem).Item2;
+            DollData data = puppets_.ContainsKey(id) ? puppets_[id] : new DollData();
+
+            TrainerExpSC.Value = ExpForLevel(data.cost, (uint)value);
         }
 
         private void TrainerMarkCB_SelectedIndexChanged(object sender, EventArgs e)

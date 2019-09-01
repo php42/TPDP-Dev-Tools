@@ -51,6 +51,12 @@ static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree)
         std::cerr << "Error writing to file: " << out.string() << std::endl;
         std::cerr << ex.what() << std::endl;
     }
+    catch(const std::exception& ex)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Error writing to file: " << out.string() << std::endl;
+        std::cerr << ex.what() << std::endl;
+    }
 }
 
 static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)
@@ -61,6 +67,10 @@ static void read_as_utf8(const Path& in, boost::property_tree::ptree& tree)
         boost::property_tree::read_json(stream, tree);
     }
     catch(const boost::property_tree::json_parser_error& ex)
+    {
+        throw BineditException("Error reading file: " + in.string() + "\n" + ex.what());
+    }
+    catch(const std::exception& ex)
     {
         throw BineditException("Error reading file: " + in.string() + "\n" + ex.what());
     }
