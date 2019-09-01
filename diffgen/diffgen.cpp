@@ -650,7 +650,9 @@ bool patch(const Path& input, const Path& output)
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
         std::cerr << "Unsupported file version: " << output.string() << std::endl;
         std::cerr << "Provided diff file is version " << file_header.version << std::endl;
-        std::cerr << "Supported version is " << DIFF_FILE_VERSION << std::endl;
+        std::cerr << "Supported version is " << (unsigned int)DIFF_FILE_VERSION << std::endl;
+        if(file_header.version > DIFF_FILE_VERSION)
+            std::cerr << "Please update to a newer version of TPDP-Dev-Tools." << std::endl;
         return false;
     }
 
