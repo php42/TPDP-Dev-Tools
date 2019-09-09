@@ -1,6 +1,6 @@
 # TPDP-Dev-Tools
 This is a set of "Romhacking" tools for TPDP.  
-These are command-line tools, basic knowledge of the windows command prompt is required.  
+While a GUI front-end is provided, these are primarily command-line tools. Basic knowledge of the windows command prompt is strongly recommended.  
 An explanation of the individual tools follows below.  
 
 ## Diffgen
