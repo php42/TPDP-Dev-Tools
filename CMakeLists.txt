@@ -67,6 +67,11 @@ if(BUILD_DIFFGEN)
     option(vcdiff_build_exec "Build vcdiff executable" OFF)
     mark_as_advanced(FORCE vcdiff_build_exec)
     add_subdirectory(deps/open-vcdiff)
+
+    # Don't install zlib stuff
+    set(SKIP_INSTALL_ALL ON)
+    add_subdirectory(deps/zlib)
+    
     add_subdirectory(diffgen)
 endif()
 

@@ -32,16 +32,18 @@
 #include <mutex>
 #include <optional>
 #include <unordered_map>
+#include "zlib.h"
 
-constexpr uint8_t DIFF_FILE_VERSION = 1;
+constexpr uint8_t DIFF_FILE_VERSION = 2;
 static const char DIFF_FILE_MAGIC[] = { 'T','P','D','P','D','i','f','f' };
+constexpr std::size_t INFLATE_BUF_SIZE = 16384;
 
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
 
 /* enter the spaghetti zone */
 
-class DiffFileHeader
+class DiffFileHeaderV1
 {
 public:
     char magic[sizeof(DIFF_FILE_MAGIC)];
@@ -49,8 +51,8 @@ public:
     uint8_t mode;
     uint8_t ynk;
 
-    DiffFileHeader() = default;
-    DiffFileHeader(const void *src) { read(src); }
+    DiffFileHeaderV1() = default;
+    DiffFileHeaderV1(const void *src) { read(src); }
 
     static constexpr auto size = sizeof(magic) + 3;
 
@@ -77,6 +79,60 @@ public:
         char buf[size];
         write(buf);
         dst.write(buf, size);
+    }
+};
+
+class DiffFileHeader
+{
+public:
+    char magic[sizeof(DIFF_FILE_MAGIC)];
+    uint8_t version;
+    uint8_t mode;
+    uint8_t ynk;
+    uint8_t compression;
+
+    DiffFileHeader() = default;
+    DiffFileHeader(const void *src, bool v1_compat) { read(src, v1_compat); }
+
+    static constexpr auto size = sizeof(magic) + 4;
+
+    void read(const void *src, bool v1_compat)
+    {
+        auto s = (const unsigned char*)src;
+        memcpy(magic, s, sizeof(magic));
+        version = s[sizeof(magic)];
+        mode = s[sizeof(magic) + 1];
+        ynk = s[sizeof(magic) + 2];
+        if(v1_compat)
+            compression = 0;
+        else
+            compression = s[sizeof(magic) + 3];
+    }
+
+    void write(void *dst) const
+    {
+        auto d = (unsigned char*)dst;
+        memcpy(d, magic, sizeof(magic));
+        d[sizeof(magic)] = version;
+        d[sizeof(magic) + 1] = mode;
+        d[sizeof(magic) + 2] = ynk;
+        d[sizeof(magic) + 3] = compression;
+    }
+
+    void write(std::ofstream& dst) const
+    {
+        char buf[size];
+        write(buf);
+        dst.write(buf, size);
+    }
+
+    void init()
+    {
+        memcpy(magic, DIFF_FILE_MAGIC, sizeof(magic));
+        version = DIFF_FILE_VERSION;
+        mode = 0;
+        ynk = 0;
+        compression = 0;
     }
 };
 
@@ -141,6 +197,136 @@ typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
 
 typedef std::tuple<uint32_t, std::string, std::string, uint8_t> FileDiff;
 typedef std::tuple<uint32_t, std::string, uint8_t, bool> ArcDiff;
+
+// Cheap hack, don't look
+static bool compress(const Path& path)
+{
+    try
+    {
+        std::size_t orig_sz;
+        auto file = read_file(path.wstring(), orig_sz);
+        if(!file)
+            throw DiffgenException("Failed to read file.");
+
+        if(orig_sz <= DiffFileHeader::size)
+            throw DiffgenException("File corrupt.");
+
+        // Allocate no more than original file size,
+        // we'll abort if compression expands the data.
+        std::unique_ptr<char[]> out = std::make_unique<char[]>(orig_sz);
+        DiffFileHeader hdr;
+        hdr.read(file.get(), false);
+        if(memcmp(hdr.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC)) != 0)
+            throw DiffgenException("Bad signature.");
+        else if(hdr.version != DIFF_FILE_VERSION)
+            throw DiffgenException("Wrong diff version.");
+
+        hdr.compression = 1;
+        hdr.write(out.get());
+
+        z_stream strm = { 0 };
+        strm.zalloc = Z_NULL;
+        strm.zfree = Z_NULL;
+        strm.opaque = Z_NULL;
+
+        auto strm_sz = orig_sz - DiffFileHeader::size;
+        int ret = deflateInit(&strm, Z_BEST_COMPRESSION);
+        if(ret != Z_OK)
+            throw DiffgenException("zlib initialization failed.");
+
+        strm.avail_in = (uInt)strm_sz;
+        strm.next_in = (Bytef*)&file.get()[DiffFileHeader::size];
+        strm.avail_out = (uInt)strm_sz;
+        strm.next_out = (Bytef*)&out.get()[DiffFileHeader::size];
+
+        ret = deflate(&strm, Z_FINISH);
+        std::size_t avail_out = strm.avail_out;
+        auto out_sz = strm_sz - avail_out;
+        deflateEnd(&strm);
+        file.reset();
+
+        if(avail_out == 0)
+        {
+            ScopedConsoleLock lock;
+            std::cout << "Note: using uncompressed stream for reduced file size." << std::endl;
+            return true;
+        }
+        else if(ret != Z_STREAM_END)
+        {
+            throw DiffgenException("Deflate returned: " + std::to_string(ret));
+        }
+
+        std::cout << "Compression ratio: " << ((double)out_sz / (double)strm_sz) << std::endl;
+        if(!write_file(path.wstring(), out.get(), out_sz + DiffFileHeader::size))
+            throw DiffgenException("Failed to write to file.");
+    }
+    catch(const std::exception& ex)
+    {
+        ScopedConsoleColorMT color(COLOR_CRITICAL);
+        std::cerr << "Error compressing file: " << path.string() << std::endl;
+        std::cerr << ex.what() << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+std::unique_ptr<char[]> decompress(const void *src, const std::size_t len, std::size_t& out_sz)
+{
+    int ret;
+    z_stream strm = { 0 };
+    strm.zalloc = Z_NULL;
+    strm.zfree = Z_NULL;
+    strm.opaque = Z_NULL;
+    strm.avail_in = (uInt)len;
+    strm.next_in = (Bytef*)src;
+    ret = inflateInit(&strm);
+    if(ret != Z_OK)
+        throw DiffgenException("Inflate Initialization failed.");
+
+    auto out_capacity = std::max(len, INFLATE_BUF_SIZE);
+    out_sz = 0;
+    auto buf = std::make_unique<char[]>(out_capacity);
+
+    do
+    {
+        auto avail = (out_capacity - out_sz);
+        if(avail < INFLATE_BUF_SIZE)
+        {
+            try
+            {
+                out_capacity += INFLATE_BUF_SIZE;
+                auto temp = std::make_unique<char[]>(out_capacity);
+                memcpy(temp.get(), buf.get(), out_sz);
+                buf = std::move(temp);
+                avail = (out_capacity - out_sz);
+            }
+            catch(const std::exception&)
+            {
+                inflateEnd(&strm);
+                throw;
+            }
+        }
+
+        strm.avail_out = (uInt)avail;
+        strm.next_out = (Bytef*)&buf.get()[out_sz];
+        ret = inflate(&strm, Z_NO_FLUSH);
+        if((ret != Z_OK) && (ret != Z_STREAM_END))
+        {
+            inflateEnd(&strm);
+            throw DiffgenException("Inflate returned: " + std::to_string(ret));
+        }
+
+        out_sz += (avail - strm.avail_out);
+    } while(strm.avail_out == 0);
+
+    inflateEnd(&strm);
+
+    if(ret != Z_STREAM_END)
+        throw DiffgenException("Incomplete stream.");
+
+    return buf;
+}
 
 /* worker thread for mode 1 diff generation */
 static std::vector<FileDiff> fileworker(const Path *input, const std::vector<Path> *rel_paths, const libtpdp::Archive *arc, int arc_num, std::size_t begin, std::size_t end)
@@ -408,10 +594,9 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
     }
 
     DiffFileHeader file_header;
+    file_header.init();
     file_header.mode = 1;
-    file_header.version = DIFF_FILE_VERSION;
     file_header.ynk = ynk ? 1 : 0;
-    memcpy(file_header.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC));
 
     std::ofstream diff_file(diff_path, std::ios::binary | std::ios::trunc);
     file_header.write(diff_file);
@@ -433,7 +618,9 @@ static bool diff_files(const Path& input, const Path& output, const Path& diff_p
             throw DiffgenException("Failed to write to file: " + diff_path.string());
     }
 
-    return true;
+    diff_file.close();
+    std::cout << "Compressing..." << std::endl;
+    return compress(diff_path);
 }
 
 static bool diff_archive(const Path& input, const Path& output, const Path& diff_path, int threads)
@@ -513,10 +700,9 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
     }
 
     DiffFileHeader file_header;
+    file_header.init();
     file_header.mode = 2;
-    file_header.version = DIFF_FILE_VERSION;
     file_header.ynk = std::get<3>(diffs[0]) ? 1 : 0;
-    memcpy(file_header.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC));
 
     std::ofstream diff_file(diff_path, std::ios::binary | std::ios::trunc);
     file_header.write(diff_file);
@@ -640,34 +826,58 @@ bool patch(const Path& input, const Path& output)
         throw DiffgenException("Failed to read file: " + output.string());
 
     auto buf = diff_file.get();
-    DiffFileHeader file_header(buf);
+    DiffFileHeader file_header(buf, false);
 
     if(std::memcmp(file_header.magic, DIFF_FILE_MAGIC, sizeof(DIFF_FILE_MAGIC)) != 0)
         throw DiffgenException("Unrecognized file format: " + output.string());
 
-    if(file_header.version != DIFF_FILE_VERSION)
+    if((file_header.version != DIFF_FILE_VERSION) && (file_header.version != 1))
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
         std::cerr << "Unsupported file version: " << output.string() << std::endl;
-        std::cerr << "Provided diff file is version " << file_header.version << std::endl;
+        std::cerr << "Provided diff file is version " << (unsigned int)file_header.version << std::endl;
         std::cerr << "Supported version is " << (unsigned int)DIFF_FILE_VERSION << std::endl;
         if(file_header.version > DIFF_FILE_VERSION)
             std::cerr << "Please update to a newer version of TPDP-Dev-Tools." << std::endl;
         return false;
     }
 
+    if(file_header.version < 2)
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        file_header.compression = 0;
+        std::cerr << "Warning: old v1 diff." << std::endl;
+    }
+
     int mode = file_header.mode;
     if(mode < 1 || mode > 2)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cerr << "Invalid diff mode: " << mode << std::endl;
-        std::cerr << "Diff file may be corrupt." << std::endl;
+        std::cerr << "Unsupported diff mode: " << mode << std::endl;
+        std::cerr << "Check for a newer version of Dev-Tools." << std::endl;
         return false;
     }
 
     bool ynk = (file_header.ynk != 0);
 
-    std::size_t pos = DiffFileHeader::size;
+    std::size_t pos = (file_header.version == 1) ? DiffFileHeaderV1::size : DiffFileHeader::size;
+
+    if(file_header.compression)
+    {
+        auto strm_sz = (sz - DiffFileHeader::size);
+        try
+        {
+            diff_file = decompress(&buf[DiffFileHeader::size], strm_sz, sz);
+            buf = diff_file.get();
+            pos = 0;
+        }
+        catch(const std::exception& ex)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Diff decompression failed: " << ex.what() << std::endl;
+            return false;
+        }
+    }
 
     if(mode == 2)
     {

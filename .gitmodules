@@ -1,3 +1,6 @@
 [submodule "deps/open-vcdiff"]
 	path = deps/open-vcdiff
 	url = https://github.com/google/open-vcdiff.git
+[submodule "deps/zlib"]
+	path = deps/zlib
+	url = https://github.com/madler/zlib.git
