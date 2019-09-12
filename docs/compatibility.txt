@@ -1,5 +1,5 @@
-TPDP: gn_dat6/doll/elements/Compatibility.csv
-YnK: gn_dat3/doll/Compatibility.csv
+TPDP: gn_dat3/doll/elements/Compatibility.csv
+YnK: gn_dat6/doll/Compatibility.csv
 this is a text file that defines the type chart ( see http://en.tpdpwiki.net/wiki/Type_Chart )
 0 = immune, 1 = not effective, 2 = neutral, 4 = super effective
 
