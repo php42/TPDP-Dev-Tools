@@ -100,6 +100,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.TrainerLevelSC = new System.Windows.Forms.NumericUpDown();
+            this.label57 = new System.Windows.Forms.Label();
             this.TrainerExpSC = new System.Windows.Forms.NumericUpDown();
             this.label56 = new System.Windows.Forms.Label();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
@@ -178,8 +180,6 @@
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.label57 = new System.Windows.Forms.Label();
-            this.TrainerLevelSC = new System.Windows.Forms.NumericUpDown();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -197,6 +197,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).BeginInit();
             this.TrainersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).BeginInit();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EV6SC)).BeginInit();
@@ -216,7 +217,6 @@
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).BeginInit();
             this.SuspendLayout();
             // 
             // TabControl
@@ -1110,6 +1110,23 @@
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
             // 
+            // TrainerLevelSC
+            // 
+            this.TrainerLevelSC.Location = new System.Drawing.Point(551, 165);
+            this.TrainerLevelSC.Name = "TrainerLevelSC";
+            this.TrainerLevelSC.Size = new System.Drawing.Size(56, 20);
+            this.TrainerLevelSC.TabIndex = 31;
+            this.TrainerLevelSC.ValueChanged += new System.EventHandler(this.TrainerLevelSC_ValueChanged);
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Location = new System.Drawing.Point(512, 168);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(33, 13);
+            this.label57.TabIndex = 30;
+            this.label57.Text = "Level";
+            // 
             // TrainerExpSC
             // 
             this.TrainerExpSC.Location = new System.Drawing.Point(386, 165);
@@ -1937,23 +1954,6 @@
             this.DiffFileDialog.FileName = "diff.bin";
             this.DiffFileDialog.Title = "Diff file location";
             // 
-            // label57
-            // 
-            this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(512, 168);
-            this.label57.Name = "label57";
-            this.label57.Size = new System.Drawing.Size(33, 13);
-            this.label57.TabIndex = 30;
-            this.label57.Text = "Level";
-            // 
-            // TrainerLevelSC
-            // 
-            this.TrainerLevelSC.Location = new System.Drawing.Point(551, 165);
-            this.TrainerLevelSC.Name = "TrainerLevelSC";
-            this.TrainerLevelSC.Size = new System.Drawing.Size(56, 20);
-            this.TrainerLevelSC.TabIndex = 31;
-            this.TrainerLevelSC.ValueChanged += new System.EventHandler(this.TrainerLevelSC_ValueChanged);
-            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1962,7 +1962,7 @@
             this.Controls.Add(this.TabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v0.2.1 ALPHA";
+            this.Text = "TPDP Editor v0.2.2 ALPHA";
             this.TabControl.ResumeLayout(false);
             this.FilesTabPage.ResumeLayout(false);
             this.FilesTabPage.PerformLayout();
@@ -1986,6 +1986,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).EndInit();
             this.TrainersTabPage.ResumeLayout(false);
             this.TrainersTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).EndInit();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
@@ -2008,7 +2009,6 @@
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).EndInit();
             this.ResumeLayout(false);
 
         }
