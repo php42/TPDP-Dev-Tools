@@ -43,7 +43,7 @@ target_link_libraries(binedit PRIVATE libtpdp Boost::boost Boost::program_option
 target_include_directories(binedit PRIVATE "../common")
 
 # Specify Windows 7 compatibility and unicode support
-target_compile_definitions(binedit PRIVATE _WIN32_WINNT=0x0601 UNICODE _UNICODE)
+target_compile_definitions(binedit PRIVATE _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
 
 if(MSVC)
     target_compile_options(binedit PRIVATE "/W4")

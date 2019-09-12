@@ -71,13 +71,14 @@ if(BUILD_DIFFGEN)
     # Don't install zlib stuff
     set(SKIP_INSTALL_ALL ON)
     add_subdirectory(deps/zlib)
+    set_property(DIRECTORY deps/zlib APPEND PROPERTY COMPILE_DEFINITIONS _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
     
     add_subdirectory(diffgen)
 endif()
 
 if(MSVC)
     # Suppress open-vcdiff compiler warnings and set config definitions
-    set_property(DIRECTORY deps/open-vcdiff APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS _WIN32_WINNT=0x0601 UNICODE _UNICODE)
+    set_property(DIRECTORY deps/open-vcdiff APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
     if(BUILD_DIFFGEN)
         # Needed for open-vcdiff to compile as C++17
         target_compile_options(vcdcom_STATIC PRIVATE "/Zc:__cplusplus")
