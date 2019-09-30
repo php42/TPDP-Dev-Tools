@@ -135,7 +135,7 @@ static void convert_nerds(const Path& in, const Path& out)
         libtpdp::PuppetData data(&file[pos]);
         data.id = (uint16_t)(pos / libtpdp::PUPPET_DATA_SIZE);
 
-        if(data.styles[0].style_type == 0) // not a real puppet
+        if((data.styles[0].style_type | data.styles[1].style_type | data.styles[2].style_type | data.styles[3].style_type) == 0) // not a real puppet
             continue;
 
         boost::property_tree::ptree puppet;
