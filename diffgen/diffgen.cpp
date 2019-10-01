@@ -846,7 +846,7 @@ bool patch(const Path& input, const Path& output)
     {
         ScopedConsoleColorChanger color(COLOR_WARN);
         file_header.compression = 0;
-        std::cerr << "Warning: old v1 diff." << std::endl;
+        std::cerr << "Note: using compatibilty mode for old v1 diff files." << std::endl;
     }
 
     int mode = file_header.mode;
@@ -854,7 +854,7 @@ bool patch(const Path& input, const Path& output)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
         std::cerr << "Unsupported diff mode: " << mode << std::endl;
-        std::cerr << "Check for a newer version of Dev-Tools." << std::endl;
+        std::cerr << "Check for a newer version of TPDP-Dev-Tools." << std::endl;
         return false;
     }
 

@@ -16,4 +16,4 @@
 
 #pragma once
 
-#define VERSION_STRING "v0.2.2 ALPHA"
+#define VERSION_STRING "v0.2.3 ALPHA"
