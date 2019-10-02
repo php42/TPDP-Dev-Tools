@@ -180,6 +180,8 @@
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.label58 = new System.Windows.Forms.Label();
+            this.NewPuppetSC = new System.Windows.Forms.NumericUpDown();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -217,6 +219,7 @@
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).BeginInit();
             this.SuspendLayout();
             // 
             // TabControl
@@ -440,6 +443,8 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.NewPuppetSC);
+            this.PuppetsTabPage.Controls.Add(this.label58);
             this.PuppetsTabPage.Controls.Add(this.NewPuppetButton);
             this.PuppetsTabPage.Controls.Add(this.groupBox5);
             this.PuppetsTabPage.Controls.Add(this.groupBox4);
@@ -1954,6 +1959,37 @@
             this.DiffFileDialog.FileName = "diff.bin";
             this.DiffFileDialog.Title = "Diff file location";
             // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Location = new System.Drawing.Point(201, 457);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(80, 13);
+            this.label58.TabIndex = 25;
+            this.label58.Text = "New Puppet ID";
+            // 
+            // NewPuppetSC
+            // 
+            this.NewPuppetSC.Location = new System.Drawing.Point(287, 455);
+            this.NewPuppetSC.Maximum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.NewPuppetSC.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.NewPuppetSC.Name = "NewPuppetSC";
+            this.NewPuppetSC.Size = new System.Drawing.Size(66, 20);
+            this.NewPuppetSC.TabIndex = 26;
+            this.NewPuppetSC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1962,7 +1998,7 @@
             this.Controls.Add(this.TabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v0.2.3 ALPHA";
+            this.Text = "TPDP Editor v0.2.4 ALPHA";
             this.TabControl.ResumeLayout(false);
             this.FilesTabPage.ResumeLayout(false);
             this.FilesTabPage.PerformLayout();
@@ -2009,6 +2045,7 @@
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2164,6 +2201,8 @@
         private System.Windows.Forms.CheckBox DiffModeCB;
         private System.Windows.Forms.NumericUpDown TrainerLevelSC;
         private System.Windows.Forms.Label label57;
+        private System.Windows.Forms.NumericUpDown NewPuppetSC;
+        private System.Windows.Forms.Label label58;
     }
 }
 

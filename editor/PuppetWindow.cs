@@ -112,6 +112,11 @@ namespace editor
                 var name = it.Value;
                 SkillCardLB.Items.Add(new Tuple<string, uint>(name, id));
             }
+
+            // New Puppet
+            NewPuppetSC.Minimum = 1;
+            NewPuppetSC.Maximum = puppet_names_.Length > 1 ? puppet_names_.Length - 1 : 512;
+            NewPuppetSC.Value = 1;
         }
 
         private void PuppetLB_SelectedIndexChanged(object sender, EventArgs e)
@@ -444,17 +449,16 @@ namespace editor
                 return;
             }
 
-            uint id = 0;
-            foreach(var it in puppets_)
+            uint id = (uint)NewPuppetSC.Value;
+            if(puppets_.ContainsKey(id))
             {
-                if(it.Key > id)
-                    id = it.Key;
+                ErrMsg("Puppet ID in use! Select a different ID.");
+                return;
             }
 
-            ++id;
             if(id >= puppet_names_.Length)
             {
-                ErrMsg("No free puppet IDs!\r\nAdd more names to DollName.csv or manually edit DollData.json");
+                ErrMsg("Puppet ID too large! Use a lower ID value.");
                 return;
             }
 
