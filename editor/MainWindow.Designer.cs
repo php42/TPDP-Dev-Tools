@@ -51,6 +51,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.NewPuppetSC = new System.Windows.Forms.NumericUpDown();
+            this.label58 = new System.Windows.Forms.Label();
             this.NewPuppetButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.StatSPDSC = new System.Windows.Forms.NumericUpDown();
@@ -180,11 +182,10 @@
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.label58 = new System.Windows.Forms.Label();
-            this.NewPuppetSC = new System.Windows.Forms.NumericUpDown();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StatSPDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatSDSC)).BeginInit();
@@ -219,7 +220,6 @@
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).BeginInit();
             this.SuspendLayout();
             // 
             // TabControl
@@ -322,7 +322,7 @@
             this.RepackButton.TabIndex = 12;
             this.RepackButton.Text = "Repack";
             this.toolTip1.SetToolTip(this.RepackButton, "Repack files in the working directory back into the game archives (modifies origi" +
-        "nal game files).");
+        "nal game files, does not modify working directory).");
             this.RepackButton.UseVisualStyleBackColor = true;
             this.RepackButton.Click += new System.EventHandler(this.RepackButton_Click);
             // 
@@ -475,6 +475,37 @@
             this.PuppetsTabPage.TabIndex = 1;
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // NewPuppetSC
+            // 
+            this.NewPuppetSC.Location = new System.Drawing.Point(287, 455);
+            this.NewPuppetSC.Maximum = new decimal(new int[] {
+            512,
+            0,
+            0,
+            0});
+            this.NewPuppetSC.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.NewPuppetSC.Name = "NewPuppetSC";
+            this.NewPuppetSC.Size = new System.Drawing.Size(66, 20);
+            this.NewPuppetSC.TabIndex = 26;
+            this.NewPuppetSC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Location = new System.Drawing.Point(201, 457);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(80, 13);
+            this.label58.TabIndex = 25;
+            this.label58.Text = "New Puppet ID";
             // 
             // NewPuppetButton
             // 
@@ -1959,37 +1990,6 @@
             this.DiffFileDialog.FileName = "diff.bin";
             this.DiffFileDialog.Title = "Diff file location";
             // 
-            // label58
-            // 
-            this.label58.AutoSize = true;
-            this.label58.Location = new System.Drawing.Point(201, 457);
-            this.label58.Name = "label58";
-            this.label58.Size = new System.Drawing.Size(80, 13);
-            this.label58.TabIndex = 25;
-            this.label58.Text = "New Puppet ID";
-            // 
-            // NewPuppetSC
-            // 
-            this.NewPuppetSC.Location = new System.Drawing.Point(287, 455);
-            this.NewPuppetSC.Maximum = new decimal(new int[] {
-            512,
-            0,
-            0,
-            0});
-            this.NewPuppetSC.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.NewPuppetSC.Name = "NewPuppetSC";
-            this.NewPuppetSC.Size = new System.Drawing.Size(66, 20);
-            this.NewPuppetSC.TabIndex = 26;
-            this.NewPuppetSC.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2004,6 +2004,7 @@
             this.FilesTabPage.PerformLayout();
             this.PuppetsTabPage.ResumeLayout(false);
             this.PuppetsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StatSPDSC)).EndInit();
@@ -2045,7 +2046,6 @@
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.NewPuppetSC)).EndInit();
             this.ResumeLayout(false);
 
         }

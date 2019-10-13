@@ -16,8 +16,7 @@ Files that fail the CRC check are simply skipped, i.e. the first mod applied is 
 This does not apply to -m 2 (mode 2) which applies the diff to the entire archive (used to add new files to the archive).  
 This means that only one mode 2 patch can be applied and it needs to be applied first. Mode 1 patches can still be applied afterward.  
 
-Note that you *cannot create new directories* even in mode 2 as there is no legitimate need to do so.  
-Also, _deleting_ files from the archive is presently unsupported.
+Note that deleting files from the archive is presently unsupported.
 
 ## BinEdit
 This converts the games various binary file formats to human-readable json and back. The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).  

@@ -31,6 +31,7 @@ constexpr unsigned int ARCHIVE_FILENAME_HEADER_SIZE = 4;
 constexpr unsigned int ARCHIVE_FILE_HEADER_SIZE = 44;
 constexpr unsigned int ARCHIVE_DIR_HEADER_SIZE = 16;
 constexpr unsigned int ARCHIVE_NO_COMPRESSION = 0xffffffff;
+constexpr unsigned int ARCHIVE_NPOS = 0xffffffff;
 
 struct ArcError : public std::runtime_error
 {
@@ -165,7 +166,7 @@ private:
     void reallocate(std::size_t sz);
 
 public:
-	Archive() : header_(), data_used_(0), data_max_(0), is_ynk_(false) {};
+	Archive() : header_(), data_used_(0), data_max_(0), file_table_offset_(0), dir_table_offset_(0), is_ynk_(false) {};
     Archive(const void *data, std::size_t len, bool is_ynk);
     ~Archive() { close(); }
 
@@ -241,8 +242,12 @@ public:
     directory_iterator insert(const directory_iterator& it, const ArchiveDirHeader& header);
     std::size_t insert_filename_header(const std::string& filename); // filename MUST be shift-jis encoded
 
-    /* insert a new file into an EXISTING folder */
+    /* insert a new file into the archive (creates parent directories if necessary) */
     iterator insert(const void *file, std::size_t size, const std::string& filepath);
+
+    /* create directory (including all parent directories). invalidates iterators.
+     * if directory already exists, returns iterator to existing directory */
+    directory_iterator create_dir(const std::string& path);
 
     /* returns true if object pointed by it represents a folder */
     bool is_dir(iterator it) const;
@@ -286,8 +291,8 @@ class Archive::iterator
 {
 private:
     char *data_;
-    std::size_t index_;
-    std::size_t offset_;
+    std::size_t index_;     // index into file table
+    std::size_t offset_;    // absolute file offset
 
 public:
     iterator() : data_(nullptr), index_(Archive::npos), offset_(Archive::npos) {};
@@ -338,8 +343,8 @@ class Archive::directory_iterator
 {
 private:
     char *data_;
-    std::size_t index_;
-    std::size_t offset_;
+    std::size_t index_;     // index into directory table
+    std::size_t offset_;    // absolute file index
 
 public:
     directory_iterator() : data_(nullptr), index_(Archive::npos), offset_(Archive::npos) {};

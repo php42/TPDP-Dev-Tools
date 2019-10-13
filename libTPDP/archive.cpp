@@ -41,6 +41,8 @@ static const uint8_t KEY_YNK[] = {0x9B, 0x16, 0xFE, 0x3A, 0x98, 0xC2, 0xA0, 0x73
 
 /* venture forth into madness */
 
+// TODO: lots of cleanup
+
 void Archive::parse()
 {
     if(data_used_ < ARCHIVE_HEADER_SIZE)
@@ -396,12 +398,12 @@ ArcFile Archive::get_file(const iterator& it) const
     return ArcFile(std::move(buf), file_header.data_size, it.index());
 }
 
-Archive::iterator Archive::repack_file(const std::string & filepath, const void * src, size_t len)
+Archive::iterator Archive::repack_file(const std::string& filepath, const void *src, size_t len)
 {
     return repack_file(find(filepath), src, len);
 }
 
-Archive::iterator Archive::repack_file(const iterator& it, const void * src, size_t len)
+Archive::iterator Archive::repack_file(const iterator& it, const void *src, size_t len)
 {
     assert((it.index() > 0) && (it < end()));
     if(it.index() == 0 || it >= end())
@@ -456,8 +458,8 @@ Archive::iterator Archive::repack_file(const ArcFile& file)
 
 std::string Archive::get_filename(const iterator& it, bool normalized) const
 {
-    assert((it.index() > 0) && (it < end()));
-    if(it.index() == 0 || it >= end())
+    assert(it < end());
+    if(it >= end())
         return {};
 
     std::size_t name_offset = it->filename_offset + header_.filename_table_offset;
@@ -470,8 +472,8 @@ std::string Archive::get_filename(const iterator& it, bool normalized) const
 
 std::string Archive::get_filename(const directory_iterator& it, bool normalized) const
 {
-    assert((it.index() > 0) && (it < dir_end()));
-    if(it.index() == 0 || it >= dir_end())
+    assert(it < dir_end());
+    if(it >= dir_end())
         return {};
 
     std::size_t header_offset = it->dir_offset + file_table_offset_;
@@ -481,8 +483,8 @@ std::string Archive::get_filename(const directory_iterator& it, bool normalized)
 
 std::string Archive::get_path(const iterator& it) const
 {
-    assert((it.index() > 0) && (it < end()));
-    if(it.index() == 0 || it >= end())
+    assert(it < end());
+    if(it >= end())
         return {};
 
     auto dir_it = get_dir(it);
@@ -502,11 +504,11 @@ std::string Archive::get_path(const iterator& it) const
 
 std::string Archive::get_path(const directory_iterator& it) const
 {
-    assert((it.index() > 0) && (it < dir_end()));
-    if(it.index() == 0 || it >= dir_end())
+    assert(it < dir_end());
+    if(it >= dir_end())
         return {};
 
-    std::size_t header_offset = it->dir_offset + header_.file_table_offset;
+    std::size_t header_offset = it->dir_offset + file_table_offset_;
 
     return get_path(make_iterator(header_offset));
 }
@@ -560,8 +562,8 @@ Archive::directory_iterator Archive::find_dir(const std::string& filepath) const
 
 Archive::directory_iterator Archive::get_dir(const iterator& it) const
 {
-    assert((it.index() > 0) && (it < end()));
-    if(it.index() == 0 || it >= end())
+    assert(it < end());
+    if(it >= end())
         return dir_end();
 
     for(auto dir_it = dir_begin(); dir_it != dir_end(); ++dir_it)
@@ -615,16 +617,24 @@ Archive::iterator Archive::insert(const iterator& it, const ArchiveFileHeader& h
 Archive::iterator Archive::insert(const void *file, std::size_t size, const std::string& filepath)
 {
     std::size_t pos = filepath.find_last_of("/\\");
-    std::string dir = filepath.substr(0, pos);
+    std::string dir = (pos == std::string::npos) ? "" : filepath.substr(0, pos); // select root dir in case of top-level file
     std::string name;
 
     if(get_header_offset(filepath) != npos) // file already exists
         return end();
 
-    if(pos == std::string::npos)
-        name = filepath;
-    else
-        name = filepath.substr(pos + 1);
+    if(pos == std::string::npos) // top-level file with no leading '/'
+        pos = 0;
+
+    pos = filepath.find_first_not_of("/\\", pos);
+    if(pos == std::string::npos) // empty filename or filepath with trailing '/'
+        return end();
+
+    name = filepath.substr(pos);
+
+    auto dir_it = create_dir(dir);
+    if(dir_it >= dir_end())
+        return end();
 
     auto filename_offset = insert_filename_header(name);
 
@@ -635,14 +645,18 @@ Archive::iterator Archive::insert(const void *file, std::size_t size, const std:
     header.compressed_size = ARCHIVE_NO_COMPRESSION;
     header.filename_offset = (uint32_t)filename_offset - header_.filename_table_offset;
 
-    auto dir_it = make_dir_iterator(get_dir_header_offset(get_header_offset(dir)));
+    dir_it = find_dir(dir); // iterators invalidated by insert_filename_header, get a new one
     if(dir_it >= dir_end())
         return end();
 
     auto it = end(dir_it);
-    dir_it->num_files += 1;
 
     it = insert(it, header);
+
+    dir_it = find_dir(dir);
+    if(dir_it->num_files == 0)
+        dir_it->file_header_offset = (uint32_t)(it.offset() - file_table_offset_);
+    dir_it->num_files += 1;
 
     it = repack_file(it, file, size);
 
@@ -706,6 +720,69 @@ std::size_t Archive::insert_filename_header(const std::string& filename)
     header_.write(data_.get());
 
     return ret;
+}
+
+Archive::directory_iterator Archive::create_dir(const std::string& path)
+{
+    std::size_t pos = 0;
+    std::string current_path;
+    directory_iterator dir_it = find_dir("");
+
+    while(pos != std::string::npos)
+    {
+        pos = path.find_first_of("/\\", pos);
+        current_path = path.substr(0, pos);
+        pos = path.find_first_not_of("/\\", pos);
+
+        //while(!current_path.empty() && (current_path.back() == '/' || current_path.back() == '\\'))
+        //    current_path.pop_back();
+
+        auto it = find(current_path);
+
+        if(it < end())
+        {
+            if(!is_dir(it))
+                return dir_end();
+
+            dir_it = dir_from_file(it);
+            continue;
+        }
+
+        auto parent_path = get_path(dir_it); // insert_filename_header invalidates iterators, save path so we can find it again
+
+        auto name_begin = current_path.find_last_of("/\\");
+        name_begin = (name_begin == std::string::npos) ? 0u : current_path.find_first_not_of("/\\", name_begin);
+        if(name_begin == std::string::npos)
+            return dir_end();
+
+        auto dir_name = current_path.substr(name_begin);
+        auto filename_offset = insert_filename_header(dir_name);
+
+        dir_it = find_dir(parent_path);
+        it = end(dir_it);
+
+        ArchiveFileHeader hdr;
+        memset(&hdr, 0, sizeof(hdr));
+        hdr.attributes = FILE_ATTRIBUTE_DIRECTORY;
+        hdr.compressed_size = ARCHIVE_NO_COMPRESSION;
+        hdr.filename_offset = (uint32_t)filename_offset - header_.filename_table_offset;
+        it = insert(it, hdr);
+
+        dir_it = find_dir(parent_path);
+        if(dir_it->num_files == 0)
+            dir_it->file_header_offset = (uint32_t)(it.offset() - file_table_offset_);
+        dir_it->num_files += 1;
+
+        auto parent_it = get_dir(it);
+        ArchiveDirHeader dir_hdr;
+        memset(&dir_hdr, 0, sizeof(dir_hdr));
+        dir_hdr.dir_offset = (uint32_t)(it.offset() - file_table_offset_);
+        dir_hdr.parent_dir_offset = (uint32_t)(parent_it.offset() - dir_table_offset_);
+        dir_hdr.file_header_offset = (uint32_t)(end().offset() - file_table_offset_);
+        dir_it = insert(dir_end(), dir_hdr);
+    }
+
+    return dir_it;
 }
 
 bool Archive::is_dir(iterator it) const
