@@ -91,7 +91,7 @@ In short:
 2. In the source folder, run bootstrap.bat, this will create b2.exe
 3. Run b2.exe
 
-Using CMake:
+Using CMake:  
 Before doing anything, make a subfolder in the TPDP-Dev-Tools folder called "build".  
 Open up CMake, set the source code folder to wherever you cloned TPDP-Dev-Tools, and set the binary folder to the build folder you just made.  
 Click configure, change the BOOST_ROOT variable to wherever you extracted Boost, click configure again, and finally click generate.  
