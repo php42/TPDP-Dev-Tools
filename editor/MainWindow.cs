@@ -204,12 +204,14 @@ namespace editor
         {
             string app = "diffgen.exe";
 
+            GameDirTextBox.Text = GameDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(GameDirTextBox.Text))
             {
                 ErrMsg("Invalid game folder path");
                 return;
             }
 
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
                 ErrMsg("Invalid working directory path");
@@ -226,6 +228,7 @@ namespace editor
         {
             string app = "binedit.exe";
 
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
                 ErrMsg("Invalid working directory path");
@@ -240,6 +243,7 @@ namespace editor
 
         private void ApplyButton_Click(object sender, EventArgs e)
         {
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
                 ErrMsg("Invalid working directory path");
@@ -343,12 +347,14 @@ namespace editor
         {
             string app = "diffgen.exe";
 
+            GameDirTextBox.Text = GameDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(GameDirTextBox.Text))
             {
                 ErrMsg("Invalid game folder path");
                 return;
             }
 
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
                 ErrMsg("Invalid working directory path");
@@ -365,12 +371,14 @@ namespace editor
         {
             string app = "diffgen.exe";
 
+            GameDirTextBox.Text = GameDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(GameDirTextBox.Text))
             {
                 ErrMsg("Invalid game folder path");
                 return;
             }
 
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
                 ErrMsg("Invalid working directory path");
@@ -400,6 +408,8 @@ namespace editor
             ConsoleOutput.Clear();
             ConsoleOutput.AppendText("Loading...\r\n");
             ConsoleOutput.Refresh();
+
+            WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
 
             // Find DollData.json and determine if this is YnK or base TPDP data
             string wkdir = WorkingDirTextBox.Text;
