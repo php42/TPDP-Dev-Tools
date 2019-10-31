@@ -41,6 +41,12 @@ constexpr std::size_t INFLATE_BUF_SIZE = 16384;
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
 
+enum CompressionType
+{
+    COMPRESSION_NONE = 0,
+    COMPRESSION_ZLIB = 1
+};
+
 /* enter the spaghetti zone */
 
 class DiffFileHeaderV1
@@ -104,7 +110,7 @@ public:
         mode = s[sizeof(magic) + 1];
         ynk = s[sizeof(magic) + 2];
         if(v1_compat)
-            compression = 0;
+            compression = COMPRESSION_NONE;
         else
             compression = s[sizeof(magic) + 3];
     }
@@ -132,7 +138,7 @@ public:
         version = DIFF_FILE_VERSION;
         mode = 0;
         ynk = 0;
-        compression = 0;
+        compression = COMPRESSION_NONE;
     }
 };
 
@@ -221,7 +227,7 @@ static bool compress(const Path& path)
         else if(hdr.version != DIFF_FILE_VERSION)
             throw DiffgenException("Wrong diff version.");
 
-        hdr.compression = 1;
+        hdr.compression = COMPRESSION_ZLIB;
         hdr.write(out.get());
 
         z_stream strm = { 0 };
@@ -845,7 +851,7 @@ bool patch(const Path& input, const Path& output)
     if(file_header.version < 2)
     {
         ScopedConsoleColorChanger color(COLOR_WARN);
-        file_header.compression = 0;
+        file_header.compression = COMPRESSION_NONE;
         std::cerr << "Note: using compatibilty mode for old v1 diff files." << std::endl;
     }
 
@@ -864,6 +870,14 @@ bool patch(const Path& input, const Path& output)
 
     if(file_header.compression)
     {
+        if(file_header.compression != COMPRESSION_ZLIB)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Unsupported compression method: " << (unsigned int)file_header.compression << std::endl;
+            std::cerr << "Check for a newer version of TPDP-Dev-Tools." << std::endl;
+            return false;
+        }
+
         auto strm_sz = (sz - DiffFileHeader::size);
         try
         {
