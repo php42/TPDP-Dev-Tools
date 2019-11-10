@@ -136,12 +136,14 @@ namespace patcher
                 return;
             }
 
+            textBox1.Text = textBox1.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(textBox1.Text))
             {
                 MessageBox.Show("Invalid game folder path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
+            textBox2.Text = textBox2.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!File.Exists(textBox2.Text))
             {
                 MessageBox.Show("Invalid patch file path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
