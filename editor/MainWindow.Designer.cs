@@ -2017,7 +2017,7 @@
             this.Controls.Add(this.TabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v0.2.4 ALPHA";
+            this.Text = "TPDP Editor v0.2.5 ALPHA";
             this.TabControl.ResumeLayout(false);
             this.FilesTabPage.ResumeLayout(false);
             this.FilesTabPage.PerformLayout();
