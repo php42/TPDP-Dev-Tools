@@ -51,6 +51,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.ExportPuppetButton = new System.Windows.Forms.Button();
             this.NewPuppetSC = new System.Windows.Forms.NumericUpDown();
             this.label58 = new System.Windows.Forms.Label();
             this.NewPuppetButton = new System.Windows.Forms.Button();
@@ -182,6 +183,7 @@
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -443,6 +445,7 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.ExportPuppetButton);
             this.PuppetsTabPage.Controls.Add(this.NewPuppetSC);
             this.PuppetsTabPage.Controls.Add(this.label58);
             this.PuppetsTabPage.Controls.Add(this.NewPuppetButton);
@@ -475,6 +478,17 @@
             this.PuppetsTabPage.TabIndex = 1;
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // ExportPuppetButton
+            // 
+            this.ExportPuppetButton.Location = new System.Drawing.Point(120, 481);
+            this.ExportPuppetButton.Name = "ExportPuppetButton";
+            this.ExportPuppetButton.Size = new System.Drawing.Size(75, 23);
+            this.ExportPuppetButton.TabIndex = 27;
+            this.ExportPuppetButton.Text = "Export Stats";
+            this.toolTip1.SetToolTip(this.ExportPuppetButton, "Generate text dump of all puppet data");
+            this.ExportPuppetButton.UseVisualStyleBackColor = true;
+            this.ExportPuppetButton.Click += new System.EventHandler(this.ExportPuppetButton_Click);
             // 
             // NewPuppetSC
             // 
@@ -1990,6 +2004,11 @@
             this.DiffFileDialog.FileName = "diff.bin";
             this.DiffFileDialog.Title = "Diff file location";
             // 
+            // ExportPuppetDialog
+            // 
+            this.ExportPuppetDialog.DefaultExt = "txt";
+            this.ExportPuppetDialog.FileName = "puppets.txt";
+            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2203,6 +2222,8 @@
         private System.Windows.Forms.Label label57;
         private System.Windows.Forms.NumericUpDown NewPuppetSC;
         private System.Windows.Forms.Label label58;
+        private System.Windows.Forms.Button ExportPuppetButton;
+        private System.Windows.Forms.SaveFileDialog ExportPuppetDialog;
     }
 }
 

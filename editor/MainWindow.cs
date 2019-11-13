@@ -584,7 +584,23 @@ namespace editor
                         var index = (is_ynk_ ? 11 : 10);
                         if(fields.Length <= index)
                             throw new Exception("ItemData.csv has too few fields!");
-                        skillcard_names_[id] = fields[index];
+                        var scname = fields[index];
+                        var skillid = uint.Parse(fields[9]);
+
+                        if((skillid > 0) && (skillid < 1023))
+                        {
+                            skillcard_names_[id] = skill_names_[skillid];
+                            if(!skill_names_[skillid].Equals(scname, StringComparison.OrdinalIgnoreCase))
+                            {
+                                string msg = "Note: Skillcard name mismatch! Item \"" + scname + "\" actually teaches \"" + skill_names_[skillid] + "\"\r\n";
+                                msg += skill_names_[skillid] + " will be displayed in the editor.\r\n";
+                                ConsoleOutput.AppendText(msg);
+                            }
+                        }
+                        else
+                        {
+                            skillcard_names_[id] = scname;
+                        }
                     }
 
                     item_names_[id] = name;

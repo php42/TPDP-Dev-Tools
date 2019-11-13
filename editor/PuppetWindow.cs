@@ -467,5 +467,141 @@ namespace editor
             PuppetLB.Items.Add(new Tuple<string, uint>(puppet_names_[id], puppet.id));
             PuppetLB.SelectedIndex = PuppetLB.FindStringExact(puppet_names_[id]);
         }
+
+        private void DumpPuppets()
+        {
+            if(string.IsNullOrEmpty(working_dir_) || puppets_.Count == 0)
+            {
+                ErrMsg("No data loaded!");
+                return;
+            }
+
+            if(ExportPuppetDialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            var filepath = ExportPuppetDialog.FileName;
+            if(string.IsNullOrEmpty(filepath))
+            {
+                ErrMsg("Invalid filepath!");
+                return;
+            }
+
+            string[] style_levels = { "0", "0", "0", "0", "30", "36", "42", "49", "56", "63", "70" };
+            string[] base_levels = { "7", "10", "14", "19", "24" };
+            string[] costs = { "80", "90", "100", "110", "120" };
+            string[] stats = { "\tHP: ", "\tFo.Atk: ", "\tFo.Def: ", "\tSp.Atk: ", "\tSp.Def: ", "\tSpeed: " };
+
+            string output = "";
+            foreach(var it in puppets_)
+            {
+                var puppet = it.Value;
+                var id = it.Key;
+
+                for(uint i = 0; i < 4; ++i)
+                {
+                    var style = puppet.styles[i];
+                    if(style.type.Equals("None", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    string typestring = "(" + style.element1;
+                    if(!style.element2.Equals("None", StringComparison.OrdinalIgnoreCase))
+                        typestring += "/" + style.element2;
+                    typestring += ")";
+
+                    output += style.type + " " + puppet_names_[id] + " " + typestring + " " + costs[puppet.cost] + " Cost\r\n";
+                    for(uint j = 0; j < 6; ++j)
+                    {
+                        output += stats[j] + style.base_stats[j].ToString() + "\r\n";
+                    }
+
+                    output += "\r\n\tAbilities:\r\n";
+                    foreach(var ability in style.abilities)
+                    {
+                        if(ability != 0)
+                            output += "\t\t" + ability_names_[ability] + "\r\n";
+                    }
+
+                    output += "\r\n\tSkills:\r\n";
+                    if(i != 0) // inherit normal form starting skills
+                    {
+                        for(uint j = 0; j < 4; ++j)
+                        {
+                            var skillid = puppet.styles[0].style_skills[j];
+                            if(skillid != 0)
+                                output += "\t\tLvl 0: " + skill_names_[skillid] + "\r\n";
+                        }
+                    }
+
+                    for(uint j = 0; j < 4; ++j) // starting skills
+                    {
+                        var skillid = style.style_skills[j];
+                        if(skillid != 0)
+                            output += "\t\tLvl 0: " + skill_names_[skillid] + "\r\n";
+                    }
+
+                    for(uint j = 0; j < 5; ++j) // base skills
+                    {
+                        var skillid = puppet.base_skills[j];
+                        if(skillid != 0)
+                            output += "\t\tLvl " + base_levels[j] + ": " + skill_names_[skillid] + "\r\n";
+                    }
+
+                    for(uint j = 4; j < 11; ++j) // style skills
+                    {
+                        var skillid = style.style_skills[j];
+                        if(skillid != 0)
+                            output += "\t\tLvl " + style_levels[j] + ": " + skill_names_[skillid] + "\r\n";
+                    }
+
+                    for(uint j = 0; j < 8; ++j) // extra lvl 70 skills
+                    {
+                        var skillid = style.lvl70_skills[j];
+                        if(skillid != 0)
+                            output += "\t\tLvl 70: " + skill_names_[skillid] + "\r\n";
+                    }
+
+                    if(style.lvl100_skill != 0) // lvl 100 skill
+                    {
+                        output += "\t\tLvl 100: " + skill_names_[style.lvl100_skill] + "\r\n";
+                    }
+
+                    output += "\r\n\tSkill Cards:\r\n";
+                    var skillcards = new SortedSet<uint>();
+                    if(i != 0) // inherit skillcards from normal form
+                    {
+                        foreach(var scid in puppet.styles[0].compatibility)
+                            skillcards.Add(scid);
+                    }
+                    foreach(var scid in style.compatibility)
+                        skillcards.Add(scid);
+
+                    foreach(var scid in skillcards)
+                        output += "\t\t" + skillcard_names_[scid] + "\r\n";
+                    output += "\r\n";
+
+                    try
+                    {
+                        File.WriteAllText(filepath, output);
+                    }
+                    catch(Exception ex)
+                    {
+                        ErrMsg("Failed to write to file: " + filepath + "\r\n" + ex.Message);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void ExportPuppetButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DumpPuppets();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error exporting puppet stats: " + ex.Message);
+            }
+        }
     }
 }
