@@ -146,4 +146,58 @@ namespace editor.json
         [DataMember]
         public DollData[] puppets;
     }
+
+    [DataContract]
+    class SkillData
+    {
+        [DataMember]
+        public uint id = 0;
+
+        [DataMember]
+        public string name = "Null";
+
+        [DataMember]
+        public string element = "None";
+
+        [DataMember]
+        public string type = "Focus";
+
+        [DataMember]
+        public uint sp = 0;
+
+        [DataMember]
+        public uint accuracy = 0;
+
+        [DataMember]
+        public uint power = 0;
+
+        [DataMember]
+        public int priority = 0;
+
+        [DataMember]
+        public uint effect_chance = 0;
+
+        [DataMember]
+        public uint effect_id = 0;
+
+        [DataMember]
+        public uint effect_target = 0;
+
+        [DataMember]
+        public uint ynk_effect_type = 0;
+
+        [DataMember]
+        public uint ynk_id = 0;
+
+    }
+
+    [DataContract]
+    class SkillJson
+    {
+        // shush
+#pragma warning disable CS0649
+        [DataMember]
+        public SkillData[] skills;
+#pragma warning restore CS0649
+    }
 }

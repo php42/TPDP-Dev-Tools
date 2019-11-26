@@ -179,6 +179,36 @@
             this.MapNameTextBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.MapListBox = new System.Windows.Forms.ListBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label71 = new System.Windows.Forms.Label();
+            this.label70 = new System.Windows.Forms.Label();
+            this.label69 = new System.Windows.Forms.Label();
+            this.SkillDataIDSC = new System.Windows.Forms.NumericUpDown();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.SkillDataEffectTypeSC = new System.Windows.Forms.NumericUpDown();
+            this.label67 = new System.Windows.Forms.Label();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.SkillDataEffectTargetSC = new System.Windows.Forms.NumericUpDown();
+            this.SkillDataEffectIDSC = new System.Windows.Forms.NumericUpDown();
+            this.label66 = new System.Windows.Forms.Label();
+            this.SkillDataEffectChanceSC = new System.Windows.Forms.NumericUpDown();
+            this.label64 = new System.Windows.Forms.Label();
+            this.label65 = new System.Windows.Forms.Label();
+            this.SkillDataPrioSC = new System.Windows.Forms.NumericUpDown();
+            this.label63 = new System.Windows.Forms.Label();
+            this.SkillDataPowerSC = new System.Windows.Forms.NumericUpDown();
+            this.label62 = new System.Windows.Forms.Label();
+            this.SkillDataAccSC = new System.Windows.Forms.NumericUpDown();
+            this.label61 = new System.Windows.Forms.Label();
+            this.SkillDataSPSC = new System.Windows.Forms.NumericUpDown();
+            this.label60 = new System.Windows.Forms.Label();
+            this.SkillDataTypeCB = new System.Windows.Forms.ComboBox();
+            this.label59 = new System.Windows.Forms.Label();
+            this.SkillDataElementCB = new System.Windows.Forms.ComboBox();
+            this.SkillDataElementLabel = new System.Windows.Forms.Label();
+            this.SkillDataTB = new System.Windows.Forms.TextBox();
+            this.SkillDataNameLabel = new System.Windows.Forms.Label();
+            this.SkillDataCB = new System.Windows.Forms.ComboBox();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -222,6 +252,18 @@
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
+            this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectTypeSC)).BeginInit();
+            this.groupBox9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectTargetSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectIDSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectChanceSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataPrioSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).BeginInit();
             this.SuspendLayout();
             // 
             // TabControl
@@ -230,6 +272,7 @@
             this.TabControl.Controls.Add(this.PuppetsTabPage);
             this.TabControl.Controls.Add(this.TrainersTabPage);
             this.TabControl.Controls.Add(this.MapsTabPage);
+            this.TabControl.Controls.Add(this.tabPage1);
             this.TabControl.Location = new System.Drawing.Point(12, 12);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
@@ -1990,6 +2033,374 @@
             this.MapListBox.TabIndex = 0;
             this.MapListBox.SelectedIndexChanged += new System.EventHandler(this.MapListBox_SelectedIndexChanged);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.label71);
+            this.tabPage1.Controls.Add(this.label70);
+            this.tabPage1.Controls.Add(this.label69);
+            this.tabPage1.Controls.Add(this.SkillDataIDSC);
+            this.tabPage1.Controls.Add(this.groupBox10);
+            this.tabPage1.Controls.Add(this.groupBox9);
+            this.tabPage1.Controls.Add(this.SkillDataPrioSC);
+            this.tabPage1.Controls.Add(this.label63);
+            this.tabPage1.Controls.Add(this.SkillDataPowerSC);
+            this.tabPage1.Controls.Add(this.label62);
+            this.tabPage1.Controls.Add(this.SkillDataAccSC);
+            this.tabPage1.Controls.Add(this.label61);
+            this.tabPage1.Controls.Add(this.SkillDataSPSC);
+            this.tabPage1.Controls.Add(this.label60);
+            this.tabPage1.Controls.Add(this.SkillDataTypeCB);
+            this.tabPage1.Controls.Add(this.label59);
+            this.tabPage1.Controls.Add(this.SkillDataElementCB);
+            this.tabPage1.Controls.Add(this.SkillDataElementLabel);
+            this.tabPage1.Controls.Add(this.SkillDataTB);
+            this.tabPage1.Controls.Add(this.SkillDataNameLabel);
+            this.tabPage1.Controls.Add(this.SkillDataCB);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(768, 554);
+            this.tabPage1.TabIndex = 6;
+            this.tabPage1.Text = "Skills";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label71
+            // 
+            this.label71.AutoSize = true;
+            this.label71.Location = new System.Drawing.Point(237, 290);
+            this.label71.Name = "label71";
+            this.label71.Size = new System.Drawing.Size(110, 13);
+            this.label71.TabIndex = 20;
+            this.label71.Text = "0 = self, 1 = opponent";
+            // 
+            // label70
+            // 
+            this.label70.AutoSize = true;
+            this.label70.Location = new System.Drawing.Point(212, 36);
+            this.label70.Name = "label70";
+            this.label70.Size = new System.Drawing.Size(375, 13);
+            this.label70.TabIndex = 19;
+            this.label70.Text = "Note: You\'ll need to change the name in SkillData.csv as well (requires reload)";
+            // 
+            // label69
+            // 
+            this.label69.AutoSize = true;
+            this.label69.Location = new System.Drawing.Point(212, 9);
+            this.label69.Name = "label69";
+            this.label69.Size = new System.Drawing.Size(18, 13);
+            this.label69.TabIndex = 18;
+            this.label69.Text = "ID";
+            // 
+            // SkillDataIDSC
+            // 
+            this.SkillDataIDSC.Enabled = false;
+            this.SkillDataIDSC.Location = new System.Drawing.Point(236, 7);
+            this.SkillDataIDSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.SkillDataIDSC.Name = "SkillDataIDSC";
+            this.SkillDataIDSC.ReadOnly = true;
+            this.SkillDataIDSC.Size = new System.Drawing.Size(120, 20);
+            this.SkillDataIDSC.TabIndex = 17;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.SkillDataEffectTypeSC);
+            this.groupBox10.Controls.Add(this.label67);
+            this.groupBox10.Location = new System.Drawing.Point(9, 324);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(222, 51);
+            this.groupBox10.TabIndex = 16;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Mystery Fields (YnK/SoD only, untested)";
+            // 
+            // SkillDataEffectTypeSC
+            // 
+            this.SkillDataEffectTypeSC.Location = new System.Drawing.Point(80, 19);
+            this.SkillDataEffectTypeSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataEffectTypeSC.Name = "SkillDataEffectTypeSC";
+            this.SkillDataEffectTypeSC.Size = new System.Drawing.Size(120, 20);
+            this.SkillDataEffectTypeSC.TabIndex = 18;
+            this.SkillDataEffectTypeSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(6, 21);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(68, 13);
+            this.label67.TabIndex = 17;
+            this.label67.Text = "Effect Type?";
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.SkillDataEffectTargetSC);
+            this.groupBox9.Controls.Add(this.SkillDataEffectIDSC);
+            this.groupBox9.Controls.Add(this.label66);
+            this.groupBox9.Controls.Add(this.SkillDataEffectChanceSC);
+            this.groupBox9.Controls.Add(this.label64);
+            this.groupBox9.Controls.Add(this.label65);
+            this.groupBox9.Location = new System.Drawing.Point(9, 217);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(222, 101);
+            this.groupBox9.TabIndex = 15;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Experimental Fields (Untested)";
+            // 
+            // SkillDataEffectTargetSC
+            // 
+            this.SkillDataEffectTargetSC.Location = new System.Drawing.Point(87, 71);
+            this.SkillDataEffectTargetSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataEffectTargetSC.Name = "SkillDataEffectTargetSC";
+            this.SkillDataEffectTargetSC.Size = new System.Drawing.Size(120, 20);
+            this.SkillDataEffectTargetSC.TabIndex = 17;
+            this.SkillDataEffectTargetSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // SkillDataEffectIDSC
+            // 
+            this.SkillDataEffectIDSC.Location = new System.Drawing.Point(87, 45);
+            this.SkillDataEffectIDSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.SkillDataEffectIDSC.Name = "SkillDataEffectIDSC";
+            this.SkillDataEffectIDSC.Size = new System.Drawing.Size(120, 20);
+            this.SkillDataEffectIDSC.TabIndex = 16;
+            this.SkillDataEffectIDSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(6, 73);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(69, 13);
+            this.label66.TabIndex = 16;
+            this.label66.Text = "Effect Target";
+            // 
+            // SkillDataEffectChanceSC
+            // 
+            this.SkillDataEffectChanceSC.Location = new System.Drawing.Point(87, 19);
+            this.SkillDataEffectChanceSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataEffectChanceSC.Name = "SkillDataEffectChanceSC";
+            this.SkillDataEffectChanceSC.Size = new System.Drawing.Size(120, 20);
+            this.SkillDataEffectChanceSC.TabIndex = 16;
+            this.SkillDataEffectChanceSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label64
+            // 
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(6, 21);
+            this.label64.Name = "label64";
+            this.label64.Size = new System.Drawing.Size(75, 13);
+            this.label64.TabIndex = 16;
+            this.label64.Text = "Effect Chance";
+            // 
+            // label65
+            // 
+            this.label65.AutoSize = true;
+            this.label65.Location = new System.Drawing.Point(6, 47);
+            this.label65.Name = "label65";
+            this.label65.Size = new System.Drawing.Size(49, 13);
+            this.label65.TabIndex = 17;
+            this.label65.Text = "Effect ID";
+            // 
+            // SkillDataPrioSC
+            // 
+            this.SkillDataPrioSC.Location = new System.Drawing.Point(64, 191);
+            this.SkillDataPrioSC.Maximum = new decimal(new int[] {
+            127,
+            0,
+            0,
+            0});
+            this.SkillDataPrioSC.Minimum = new decimal(new int[] {
+            128,
+            0,
+            0,
+            -2147483648});
+            this.SkillDataPrioSC.Name = "SkillDataPrioSC";
+            this.SkillDataPrioSC.Size = new System.Drawing.Size(142, 20);
+            this.SkillDataPrioSC.TabIndex = 14;
+            this.SkillDataPrioSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(6, 193);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(38, 13);
+            this.label63.TabIndex = 13;
+            this.label63.Text = "Priority";
+            // 
+            // SkillDataPowerSC
+            // 
+            this.SkillDataPowerSC.Location = new System.Drawing.Point(64, 165);
+            this.SkillDataPowerSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataPowerSC.Name = "SkillDataPowerSC";
+            this.SkillDataPowerSC.Size = new System.Drawing.Size(142, 20);
+            this.SkillDataPowerSC.TabIndex = 12;
+            this.SkillDataPowerSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label62
+            // 
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(6, 167);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(37, 13);
+            this.label62.TabIndex = 11;
+            this.label62.Text = "Power";
+            // 
+            // SkillDataAccSC
+            // 
+            this.SkillDataAccSC.Location = new System.Drawing.Point(64, 139);
+            this.SkillDataAccSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataAccSC.Name = "SkillDataAccSC";
+            this.SkillDataAccSC.Size = new System.Drawing.Size(142, 20);
+            this.SkillDataAccSC.TabIndex = 10;
+            this.SkillDataAccSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(6, 141);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(52, 13);
+            this.label61.TabIndex = 9;
+            this.label61.Text = "Accuracy";
+            // 
+            // SkillDataSPSC
+            // 
+            this.SkillDataSPSC.Location = new System.Drawing.Point(64, 113);
+            this.SkillDataSPSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.SkillDataSPSC.Name = "SkillDataSPSC";
+            this.SkillDataSPSC.Size = new System.Drawing.Size(142, 20);
+            this.SkillDataSPSC.TabIndex = 8;
+            this.SkillDataSPSC.ValueChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label60
+            // 
+            this.label60.AutoSize = true;
+            this.label60.Location = new System.Drawing.Point(6, 115);
+            this.label60.Name = "label60";
+            this.label60.Size = new System.Drawing.Size(21, 13);
+            this.label60.TabIndex = 7;
+            this.label60.Text = "SP";
+            // 
+            // SkillDataTypeCB
+            // 
+            this.SkillDataTypeCB.FormattingEnabled = true;
+            this.SkillDataTypeCB.Items.AddRange(new object[] {
+            "Focus",
+            "Spread",
+            "Status"});
+            this.SkillDataTypeCB.Location = new System.Drawing.Point(64, 86);
+            this.SkillDataTypeCB.Name = "SkillDataTypeCB";
+            this.SkillDataTypeCB.Size = new System.Drawing.Size(142, 21);
+            this.SkillDataTypeCB.TabIndex = 6;
+            this.SkillDataTypeCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Location = new System.Drawing.Point(6, 89);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(31, 13);
+            this.label59.TabIndex = 5;
+            this.label59.Text = "Type";
+            // 
+            // SkillDataElementCB
+            // 
+            this.SkillDataElementCB.FormattingEnabled = true;
+            this.SkillDataElementCB.Items.AddRange(new object[] {
+            "None",
+            "Void",
+            "Fire",
+            "Water",
+            "Nature",
+            "Earth",
+            "Steel",
+            "Wind",
+            "Electric",
+            "Light",
+            "Dark",
+            "Nether",
+            "Poison",
+            "Fighting",
+            "Illusion",
+            "Sound",
+            "Dream",
+            "Warped"});
+            this.SkillDataElementCB.Location = new System.Drawing.Point(64, 59);
+            this.SkillDataElementCB.Name = "SkillDataElementCB";
+            this.SkillDataElementCB.Size = new System.Drawing.Size(142, 21);
+            this.SkillDataElementCB.TabIndex = 4;
+            this.SkillDataElementCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // SkillDataElementLabel
+            // 
+            this.SkillDataElementLabel.AutoSize = true;
+            this.SkillDataElementLabel.Location = new System.Drawing.Point(6, 62);
+            this.SkillDataElementLabel.Name = "SkillDataElementLabel";
+            this.SkillDataElementLabel.Size = new System.Drawing.Size(45, 13);
+            this.SkillDataElementLabel.TabIndex = 3;
+            this.SkillDataElementLabel.Text = "Element";
+            // 
+            // SkillDataTB
+            // 
+            this.SkillDataTB.Location = new System.Drawing.Point(64, 33);
+            this.SkillDataTB.MaxLength = 31;
+            this.SkillDataTB.Name = "SkillDataTB";
+            this.SkillDataTB.Size = new System.Drawing.Size(142, 20);
+            this.SkillDataTB.TabIndex = 2;
+            this.SkillDataTB.TextChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // SkillDataNameLabel
+            // 
+            this.SkillDataNameLabel.AutoSize = true;
+            this.SkillDataNameLabel.Location = new System.Drawing.Point(6, 36);
+            this.SkillDataNameLabel.Name = "SkillDataNameLabel";
+            this.SkillDataNameLabel.Size = new System.Drawing.Size(35, 13);
+            this.SkillDataNameLabel.TabIndex = 1;
+            this.SkillDataNameLabel.Text = "Name";
+            // 
+            // SkillDataCB
+            // 
+            this.SkillDataCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.SkillDataCB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.SkillDataCB.FormattingEnabled = true;
+            this.SkillDataCB.Location = new System.Drawing.Point(6, 6);
+            this.SkillDataCB.Name = "SkillDataCB";
+            this.SkillDataCB.Size = new System.Drawing.Size(200, 21);
+            this.SkillDataCB.TabIndex = 0;
+            this.SkillDataCB.Text = "Skill";
+            this.SkillDataCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataCB_SelectedIndexChanged);
+            // 
             // GameDirBrowser
             // 
             this.GameDirBrowser.Description = "Locate Game Folder";
@@ -2065,6 +2476,21 @@
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectTypeSC)).EndInit();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectTargetSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectIDSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectChanceSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataPrioSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2224,6 +2650,36 @@
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.Button ExportPuppetButton;
         private System.Windows.Forms.SaveFileDialog ExportPuppetDialog;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.ComboBox SkillDataCB;
+        private System.Windows.Forms.Label SkillDataNameLabel;
+        private System.Windows.Forms.Label label69;
+        private System.Windows.Forms.NumericUpDown SkillDataIDSC;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.NumericUpDown SkillDataEffectTypeSC;
+        private System.Windows.Forms.Label label67;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.NumericUpDown SkillDataEffectTargetSC;
+        private System.Windows.Forms.NumericUpDown SkillDataEffectIDSC;
+        private System.Windows.Forms.Label label66;
+        private System.Windows.Forms.NumericUpDown SkillDataEffectChanceSC;
+        private System.Windows.Forms.Label label64;
+        private System.Windows.Forms.Label label65;
+        private System.Windows.Forms.NumericUpDown SkillDataPrioSC;
+        private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.NumericUpDown SkillDataPowerSC;
+        private System.Windows.Forms.Label label62;
+        private System.Windows.Forms.NumericUpDown SkillDataAccSC;
+        private System.Windows.Forms.Label label61;
+        private System.Windows.Forms.NumericUpDown SkillDataSPSC;
+        private System.Windows.Forms.Label label60;
+        private System.Windows.Forms.ComboBox SkillDataTypeCB;
+        private System.Windows.Forms.Label label59;
+        private System.Windows.Forms.ComboBox SkillDataElementCB;
+        private System.Windows.Forms.Label SkillDataElementLabel;
+        private System.Windows.Forms.TextBox SkillDataTB;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.Label label71;
     }
 }
 

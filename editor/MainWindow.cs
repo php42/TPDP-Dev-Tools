@@ -23,6 +23,7 @@ namespace editor
         private List<MadJson> maps_ = new List<MadJson>();
         private List<DodJson> dods_ = new List<DodJson>();
         private Dictionary<uint, DollData> puppets_ = new Dictionary<uint, DollData>();
+        private Dictionary<uint, SkillData> skills_ = new Dictionary<uint, SkillData>();
         private Dictionary<uint, string> ability_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> skill_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> item_names_ = new Dictionary<uint, string>();
@@ -35,7 +36,13 @@ namespace editor
         {
             is_ynk_ = false;
             maps_ = new List<MadJson>();
+            dods_ = new List<DodJson>();
             puppets_ = new Dictionary<uint, DollData>();
+            skills_ = new Dictionary<uint, SkillData>();
+            ability_names_ = new Dictionary<uint, string>();
+            skill_names_ = new Dictionary<uint, string>();
+            item_names_ = new Dictionary<uint, string>();
+            skillcard_names_ = new Dictionary<uint, string>();
             puppet_names_ = new string[1] { "" };
             map_names_ = new string[1] { "" };
             working_dir_ = null;
@@ -408,6 +415,7 @@ namespace editor
             ConsoleOutput.Clear();
             ConsoleOutput.AppendText("Loading...\r\n");
             ConsoleOutput.Refresh();
+            Reset();
 
             WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
 
@@ -619,20 +627,33 @@ namespace editor
             }
             catch(Exception ex)
             {
-                ErrMsg("Failed to load puppets: " + ex.Message);
+                ErrMsg("Failed to load puppet data: " + ex.Message);
                 Reset();
                 return;
             }
 
             // Populate Trainers tab
-            string dods = wkdir + (is_ynk_ ? "/gn_dat5.arc/script/dollOperator" : "/gn_dat3.arc/script/dollOperator");
             try
             {
+                string dods = wkdir + (is_ynk_ ? "/gn_dat5.arc/script/dollOperator" : "/gn_dat3.arc/script/dollOperator");
                 LoadTrainers(dods);
             }
             catch(Exception ex)
             {
-                ErrMsg("Failed to load puppets: " + ex.Message);
+                ErrMsg("Failed to load trainer data: " + ex.Message);
+                Reset();
+                return;
+            }
+
+            // Populate Skills tab
+            try
+            {
+                string skills = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.json" : "/gn_dat3.arc/doll/skill/SkillData.json");
+                LoadSkills(skills);
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Failed to load skill data: " + ex.Message);
                 Reset();
                 return;
             }

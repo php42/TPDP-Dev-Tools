@@ -8,7 +8,7 @@ the following fields are speculative and untested:
 "effect_id": id of the effect to be applied
 "effect_target": whether the effect is applied to you or your opponent (0 = self, 1 = opponent)
 "ynk_effect_type": type of effect (present only in YnK/SoD)
-"ynk_id": some sort of id present only in YnK/SoD
+"ynk_id": redundant id field present only in YnK/SoD
 
 
 ---BINARY FORMAT---
@@ -25,5 +25,5 @@ the following fields are speculative and untested:
 0x29: u8   effect_chance  |
 0x2A: u8   effect_type    | (YnK/SoD)
 0x2B: u8   effect_target  |
-0x2C: u8   id(???)        | (YnK/SoD)
-0x2D-0x76: ???           _|
+0x2C: u16   id(???)       | (YnK/SoD)
+0x2E-0x76: ???           _|

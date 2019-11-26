@@ -83,8 +83,9 @@ public:
     uint8_t zero;
     uint16_t effect_id;
     uint8_t effect_chance, effect_target;               /* best guess. chance seems to be ignored on status effect skills. target = 0 for self, 1 for opponent */
-    uint8_t effect_type, ynk_id;                         /* YnK only */
-	//uint8_t unknown_0x2d[74];							/* for reference, 74 bytes of padding or who knows what */
+    uint8_t effect_type;                                /* YnK only */
+    uint16_t ynk_id;                                    /* YnK only */
+	//uint8_t unknown_0x2e[73];							/* for reference, 73 bytes of padding or who knows what */
 
 	SkillData() : element(0), power(0), accuracy(0), sp(0), priority(0), type(0), zero(0),
                   effect_id(0), effect_chance(0), effect_target(0), effect_type(0), ynk_id(0) {}

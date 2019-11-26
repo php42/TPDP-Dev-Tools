@@ -13,6 +13,7 @@ set(editor_sources
     "Program.cs"
     "PuppetWindow.cs"
     "TrainerWindow.cs"
+    "SkillWindow.cs"
     "Properties/AssemblyInfo.cs"
     "Properties/Resources.Designer.cs"
     "Properties/Resources.resx"

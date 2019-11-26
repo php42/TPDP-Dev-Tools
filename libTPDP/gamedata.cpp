@@ -89,7 +89,7 @@ void SkillData::read(const void *data)
 	effect_chance = buf[41];
     effect_type = buf[42];
 	effect_target = buf[43];
-    ynk_id = buf[44];
+    ynk_id = read_le16(&buf[44]);
 }
 
 void SkillData::write(void *data)
@@ -107,7 +107,7 @@ void SkillData::write(void *data)
     buf[41] = effect_chance;
     buf[42] = effect_type;
     buf[43] = effect_target;
-    buf[44] = ynk_id;
+    write_le16(&buf[44], ynk_id);
 }
 
 StyleData::StyleData() : style_type(0), element1(0), element2(0), lv100_skill(0)
