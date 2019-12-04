@@ -17,8 +17,11 @@
 #include "gamedata.h"
 #include "../common/endian.h"
 #include "../common/textconvert.h"
+#include"../common/filesystem.h"
 #include <cassert>
 #include <utility>
+#include <stdexcept>
+#include <algorithm>
 
 static const unsigned int g_style_levels[] = {0, 0, 0, 0, 30, 36, 42, 49, 56, 63, 70};
 static const unsigned int g_base_levels[] = {7, 10, 14, 19, 24};
@@ -92,7 +95,7 @@ void SkillData::read(const void *data)
     ynk_id = read_le16(&buf[44]);
 }
 
-void SkillData::write(void *data)
+void SkillData::write(void *data) const
 {
     uint8_t *buf = (uint8_t*)data;
 
@@ -145,7 +148,7 @@ void StyleData::read(const void *data)
 		lv70_skills[i] = read_le16(&buf[65 + (i * 2)]);
 }
 
-void StyleData::write(void * data)
+void StyleData::write(void * data) const
 {
     uint8_t *buf = (uint8_t*)data;
 
@@ -213,7 +216,7 @@ void PuppetData::read(const void *data)
 		styles[i].read(&buf[93 + (i * STYLE_DATA_SIZE)]);
 }
 
-void PuppetData::write(void *data)
+void PuppetData::write(void *data) const
 {
     uint8_t *buf = (uint8_t*)data;
 
@@ -394,7 +397,13 @@ std::wstring element_string(unsigned int element)
 
 void MADData::read(const void *data)
 {
-    const char *buf = (const char*)data;
+    const uint8_t *buf = (const uint8_t*)data;
+
+    memcpy(tilesets, buf, sizeof(tilesets));
+    overworld_fog = buf[8];
+    overworld_theme = buf[9];
+    battle_background = buf[10];
+    cave = buf[12];
 
     /* area name */
     memcpy(location_name, &buf[0x59], sizeof(location_name));
@@ -412,9 +421,15 @@ void MADData::read(const void *data)
     memcpy(special_puppet_ratios, &buf[0x54], sizeof(special_puppet_ratios));
 }
 
-void MADData::write(void *data)
+void MADData::write(void *data) const
 {
-    char *buf = (char*)data;
+    uint8_t *buf = (uint8_t*)data;
+
+    memcpy(buf, tilesets, sizeof(tilesets));
+    buf[8] = overworld_fog;
+    buf[9] = overworld_theme;
+    buf[10] = battle_background;
+    buf[12] = cave;
 
     /* area name */
     memcpy(&buf[0x59], location_name, sizeof(location_name));
@@ -466,7 +481,7 @@ void MADEncounter::read(const MADData& data, int i, bool special)
 	}
 }
 
-void MADEncounter::write(MADData& data, int i, bool special)
+void MADEncounter::write(MADData& data, int i, bool special) const
 {
 	assert(i < 10);
 	assert((i < 5) || !special);
@@ -485,6 +500,141 @@ void MADEncounter::write(MADData& data, int i, bool special)
 		data.puppet_styles[i] = style;
 		data.puppet_ratios[i] = weight;
 	}
+}
+
+void ChipData::read(const void *data)
+{
+    auto chip = (const uint8_t*)data;
+
+    for(std::size_t i = 0; i < 256; ++i)
+    {
+        index_map_[i] = chip[i * 26];
+    }
+}
+
+void FMFData::read(std::wstring path)
+{
+    data_ = read_file(path, sz_);
+
+    if(!data_ || (sz_ < 20))
+        throw std::runtime_error("Failed to read FMF file.");
+
+    payload_len = read_le32(&data_[4]);
+    map_width = read_le32(&data_[8]);
+    map_height = read_le32(&data_[12]);
+    num_layers = (uint8_t)data_[0x12];
+    unk1 = data_[0x10];
+    unk2 = data_[0x11];
+    unk3 = data_[0x13];
+
+    auto stride = map_width * map_height * 2;
+
+    if((stride * num_layers) != payload_len)
+        throw std::runtime_error("Corrupt FMF file.");
+
+    for(std::size_t i = 0; i < num_layers; ++i)
+    {
+        auto offset = (stride * i) + 20;
+        layers_.push_back((uint8_t*)&data_[offset]);
+    }
+}
+
+void FMFData::write(std::wstring path)
+{
+    write_le32(&data_[4], (uint32_t)payload_len);
+    write_le32(&data_[8], (uint32_t)map_width);
+    write_le32(&data_[12], (uint32_t)map_height);
+    data_[0x12] = (uint8_t)num_layers;
+    data_[0x10] = unk1;
+    data_[0x11] = unk2;
+    data_[0x13] = unk3;
+
+    if(!write_file(path, data_.get(), sz_))
+        throw std::runtime_error("Failed to write FMF file.");
+}
+
+void FMFData::resize(std::size_t width, std::size_t height)
+{
+    const auto new_payload_len = width * height * num_layers * 2;
+    const auto new_sz = payload_len + 20;
+
+    const auto layer_sz = map_width * map_height * 2;
+    const auto new_layer_sz = width * height * 2;
+    const auto stride = map_width * 2;
+    const auto new_stride = width * 2;
+
+    auto new_buf = std::make_unique<char[]>(new_sz);
+    memset(new_buf.get(), 0, new_sz);
+
+    for(std::size_t i = 0; i < num_layers; ++i)
+    {
+        auto layer = get_layer(i);
+        auto new_layer = &new_buf[(i * new_layer_sz) + 20];
+
+        for(std::size_t j = 0; j < std::min(map_height, height); ++j)
+        {
+            auto row = &layer[j * stride];
+            auto new_row = &new_layer[j * new_stride];
+            memcpy(new_row, row, std::min(stride, new_stride));
+        }
+    }
+
+    payload_len = new_payload_len;
+    sz_ = new_sz;
+    map_width = width;
+    map_height = height;
+
+    write_le32(&new_buf[4], (uint32_t)payload_len);
+    write_le32(&new_buf[8], (uint32_t)map_width);
+    write_le32(&new_buf[12], (uint32_t)map_height);
+    new_buf[0x12] = (uint8_t)num_layers;
+    new_buf[0x10] = unk1;
+    new_buf[0x11] = unk2;
+    new_buf[0x13] = unk3;
+
+    data_ = std::move(new_buf);
+
+    layers_.clear();
+    for(std::size_t i = 0; i < num_layers; ++i)
+    {
+        auto offset = (new_layer_sz * i) + 20;
+        layers_.push_back((uint8_t*)&data_[offset]);
+    }
+}
+
+void OBSData::read(std::wstring path)
+{
+    data_ = read_file(path, sz_);
+    if(!data_ || (sz_ < 20480))
+        throw std::runtime_error("Failed to read OBS file.");
+}
+
+void OBSData::write(std::wstring path) const
+{
+    if(!write_file(path, data_.get(), sz_))
+        throw std::runtime_error("Failed to write OBS file.");
+}
+
+void OBSEntry::read(const void *data)
+{
+    const uint8_t *buf = (const uint8_t*)data;
+    object_id = read_le16(buf);
+    type = buf[2];
+    unknown = buf[3];
+    event_arg = read_le16(&buf[4]);
+    event_index = read_le16(&buf[6]);
+    memcpy(flags, &buf[8], sizeof(flags));
+}
+
+void OBSEntry::write(void *data) const
+{
+    uint8_t *buf = (uint8_t*)data;
+    write_le16(buf, object_id);
+    buf[2] = type;
+    buf[3] = unknown;
+    write_le16(&buf[4], event_arg);
+    write_le16(&buf[6], event_index);
+    memcpy(&buf[8], flags, sizeof(flags));
 }
 
 std::wstring skill_type_string(unsigned int type)

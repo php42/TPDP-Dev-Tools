@@ -242,6 +242,7 @@ namespace editor
 
             TrainerNameTB.Text = dod.trainer_name;
             TrainerTitleTB.Text = dod.trainer_title;
+            PortraitIDSC.Value = dod.portrait_id;
             DodFilepathTB.Text = dod.filepath;
             TrainerSlotCB.SelectedIndex = -1;
             TrainerPuppetCB.SelectedIndex = -1;
@@ -254,6 +255,9 @@ namespace editor
             TrainerCostumeCB.SelectedIndex = -1;
             TrainerItemCB.SelectedIndex = -1;
             TrainerExpSC.Value = 0;
+
+            IntroTextSC.Value = dod.intro_text_id;
+            EndTextSC.Value = dod.end_text_id;
 
             TrainerSkill1CB.SelectedIndex = -1;
             TrainerSkill2CB.SelectedIndex = -1;
@@ -502,6 +506,33 @@ namespace editor
                 return;
 
             dods_[dodindex].puppets[slotindex].nickname = TrainerPuppetNickTB.Text;
+        }
+
+        private void IntroTextSC_ValueChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            if(dodindex < 0)
+                return;
+
+            dods_[dodindex].intro_text_id = (uint)IntroTextSC.Value;
+        }
+
+        private void EndTextSC_ValueChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            if(dodindex < 0)
+                return;
+
+            dods_[dodindex].end_text_id = (uint)EndTextSC.Value;
+        }
+
+        private void PortraitIDSC_ValueChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            if(dodindex < 0)
+                return;
+
+            dods_[dodindex].portrait_id = (uint)PortraitIDSC.Value;
         }
     }
 }

@@ -434,6 +434,32 @@ namespace editor
                 }
             }
 
+            string versiondata = wkdir + "/version.json";
+            if(!File.Exists(versiondata))
+            {
+                ErrMsg("Seems like you're using an old JSON dump from an alpha build. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
+                return;
+            }
+
+            try
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(VersionJson));
+                var buf = File.ReadAllBytes(versiondata);
+                MemoryStream s = new MemoryStream(buf);
+                var ver = (VersionJson)ser.ReadObject(s);
+                if((ver.major != 1) || (ver.minor != 0))
+                {
+                    bool newer = (ver.major > 1) || (ver.major == 1 && (ver.minor > 0));
+                    ErrMsg("Current JSON dump is for " + (newer ? "a newer" : "an older") + " version of TPDP-Dev-Tools. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
+                    return;
+                }
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error parsing file: " + versiondata + "\r\n" + ex.Message);
+                return;
+            }
+
             // Parse puppets
             puppets_.Clear();
             try
@@ -598,16 +624,17 @@ namespace editor
                         if((skillid > 0) && (skillid < 1023))
                         {
                             skillcard_names_[id] = skill_names_[skillid];
-                            if(!skill_names_[skillid].Equals(scname, StringComparison.OrdinalIgnoreCase))
+                            /*if(!skill_names_[skillid].Equals(scname, StringComparison.OrdinalIgnoreCase))
                             {
                                 string msg = "Note: Skillcard name mismatch! Item \"" + scname + "\" actually teaches \"" + skill_names_[skillid] + "\"\r\n";
                                 msg += skill_names_[skillid] + " will be displayed in the editor.\r\n";
                                 ConsoleOutput.AppendText(msg);
-                            }
+                            }*/
                         }
                         else
                         {
-                            skillcard_names_[id] = scname;
+                            //skillcard_names_[id] = scname;
+                            skillcard_names_[id] = name;
                         }
                     }
 

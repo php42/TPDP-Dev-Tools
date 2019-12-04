@@ -19,6 +19,7 @@
 #include <iostream>
 #include "../common/console.h"
 #include "../common/version.h"
+#include <chrono>
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
@@ -78,10 +79,24 @@ int wmain(int argc, wchar_t *argv[])
             return EXIT_FAILURE;
         }
 
+        auto begin = std::chrono::high_resolution_clock::now();
         if(opts.count("convert"))
             success = convert(input_path);
         else if(opts.count("patch"))
             success = patch(input_path);
+
+        if(success)
+        {
+            auto end = std::chrono::high_resolution_clock::now();
+            auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
+            std::cout << "Done." << std::endl;
+            std::cout << "Finished in " << seconds.count() << " seconds." << std::endl;
+        }
+        else
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Operation aborted." << std::endl;
+        }
     }
     catch(const std::exception& ex)
     {
@@ -95,9 +110,6 @@ int wmain(int argc, wchar_t *argv[])
         std::cerr << "An unknown error occurred" << std::endl;
         return EXIT_FAILURE;
     }
-
-    if(success)
-        std::cout << "Done." << std::endl;
 
     return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

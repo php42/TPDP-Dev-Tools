@@ -10,7 +10,10 @@ learned at levels 7, 10, 14, 19, 24 in that order
 
 "cost": 0-4 (inclusive) translates to 80-120 cost ((cost * 10) + 80)
 
-"item_drop_table": items dropped as loot when defeated in the wild (untested)
+"item_drop_table": items dropped as loot when defeated in the wild
+slots 1 and 3 are 10% drop rate
+slot 0 is 80% for levels 1-20, 40% at level 21+
+slot 2 is 40% and only drops at level 21+
 
 "base_stats": hp, f.atk, f.def, s.atk, s.def, speed in that order
 

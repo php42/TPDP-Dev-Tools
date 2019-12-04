@@ -1,0 +1,9 @@
+.chp files contain information about the animations for a tileset.
+it contains an array of 26-byte structures.
+the json generated for this one is purely informational as all it does is map linear addresses to the index of the first frame of animation on the sprite sheet.
+this is mostly useful for rendering .fmf files.
+
+---BINARY FORMAT---
+                             _
+0x00: u8 index of first frame |
+0x01-0x19: ???               _|--0x1A

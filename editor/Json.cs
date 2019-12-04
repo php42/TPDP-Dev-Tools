@@ -3,6 +3,26 @@
 namespace editor.json
 {
     [DataContract]
+    class VersionJson
+    {
+        [DataMember]
+        public uint major = 0;
+
+        [DataMember]
+        public uint minor = 0;
+
+        [DataMember]
+        public string dev_tools = "Unknown";
+    }
+
+    [DataContract]
+    class ChipJson
+    {
+        [DataMember]
+        public uint[] index_map = new uint[256];
+    }
+
+    [DataContract]
     class PuppetJson
     {
         [DataMember]
@@ -49,6 +69,15 @@ namespace editor.json
         public string trainer_title = "";
 
         [DataMember]
+        public uint portrait_id;
+
+        [DataMember]
+        public uint intro_text_id;
+
+        [DataMember]
+        public uint end_text_id;
+
+        [DataMember]
         public PuppetJson[] puppets = { new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson() };
 
         public string filepath = "";
@@ -77,6 +106,21 @@ namespace editor.json
         [DataMember]
         public string location_name;
 
+        [DataMember]
+        public uint[] tilesets = new uint[4];
+
+        [DataMember]
+        public uint overworld_fog = 0;
+
+        [DataMember]
+        public uint overworld_theme = 0;
+
+        [DataMember]
+        public uint battle_background = 0;
+
+        [DataMember]
+        public uint cave = 0;
+
         // shush
 #pragma warning disable CS0649
         [DataMember]
@@ -88,6 +132,66 @@ namespace editor.json
 
         public string filepath;
         public int id;
+    }
+
+    [DataContract]
+    class FmfJson
+    {
+        [DataMember]
+        public uint width;
+
+        [DataMember]
+        public uint height;
+
+        [DataMember]
+        public uint payload_length;
+
+        [DataMember]
+        public uint num_layers;
+
+        [DataMember]
+        public uint unknown_1;
+
+        [DataMember]
+        public uint unknown_2;
+
+        [DataMember]
+        public uint unknown_3;
+
+        [DataMember]
+        public string[] layers;
+    }
+
+    [DataContract]
+    class ObsEntry
+    {
+        [DataMember]
+        public uint index;
+
+        [DataMember]
+        public uint object_id;
+
+        [DataMember]
+        public uint type;
+
+        [DataMember]
+        public uint unknown;
+
+        [DataMember]
+        public uint event_arg;
+
+        [DataMember]
+        public uint event_index;
+
+        [DataMember]
+        public uint[] flags;
+    }
+
+    [DataContract]
+    class ObsJson
+    {
+        [DataMember]
+        public ObsEntry[] entries;
     }
 
     [DataContract]
@@ -186,8 +290,8 @@ namespace editor.json
         [DataMember]
         public uint ynk_effect_type = 0;
 
-        [DataMember]
-        public uint ynk_id = 0;
+        //[DataMember]
+        //public uint ynk_id = 0;
 
     }
 

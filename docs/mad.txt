@@ -1,12 +1,35 @@
 .mad files contain wild puppets and other map attributes for a particular area.
-the json should be pretty self-explanatory.
 
 "weight": encounter rate relative to other puppets in the same encounter type
 percentage calculated by weight divided by sum of weights (within the same encounter type)
 Note that the sum of weights seems to determine (or at least influence) the frequency of encounters in general (i.e. how long it takes before you get an encounter while running around in the grass)
 If the sum of weights is very low (minimum in vanilla SoD is 28) you run the risk of encounters not spawning at all or taking an eternity to spawn
 
+"tilesets": array of 4 integers indicating tileset IDs used in the map. tilesets are located in gn_dat5/map/chip
+"overworld_fog": enable fog effect on the overworld for this map
+"overworld_theme": song id
+"battle_background": image id
+"cave": are we in a cave?
+
 "special" encounters are blue grass encounters
 
 binary format:
 http://thpp.supersanctuary.net/forum/index.php?topic=493.msg3141#msg3141
+                            _
+0x00: u16 tilesets[4]        |
+0x08: u8 overworld_fog       |
+0x09: u8 overworld_theme     |
+0x0A: u8 battle_backgound    | (maybe u16?)
+0x0B: ???                    |
+0x0C: u8 cave                |
+0x0D: ???                    |
+0x0E: u16 encounters[10]     |
+0x22: u8 levels[10]          |--0x8B
+0x2C: u8 styles[10]          |
+0x36: u8 weights[10]         |
+0x40: u16 special puppets[5] |
+0x4A: u8 special levels[5]   |
+0x4f: u8 special styles[5]   |
+0x54: u8 special weights[5]  |
+0x59: char name[32]          |
+0x79-0x8A: ???              _|

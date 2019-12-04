@@ -1,1 +1,24 @@
 http://thpp.supersanctuary.net/forum/index.php?topic=493.msg3141#msg3141
+
+.fmf files contain level geometry and object placement.
+it consists of a 20 byte header followed by 13 layers (in separate planes) of level geometry.
+each layer is an array of 2 byte integers.
+the first 8 layers are used for tileset layout and are handled differently.
+layers 0-7 instead contain pairs of 1 byte values. first byte being an index into the tileset sprite sheet (see chp.txt) and second byte being an index into the tileset array in the mad file (see mad.txt).
+layer 8 contains a collision/zone mask.
+layer 10 and 11 contain placement of objects and events. each 2 byte value is an index into the obs file (see obs.txt).
+layers 9 and 12 seem to be unused but occasionally contain garbage(?).
+
+"width" and "height": size of the map in tiles
+"payload_length": size of the layer data following the header. (width * height * num_layers * 2)
+"num_layers": should always be 13
+
+---BINARY FORMAT---
+                         _
+0x00-0x03: file signature | "FMF_"
+0x04: u32 payload_len     |
+0x08: u32 width           |
+0x0C: u32 height          |-- 0x14 (20 byte header)
+0x10-0x11: ???            | always 0x2020 (?)
+0x12: u8  num_layers      | always 13 (?)
+0x13: ???                _| always 0x10 (?)

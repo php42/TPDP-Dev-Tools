@@ -84,6 +84,12 @@
             this.label21 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label79 = new System.Windows.Forms.Label();
+            this.label78 = new System.Windows.Forms.Label();
+            this.label77 = new System.Windows.Forms.Label();
+            this.label76 = new System.Windows.Forms.Label();
+            this.label75 = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
             this.Item4CB = new System.Windows.Forms.ComboBox();
             this.Item3CB = new System.Windows.Forms.ComboBox();
             this.Item2CB = new System.Windows.Forms.ComboBox();
@@ -103,6 +109,14 @@
             this.label15 = new System.Windows.Forms.Label();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.PortraitIDSC = new System.Windows.Forms.NumericUpDown();
+            this.label80 = new System.Windows.Forms.Label();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.label73 = new System.Windows.Forms.Label();
+            this.EndTextSC = new System.Windows.Forms.NumericUpDown();
+            this.IntroTextSC = new System.Windows.Forms.NumericUpDown();
+            this.label72 = new System.Windows.Forms.Label();
+            this.label68 = new System.Windows.Forms.Label();
             this.TrainerLevelSC = new System.Windows.Forms.NumericUpDown();
             this.label57 = new System.Windows.Forms.Label();
             this.TrainerExpSC = new System.Windows.Forms.NumericUpDown();
@@ -209,6 +223,7 @@
             this.SkillDataTB = new System.Windows.Forms.TextBox();
             this.SkillDataNameLabel = new System.Windows.Forms.Label();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -232,6 +247,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).BeginInit();
             this.TrainersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).BeginInit();
+            this.groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EndTextSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntroTextSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).BeginInit();
             this.groupBox8.SuspendLayout();
@@ -273,6 +292,7 @@
             this.TabControl.Controls.Add(this.TrainersTabPage);
             this.TabControl.Controls.Add(this.MapsTabPage);
             this.TabControl.Controls.Add(this.tabPage1);
+            this.TabControl.Controls.Add(this.tabPage2);
             this.TabControl.Location = new System.Drawing.Point(12, 12);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
@@ -524,7 +544,7 @@
             // 
             // ExportPuppetButton
             // 
-            this.ExportPuppetButton.Location = new System.Drawing.Point(120, 481);
+            this.ExportPuppetButton.Location = new System.Drawing.Point(120, 504);
             this.ExportPuppetButton.Name = "ExportPuppetButton";
             this.ExportPuppetButton.Size = new System.Drawing.Size(75, 23);
             this.ExportPuppetButton.TabIndex = 27;
@@ -535,7 +555,7 @@
             // 
             // NewPuppetSC
             // 
-            this.NewPuppetSC.Location = new System.Drawing.Point(287, 455);
+            this.NewPuppetSC.Location = new System.Drawing.Point(287, 478);
             this.NewPuppetSC.Maximum = new decimal(new int[] {
             512,
             0,
@@ -558,7 +578,7 @@
             // label58
             // 
             this.label58.AutoSize = true;
-            this.label58.Location = new System.Drawing.Point(201, 457);
+            this.label58.Location = new System.Drawing.Point(201, 480);
             this.label58.Name = "label58";
             this.label58.Size = new System.Drawing.Size(80, 13);
             this.label58.TabIndex = 25;
@@ -566,7 +586,7 @@
             // 
             // NewPuppetButton
             // 
-            this.NewPuppetButton.Location = new System.Drawing.Point(120, 452);
+            this.NewPuppetButton.Location = new System.Drawing.Point(120, 475);
             this.NewPuppetButton.Name = "NewPuppetButton";
             this.NewPuppetButton.Size = new System.Drawing.Size(75, 23);
             this.NewPuppetButton.TabIndex = 24;
@@ -588,7 +608,7 @@
             this.groupBox5.Controls.Add(this.label28);
             this.groupBox5.Controls.Add(this.StatHPSC);
             this.groupBox5.Controls.Add(this.label27);
-            this.groupBox5.Location = new System.Drawing.Point(120, 338);
+            this.groupBox5.Location = new System.Drawing.Point(120, 361);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(200, 108);
             this.groupBox5.TabIndex = 21;
@@ -944,16 +964,76 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label79);
+            this.groupBox2.Controls.Add(this.label78);
+            this.groupBox2.Controls.Add(this.label77);
+            this.groupBox2.Controls.Add(this.label76);
+            this.groupBox2.Controls.Add(this.label75);
+            this.groupBox2.Controls.Add(this.label74);
             this.groupBox2.Controls.Add(this.Item4CB);
             this.groupBox2.Controls.Add(this.Item3CB);
             this.groupBox2.Controls.Add(this.Item2CB);
             this.groupBox2.Controls.Add(this.Item1CB);
             this.groupBox2.Location = new System.Drawing.Point(120, 199);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 133);
+            this.groupBox2.Size = new System.Drawing.Size(200, 156);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Item Drops";
+            // 
+            // label79
+            // 
+            this.label79.AutoSize = true;
+            this.label79.Location = new System.Drawing.Point(6, 137);
+            this.label79.Name = "label79";
+            this.label79.Size = new System.Drawing.Size(111, 13);
+            this.label79.TabIndex = 28;
+            this.label79.Text = "**Drops only at lvl 21+";
+            // 
+            // label78
+            // 
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(6, 124);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(77, 13);
+            this.label78.TabIndex = 28;
+            this.label78.Text = "*40% at lvl 21+";
+            // 
+            // label77
+            // 
+            this.label77.AutoSize = true;
+            this.label77.Location = new System.Drawing.Point(133, 103);
+            this.label77.Name = "label77";
+            this.label77.Size = new System.Drawing.Size(27, 13);
+            this.label77.TabIndex = 28;
+            this.label77.Text = "10%";
+            // 
+            // label76
+            // 
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(133, 76);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(35, 13);
+            this.label76.TabIndex = 28;
+            this.label76.Text = "40%**";
+            // 
+            // label75
+            // 
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(133, 49);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(27, 13);
+            this.label75.TabIndex = 29;
+            this.label75.Text = "10%";
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(133, 22);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(31, 13);
+            this.label74.TabIndex = 28;
+            this.label74.Text = "80%*";
             // 
             // Item4CB
             // 
@@ -1165,6 +1245,9 @@
             // 
             // TrainersTabPage
             // 
+            this.TrainersTabPage.Controls.Add(this.PortraitIDSC);
+            this.TrainersTabPage.Controls.Add(this.label80);
+            this.TrainersTabPage.Controls.Add(this.groupBox11);
             this.TrainersTabPage.Controls.Add(this.TrainerLevelSC);
             this.TrainersTabPage.Controls.Add(this.label57);
             this.TrainersTabPage.Controls.Add(this.TrainerExpSC);
@@ -1203,6 +1286,95 @@
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
             // 
+            // PortraitIDSC
+            // 
+            this.PortraitIDSC.Location = new System.Drawing.Point(385, 85);
+            this.PortraitIDSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.PortraitIDSC.Name = "PortraitIDSC";
+            this.PortraitIDSC.Size = new System.Drawing.Size(121, 20);
+            this.PortraitIDSC.TabIndex = 34;
+            this.PortraitIDSC.ValueChanged += new System.EventHandler(this.PortraitIDSC_ValueChanged);
+            // 
+            // label80
+            // 
+            this.label80.AutoSize = true;
+            this.label80.Location = new System.Drawing.Point(324, 87);
+            this.label80.Name = "label80";
+            this.label80.Size = new System.Drawing.Size(54, 13);
+            this.label80.TabIndex = 33;
+            this.label80.Text = "Portrait ID";
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.Controls.Add(this.label73);
+            this.groupBox11.Controls.Add(this.EndTextSC);
+            this.groupBox11.Controls.Add(this.IntroTextSC);
+            this.groupBox11.Controls.Add(this.label72);
+            this.groupBox11.Controls.Add(this.label68);
+            this.groupBox11.Location = new System.Drawing.Point(264, 246);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(207, 100);
+            this.groupBox11.TabIndex = 32;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Dialogue";
+            // 
+            // label73
+            // 
+            this.label73.AutoSize = true;
+            this.label73.Location = new System.Drawing.Point(6, 76);
+            this.label73.Name = "label73";
+            this.label73.Size = new System.Drawing.Size(197, 13);
+            this.label73.TabIndex = 33;
+            this.label73.Text = "Note: ID of .txt file in gn_dat5/script/talk";
+            // 
+            // EndTextSC
+            // 
+            this.EndTextSC.Location = new System.Drawing.Point(78, 47);
+            this.EndTextSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.EndTextSC.Name = "EndTextSC";
+            this.EndTextSC.Size = new System.Drawing.Size(120, 20);
+            this.EndTextSC.TabIndex = 33;
+            this.EndTextSC.ValueChanged += new System.EventHandler(this.EndTextSC_ValueChanged);
+            // 
+            // IntroTextSC
+            // 
+            this.IntroTextSC.Location = new System.Drawing.Point(78, 20);
+            this.IntroTextSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.IntroTextSC.Name = "IntroTextSC";
+            this.IntroTextSC.Size = new System.Drawing.Size(120, 20);
+            this.IntroTextSC.TabIndex = 33;
+            this.IntroTextSC.ValueChanged += new System.EventHandler(this.IntroTextSC_ValueChanged);
+            // 
+            // label72
+            // 
+            this.label72.AutoSize = true;
+            this.label72.Location = new System.Drawing.Point(6, 49);
+            this.label72.Name = "label72";
+            this.label72.Size = new System.Drawing.Size(64, 13);
+            this.label72.TabIndex = 33;
+            this.label72.Text = "End Text ID";
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(6, 22);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(66, 13);
+            this.label68.TabIndex = 33;
+            this.label68.Text = "Intro Text ID";
+            // 
             // TrainerLevelSC
             // 
             this.TrainerLevelSC.Location = new System.Drawing.Point(551, 165);
@@ -1222,14 +1394,14 @@
             // 
             // TrainerExpSC
             // 
-            this.TrainerExpSC.Location = new System.Drawing.Point(386, 165);
+            this.TrainerExpSC.Location = new System.Drawing.Point(385, 165);
             this.TrainerExpSC.Maximum = new decimal(new int[] {
             1300000,
             0,
             0,
             0});
             this.TrainerExpSC.Name = "TrainerExpSC";
-            this.TrainerExpSC.Size = new System.Drawing.Size(120, 20);
+            this.TrainerExpSC.Size = new System.Drawing.Size(121, 20);
             this.TrainerExpSC.TabIndex = 29;
             this.TrainerExpSC.ValueChanged += new System.EventHandler(this.TrainerExpSC_ValueChanged);
             // 
@@ -2401,6 +2573,16 @@
             this.SkillDataCB.Text = "Skill";
             this.SkillDataCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataCB_SelectedIndexChanged);
             // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(768, 554);
+            this.tabPage2.TabIndex = 7;
+            this.tabPage2.Text = "Maps (Design)";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
             // GameDirBrowser
             // 
             this.GameDirBrowser.Description = "Locate Game Folder";
@@ -2428,7 +2610,7 @@
             this.Controls.Add(this.TabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v0.2.5 ALPHA";
+            this.Text = "TPDP Editor v1.0.0 BETA";
             this.TabControl.ResumeLayout(false);
             this.FilesTabPage.ResumeLayout(false);
             this.FilesTabPage.PerformLayout();
@@ -2447,12 +2629,18 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).EndInit();
             this.TrainersTabPage.ResumeLayout(false);
             this.TrainersTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).EndInit();
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EndTextSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.IntroTextSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerExpSC)).EndInit();
             this.groupBox8.ResumeLayout(false);
@@ -2680,6 +2868,21 @@
         private System.Windows.Forms.TextBox SkillDataTB;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.Label label71;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.Label label73;
+        private System.Windows.Forms.NumericUpDown EndTextSC;
+        private System.Windows.Forms.NumericUpDown IntroTextSC;
+        private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.Label label79;
+        private System.Windows.Forms.Label label78;
+        private System.Windows.Forms.Label label77;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.Label label75;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.NumericUpDown PortraitIDSC;
+        private System.Windows.Forms.Label label80;
     }
 }
 

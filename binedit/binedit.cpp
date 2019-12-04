@@ -26,34 +26,95 @@
 #endif
 
 #include <boost/algorithm/string.hpp>
+#include <boost/beast/core/detail/base64.hpp>
 #include "../common/textconvert.h"
 #include "../common/filesystem.h"
 #include "../common/console.h"
+#include "../common/endian.h"
+#include "../common/version.h"
 #include <libtpdp.h>
 #include "binedit.h"
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <chrono>
+#include <thread>
+#include <future>
+#include <functional>
+#include <stdexcept>
+#include <utility>
 
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
+namespace b64 = boost::beast::detail::base64;
 
-static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree)
+constexpr unsigned int JSON_MAJOR = 1;
+constexpr unsigned int JSON_MINOR = 0;
+
+class WorkerError : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+};
+
+/* synchronization for console access (scoped ownership, recursive) */
+class ScopedConsoleLock
+{
+private:
+    static std::recursive_mutex mtx_;
+    std::lock_guard<std::recursive_mutex> lock_;
+
+public:
+    ScopedConsoleLock() : lock_(mtx_) {}
+    ScopedConsoleLock(const ScopedConsoleLock&) = delete;
+    ScopedConsoleLock& operator=(const ScopedConsoleLock&) = delete;
+};
+
+std::recursive_mutex ScopedConsoleLock::mtx_;
+
+/* scoped ownership of the console + change console text color (color reverted at end of life) */
+class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed last
+{
+    using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
+};
+
+typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
+
+static std::string base64_encode(const void *src, const std::size_t len)
+{
+    std::string ret;
+    ret.resize(b64::encoded_size(len));
+    auto ret_len = b64::encode(ret.data(), src, len);
+    ret.resize(ret_len);
+
+    return ret;
+}
+
+static std::size_t base64_decode(const std::string& str, void *dst, const std::size_t len)
+{
+    if(str.size() > b64::encoded_size(len))
+        throw BineditException("Insufficient base64 buffer size.");
+
+    auto ret = b64::decode(dst, str.c_str(), str.size());
+
+    return ret.first;
+}
+
+static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree, bool pretty_print = true)
 {
     try
     {
         std::ofstream stream(out, std::ios::binary | std::ios::trunc);
-        boost::property_tree::write_json(stream, tree);
+        boost::property_tree::write_json(stream, tree, pretty_print);
     }
     catch(const boost::property_tree::json_parser_error& ex)
     {
-        ScopedConsoleColorChanger color(COLOR_WARN);
+        ScopedConsoleColorMT color(COLOR_WARN);
         std::cerr << "Error writing to file: " << out.string() << std::endl;
         std::cerr << ex.what() << std::endl;
     }
     catch(const std::exception& ex)
     {
-        ScopedConsoleColorChanger color(COLOR_WARN);
+        ScopedConsoleColorMT color(COLOR_WARN);
         std::cerr << "Error writing to file: " << out.string() << std::endl;
         std::cerr << ex.what() << std::endl;
     }
@@ -126,7 +187,10 @@ static void convert_nerds(const Path& in, const Path& out)
     if(file == nullptr)
         throw BineditException("failed to open file: " + in.string());
 
-    std::cout << in.string() << " >> " << out.string() << std::endl;
+    {
+        ScopedConsoleLock lock;
+        std::cout << in.string() << " >> " << out.string() << std::endl;
+    }
 
     boost::property_tree::ptree tree;
 
@@ -330,6 +394,14 @@ static void convert_mad(const Path& in, const Path& out)
 
     tree.put("location_name", sjis_to_utf8(std::string(data.location_name))); // needs to be UTF-8 or the parser complains when reading it back
 
+    for(auto i : data.tilesets)
+        tree.add("tilesets.", i);
+
+    tree.put("overworld_fog", data.overworld_fog);
+    tree.put("overworld_theme", data.overworld_theme);
+    tree.put("battle_background", data.battle_background);
+    tree.put("cave", data.cave);
+
     for(auto i = 0; i < 10; ++i)
     {
         if(i < 5)
@@ -376,6 +448,11 @@ static void patch_mad(const Path& data, const Path& json)
     mad.location_name[location_name.size()] = 0;
     mad.clear_encounters();
 
+    mad.overworld_fog = tree.get<uint8_t>("overworld_fog");
+    mad.overworld_theme = tree.get<uint8_t>("overworld_theme");
+    mad.battle_background = tree.get<uint8_t>("battle_background");
+    mad.cave = tree.get<uint8_t>("cave");
+
     if(tree.get_child("special_encounters").size() > 5)
         throw BineditException("Too many special encounters! Max is 5");
     if(tree.get_child("normal_encounters").size() > 10)
@@ -393,7 +470,7 @@ static void patch_mad(const Path& data, const Path& json)
 
         if(encounter.level > 100)
         {
-            ScopedConsoleColorChanger color(COLOR_WARN);
+            ScopedConsoleColorMT color(COLOR_WARN);
             std::cerr << "Warning: " << json.string() << "\r\nPuppet level greater than 100!" << std::endl;
         }
         if(encounter.style > 3)
@@ -414,7 +491,7 @@ static void patch_mad(const Path& data, const Path& json)
 
         if(encounter.level > 100)
         {
-            ScopedConsoleColorChanger color(COLOR_WARN);
+            ScopedConsoleColorMT color(COLOR_WARN);
             std::cerr << "Warning: " << json.string() << "\r\nPuppet level greater than 100!" << std::endl;
         }
         if(encounter.style > 3)
@@ -422,6 +499,13 @@ static void patch_mad(const Path& data, const Path& json)
 
         encounter.write(mad, index++, false);
     }
+
+    if(tree.get_child("tilesets").size() != 4)
+        throw BineditException("Must have 4 tilesets!");
+
+    index = 0;
+    for(auto& it : tree.get_child("tilesets"))
+        mad.tilesets[index++] = it.second.get_value<uint16_t>();
 
     mad.write(file.get());
 
@@ -448,6 +532,10 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
 
     tree.put("trainer_name", sjis_to_utf8(trainer_name));
     tree.put("trainer_title", sjis_to_utf8(trainer_title));
+    tree.put("portrait_id", read_le16(&file[0x20]));
+
+    tree.put("intro_text_id", read_le16(&file[0x25]));
+    tree.put("end_text_id", read_le16(&file[0x27]));
 
     unsigned char *buf = (unsigned char*)&file[0x2C];
     for(auto i = 0; i < 6; ++i)
@@ -492,6 +580,13 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
 
     auto trainer_name = utf8_to_sjis(tree.get<std::string>("trainer_name"));
     auto trainer_title = utf8_to_sjis(tree.get<std::string>("trainer_title"));
+    auto portrait_id = tree.get<uint16_t>("portrait_id");
+    write_le16(&file[0x20], portrait_id);
+
+    auto intro_text_id = tree.get<uint16_t>("intro_text_id");
+    auto end_text_id = tree.get<uint16_t>("end_text_id");
+    write_le16(&file[0x25], intro_text_id);
+    write_le16(&file[0x27], end_text_id);
 
     if(trainer_name.size() >= 32)
         throw BineditException("Trainer name must be less than 32 bytes!");
@@ -561,7 +656,10 @@ static void convert_skills(const Path& in, const Path& out)
     if(!file || sz != 0x1DC00)
         throw BineditException("Error reading file: " + in.string());
 
-    std::cout << in.string() << " >> " << out.string() << std::endl;
+    {
+        ScopedConsoleLock lock;
+        std::cout << in.string() << " >> " << out.string() << std::endl;
+    }
 
     boost::property_tree::ptree tree;
 
@@ -586,7 +684,7 @@ static void convert_skills(const Path& in, const Path& out)
         node.put("effect_id", skill.effect_id);
         node.put("effect_target", skill.effect_target);
         node.put("ynk_effect_type", skill.effect_type);
-        node.put("ynk_id", skill.ynk_id);
+        //node.put("ynk_id", skill.ynk_id);
 
         tree.add_child("skills.", node);
     }
@@ -638,13 +736,194 @@ static void patch_skills(const Path& data, const Path& json)
         skill.effect_id = node.get<uint16_t>("effect_id");
         skill.effect_target = node.get<uint8_t>("effect_target");
         skill.effect_type = node.get<uint8_t>("ynk_effect_type");
-        skill.ynk_id = node.get<uint16_t>("ynk_id");
+        //skill.ynk_id = node.get<uint16_t>("ynk_id");
 
         skill.write(&file[pos]);
     }
 
     if(!write_file(data.wstring(), file.get(), sz))
         throw BineditException("Failed to write to file: " + data.string());
+}
+
+static void convert_chip(const Path& in, const Path& out)
+{
+    std::size_t sz;
+    auto file = read_file(in.wstring(), sz);
+    if(!file || sz != 6656)
+        throw BineditException("Error reading file: " + in.string());
+
+    libtpdp::ChipData chp(file.get());
+    boost::property_tree::ptree tree;
+
+    for(auto i = 0; i < 256; ++i)
+    {
+        tree.add("index_map.", chp[i]);
+    }
+
+    save_as_utf8(out, tree);
+}
+
+static void convert_fmf(const Path& in, const Path& out)
+{
+    libtpdp::FMFData fmf(in.wstring());
+    boost::property_tree::ptree tree;
+
+    tree.put("width", fmf.map_width);
+    tree.put("height", fmf.map_height);
+    tree.put("payload_length", fmf.payload_len);
+    tree.put("num_layers", fmf.num_layers);
+    tree.put("unknown_1", fmf.unk1);
+    tree.put("unknown_2", fmf.unk2);
+    tree.put("unknown_3", fmf.unk3);
+
+    const auto layer_sz = fmf.map_width * fmf.map_height * 2;
+    for(auto i = 0; i < fmf.num_layers; ++i)
+        tree.add("layers.", base64_encode(fmf.get_layer(i), layer_sz));
+
+    save_as_utf8(out, tree);
+}
+
+static void patch_fmf(const Path& data, const Path& json)
+{
+    libtpdp::FMFData fmf(data.wstring());
+    boost::property_tree::ptree tree;
+    read_as_utf8(json, tree);
+
+    auto width = tree.get<std::size_t>("width");
+    auto height = tree.get<std::size_t>("height");
+    auto payload_len = tree.get<std::size_t>("payload_length");
+    auto num_layers = tree.get<std::size_t>("num_layers");
+    auto unk1 = tree.get<uint8_t>("unknown_1");
+    auto unk2 = tree.get<uint8_t>("unknown_2");
+    auto unk3 = tree.get<uint8_t>("unknown_3");
+
+    if(num_layers != 13)
+        throw BineditException("FMF must have 13 layers.");
+
+    if((width * height * num_layers * 2) != payload_len)
+        throw BineditException("Invalid payload length.");
+
+    if((width != fmf.map_width) || (height != fmf.map_height))
+    {
+        fmf.resize(width, height);
+    }
+
+    fmf.num_layers = num_layers;
+    fmf.unk1 = unk1;
+    fmf.unk2 = unk2;
+    fmf.unk3 = unk3;
+
+    if(tree.get_child("layers").size() != 13)
+        throw BineditException("FMF must have 13 layers.");
+
+    auto i = 0;
+    const auto layer_sz = fmf.map_width * fmf.map_height * 2;
+    for(auto& it : tree.get_child("layers"))
+    {
+        auto str = it.second.get_value<std::string>();
+        if(str.size() > b64::encoded_size(layer_sz))
+            throw BineditException("Layer data exceeds buffer size.");
+
+        auto c = base64_decode(str, fmf.get_layer(i++), layer_sz);
+        if(c > layer_sz)
+            throw BineditException("Map layer overflow.");
+    }
+
+    fmf.write(data.wstring());
+}
+
+static void convert_obs(const Path& in, const Path& out)
+{
+    const libtpdp::OBSData obs(in.wstring());
+    boost::property_tree::ptree tree;
+
+    for(std::size_t i = 0; i < obs.num_entries(); ++i)
+    {
+        const auto entry = obs.get_entry(i);
+        boost::property_tree::ptree node;
+
+        // For some reason std::to_string is a million times
+        // faster than the built-in conversion???
+        node.put("index", std::to_string(i));
+        node.put("object_id", std::to_string(entry.object_id));
+        node.put("type", std::to_string(entry.type));
+        node.put("unknown", std::to_string(entry.unknown));
+        node.put("event_arg", std::to_string(entry.event_arg));
+        node.put("event_index", std::to_string(entry.event_index));
+
+        for(auto j : entry.flags)
+            node.add("flags.", std::to_string(j));
+
+        tree.add_child("entries.", node);
+    }
+
+    save_as_utf8(out, tree);
+}
+
+static void patch_obs(const Path& data, const Path& json)
+{
+    libtpdp::OBSData obs(data.wstring());
+    boost::property_tree::ptree tree;
+    read_as_utf8(json, tree);
+
+    for(auto& it : tree.get_child("entries"))
+    {
+        auto& node = it.second;
+        libtpdp::OBSEntry entry;
+
+        auto index = node.get<std::size_t>("index");
+        if(index > obs.num_entries())
+            throw BineditException("OBS entry out of range.");
+
+        entry.object_id = node.get<uint16_t>("object_id");
+        entry.type = node.get<uint8_t>("type");
+        entry.unknown = node.get<uint8_t>("unknown");
+        entry.event_arg = node.get<uint16_t>("event_arg");
+        entry.event_index = node.get<uint16_t>("event_index");
+
+        if(node.get_child("flags").size() != 12)
+            throw BineditException("OBS entry must have 12 flags.");
+
+        auto i = 0;
+        for(auto& flag : node.get_child("flags"))
+            entry.flags[i++] = flag.second.get_value<uint8_t>();
+
+        entry.write(obs[index]);
+    }
+
+    obs.write(data.wstring());
+}
+
+static void write_version_json(const Path& dir)
+{
+    boost::property_tree::ptree tree;
+    tree.put("major", JSON_MAJOR);
+    tree.put("minor", JSON_MINOR);
+    tree.put("dev_tools", VERSION_STRING);
+
+    save_as_utf8(dir / "version.json", tree);
+}
+
+static std::tuple<unsigned int, unsigned int, std::string> read_version_json(const Path& dir)
+{
+    boost::property_tree::ptree tree;
+    read_as_utf8(dir / "version.json", tree);
+    return { tree.get<unsigned int>("major"), tree.get<unsigned int>("minor"), tree.get<std::string>("dev_tools") };
+}
+
+template<typename Func, typename... ArgTypes>
+std::function<void()> make_worker(const std::string& file, Func func, ArgTypes... args)
+{
+    return [=]() {
+        try
+        {
+            func(args...);
+        }
+        catch(const std::exception& ex)
+        {
+            throw WorkerError("Error converting file: " + file + "\r\n" + ex.what());
+        }
+    };
 }
 
 bool convert(const Path& input)
@@ -658,8 +937,20 @@ bool convert(const Path& input)
     if(!rand_data || rand_sz != 65536)
         throw BineditException("Error opening file: " + rand_path.string() + "\r\nThis file is REQUIRED for converting .dod files.");
 
+    write_version_json(input);
+
+    std::vector<std::future<void>> futures;
+    auto max_threads = std::thread::hardware_concurrency();
+    if(max_threads < 1)
+        max_threads = 1;
+
+    std::cout << "Using up to " << max_threads << " concurrent threads" << std::endl;
+
     auto count_mad = 0;
     auto count_dod = 0;
+    auto count_chp = 0;
+    auto count_fmf = 0;
+    auto count_obs = 0;
     for(auto& entry : fs::recursive_directory_iterator(input))
     {
         if(!entry.is_regular_file())
@@ -667,44 +958,119 @@ bool convert(const Path& input)
 
         try
         {
-            if(algo::iequals(entry.path().extension().wstring(), L".mad"))
+            auto in = entry.path();
+            if(algo::iequals(in.extension().wstring(), L".mad"))
             {
-                auto json = entry.path();
+                auto json = in;
                 json.replace_extension(L".json");
-                convert_mad(entry.path(), json);
+                //convert_mad(in, json);
                 ++count_mad;
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_mad, in, json)));
             }
-            else if(algo::iequals(entry.path().extension().wstring(), L".dod"))
+            else if(algo::iequals(in.extension().wstring(), L".dod"))
             {
-                auto json = entry.path();
+                auto json = in;
                 json.replace_extension(L".json");
-                convert_dod(entry.path(), json, rand_data.get());
+                //convert_dod(in, json, rand_data.get());
                 ++count_dod;
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_dod, in, json, rand_data.get())));
             }
-            else if(algo::iequals(entry.path().filename().wstring(), L"DollData.dbs"))
+            else if(algo::iequals(in.extension().wstring(), L".chp"))
             {
-                auto json = entry.path();
+                auto json = in;
                 json.replace_extension(L".json");
-                convert_nerds(entry.path(), json);
+                //convert_chip(in, json);
+                ++count_chp;
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_chip, in, json)));
             }
-            else if(algo::iequals(entry.path().filename().wstring(), L"SkillData.sbs"))
+            else if(algo::iequals(in.extension().wstring(), L".fmf"))
             {
-                auto json = entry.path();
+                auto json = in;
+                json.replace_filename(json.stem().wstring() + L"_fmf.json");
+                //convert_fmf(in, json);
+                ++count_fmf;
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_fmf, in, json)));
+            }
+            else if(algo::iequals(in.extension().wstring(), L".obs"))
+            {
+                auto json = in;
+                json.replace_filename(json.stem().wstring() + L"_obs.json");
+                //convert_obs(in, json);
+                ++count_obs;
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_obs, in, json)));
+            }
+            else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
+            {
+                auto json = in;
                 json.replace_extension(L".json");
-                convert_skills(entry.path(), json);
+                //convert_nerds(in, json);
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_nerds, in, json)));
+            }
+            else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
+            {
+                auto json = in;
+                json.replace_extension(L".json");
+                //convert_skills(in, json);
+                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_skills, in, json)));
             }
         }
         catch(const std::exception& ex)
         {
-            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
             std::cerr << "Error converting file: " << entry.path().string() << std::endl;
             std::cerr << ex.what() << std::endl;
-            return false;
         }
+
+        for(;;)
+        {
+            for(auto it = futures.begin(); it != futures.end();)
+            {
+                try
+                {
+                    if(it->wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+                    {
+                        it->get();
+                        it = futures.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
+                }
+                catch(const WorkerError& ex)
+                {
+                    ScopedConsoleColorMT color(COLOR_CRITICAL);
+                    std::cerr << ex.what() << std::endl;
+                    it = futures.erase(it);
+                }
+            }
+            if(futures.size() >= max_threads)
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            else
+                break;
+        }
+    }
+
+    while(!futures.empty())
+    {
+        try
+        {
+            if(futures.back().valid())
+                futures.back().get();
+        }
+        catch(const WorkerError& ex)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::cerr << ex.what() << std::endl;
+        }
+        futures.pop_back();
     }
 
     std::cout << "converted " << count_dod << " .dod files." << std::endl;
     std::cout << "converted " << count_mad << " .mad files." << std::endl;
+    std::cout << "converted " << count_chp << " .chp files." << std::endl;
+    std::cout << "converted " << count_fmf << " .fmf files." << std::endl;
+    std::cout << "converted " << count_obs << " .obs files." << std::endl;
 
     return true;
 }
@@ -714,6 +1080,23 @@ bool patch(const Path& input)
     if(!fs::exists(input) || !fs::is_directory(input))
         throw BineditException("Directory does not exist: " + input.string());
 
+    if(!fs::exists(input / "version.json"))
+        throw BineditException("Could not locate version.json. Please run convert.");
+
+    auto ver = read_version_json(input);
+    const auto ver_major = std::get<0>(ver);
+    const auto ver_minor = std::get<1>(ver);
+    if((ver_major != JSON_MAJOR) || (ver_minor != JSON_MINOR))
+    {
+        ScopedConsoleColorChanger color(COLOR_CRITICAL);
+
+        bool newer = (ver_major > JSON_MAJOR) || (ver_major == JSON_MAJOR && (ver_minor > JSON_MINOR));
+
+        std::cerr << "Error: Working directory contains " << (newer ? "a newer" : "an older") << " JSON dump format." << std::endl;
+        std::cerr << "Please run convert to update the JSON, or use " << (newer ? "a newer" : "an older") << " version of TPDP-Dev-Tools." << std::endl;
+        return false;
+    }
+
     auto rand_path = input / L"gn_dat1.arc/common/EFile.bin";
     std::size_t rand_sz;
     auto rand_data = read_file(rand_path.wstring(), rand_sz);
@@ -722,6 +1105,8 @@ bool patch(const Path& input)
 
     auto count_mad = 0;
     auto count_dod = 0;
+    auto count_fmf = 0;
+    auto count_obs = 0;
     for(auto& entry : fs::recursive_directory_iterator(input))
     {
         if(!entry.is_regular_file())
@@ -738,6 +1123,26 @@ bool patch(const Path& input)
                 {
                     patch_mad(entry.path(), json);
                     ++count_mad;
+                }
+            }
+            else if(algo::iequals(entry.path().extension().wstring(), L".fmf"))
+            {
+                json = entry.path();
+                json.replace_filename(json.stem().wstring() + L"_fmf.json");
+                if(fs::exists(json) && fs::is_regular_file(json))
+                {
+                    patch_fmf(entry.path(), json);
+                    ++count_fmf;
+                }
+            }
+            else if(algo::iequals(entry.path().extension().wstring(), L".obs"))
+            {
+                json = entry.path();
+                json.replace_filename(json.stem().wstring() + L"_obs.json");
+                if(fs::exists(json) && fs::is_regular_file(json))
+                {
+                    patch_obs(entry.path(), json);
+                    ++count_obs;
                 }
             }
             else if(algo::iequals(entry.path().extension().wstring(), L".dod"))
@@ -776,6 +1181,8 @@ bool patch(const Path& input)
 
     std::cout << "patched " << count_dod << " .dod files." << std::endl;
     std::cout << "patched " << count_mad << " .mad files." << std::endl;
+    std::cout << "patched " << count_fmf << " .fmf files." << std::endl;
+    std::cout << "patched " << count_obs << " .obs files." << std::endl;
 
     return true;
 }

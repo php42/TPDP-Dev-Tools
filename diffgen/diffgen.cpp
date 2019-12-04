@@ -826,6 +826,9 @@ bool patch(const Path& input, const Path& output)
     std::unordered_map<int, std::vector<std::tuple<uint32_t, std::string, std::string>>> diffs;
     libtpdp::Archive arc;
 
+    std::size_t diff_count = 0;
+    std::size_t diffs_applied = 0;
+
     std::size_t sz;
     auto diff_file = read_file(output.wstring(), sz);
     if(!diff_file || (sz < DiffFileHeader::size))
@@ -937,6 +940,7 @@ bool patch(const Path& input, const Path& output)
             if(arc.is_ynk() != ynk)
                 throw DiffgenException("Game version mismatch: attempting to patch base game with a diff for YnK/SoD or vice versa");
 
+            ++diff_count;
             boost::crc_32_type src_crc;
             src_crc.process_bytes(arc.data(), arc.size());
             if(src_crc.checksum() != header.crc)
@@ -961,8 +965,16 @@ bool patch(const Path& input, const Path& output)
 
             if(!new_arc.save(arc_path.wstring()))
                 throw DiffgenException("Failed to write to file: " + arc_path.string());
+            ++diffs_applied;
         }
 
+        std::cout << "Applied " << diffs_applied << "/" << diff_count << " diffs." << std::endl;
+        if(diffs_applied == 0)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::cerr << "Failed to apply patch. Are you using the correct game version?" << std::endl;
+            return false;
+        }
         return true;
     }
 
@@ -1054,6 +1066,7 @@ bool patch(const Path& input, const Path& output)
                 return false;
             }
 
+            ++diff_count;
             boost::crc_32_type src_crc;
             src_crc.process_bytes(file.data(), file.size());
             if(src_crc.checksum() != crc)
@@ -1075,12 +1088,20 @@ bool patch(const Path& input, const Path& output)
 
             if(arc.repack_file(file_iter, target.data(), target.size()) >= arc.end())
                 throw DiffgenException("Error repacking file: " + path);
+            ++diffs_applied;
         }
 
         if(!arc.save(arc_path.wstring()))
             throw DiffgenException("Failed to write to file: " + arc_path.string());
     }
 
+    std::cout << "Applied " << diffs_applied << "/" << diff_count << " diffs." << std::endl;
+    if(diffs_applied == 0)
+    {
+        ScopedConsoleColorChanger color(COLOR_CRITICAL);
+        std::cerr << "Failed to apply patch. Are you using the correct game version?" << std::endl;
+        return false;
+    }
     return true;
 }
 

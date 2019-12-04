@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <map>
+#include "../common/typedefs.h"
 
 namespace libtpdp
 {
@@ -72,6 +74,10 @@ enum SkillType
     SKILL_TYPE_MAX
 };
 
+/* NOTE: Many of these classes are intended to modify data in-place.
+ * Reading from one place and writing to another may not produce a proper copy.
+ * Classes that read entire files are safe to copy in that fashion. */
+
 /* base data for skills */
 class SkillData
 {
@@ -92,7 +98,7 @@ public:
 	SkillData(const void *data) {read(data);}
 
 	void read(const void *data);
-    void write(void *data);
+    void write(void *data) const;
 };
 
 /* base data for an individual style of a puppet */
@@ -113,7 +119,7 @@ public:
 	StyleData(const void *data) {read(data);}
 
 	void read(const void *data);
-    void write(void *data);
+    void write(void *data) const;
     std::wstring style_string() const;
 };
 
@@ -132,7 +138,7 @@ public:
 	PuppetData(const void *data) {read(data);}
 
 	void read(const void *data);
-    void write(void *data);
+    void write(void *data) const;
 
     int level_to_learn(unsigned int style_index, unsigned int skill_id) const;  /* level required to learn a skill, returns -1 if puppet cannot learn the skill by levelling */
 	int max_style_index() const;
@@ -183,7 +189,7 @@ public:
 	void read(const MADData& data, int index, bool special);
 
 	/* save this encounter to the given index in the supplied MAD file, 'special' toggles between normal and blue grass encounters */
-	void write(MADData& data, int index, bool special);
+	void write(MADData& data, int index, bool special) const;
 };
 
 /* data from .mad files. details wild puppet encounters for a specific location
@@ -191,6 +197,12 @@ public:
 class MADData
 {
 public:
+    uint16_t tilesets[4];
+    uint8_t overworld_fog;
+    uint8_t overworld_theme;
+    uint8_t battle_background;
+    uint8_t cave;
+
     /* encounters in normal grass */
     uint16_t puppet_ids[10];            /* IDs of puppets found in normal grass */
     uint8_t puppet_levels[10];          /* Average levels of puppets found in normal grass */
@@ -210,8 +222,89 @@ public:
     MADData(const void *data) { read(data); }
 
     void read(const void *data);
-    void write(void *data);
+    void write(void *data) const;
 	void clear_encounters();
+};
+
+class ChipData
+{
+private:
+    uint8_t index_map_[256];
+
+public:
+    ChipData() = default;
+    ChipData(const void *data) { read(data); }
+
+    void read(const void *data);
+
+    auto operator[](unsigned int index) const { return index_map_[index]; }
+};
+
+class FMFData
+{
+private:
+    std::size_t sz_;
+    FileBuf data_;
+
+    std::vector<uint8_t*> layers_;
+
+public:
+    std::size_t payload_len;    // length of data after header
+    std::size_t map_width;
+    std::size_t map_height;
+    std::size_t num_layers;     // should always be 13
+    uint8_t unk1, unk2, unk3;   // 32, 32, 16
+
+    FMFData() = default;
+    FMFData(std::wstring path) { read(path); }
+
+    void read(std::wstring path);
+    void write(std::wstring path);
+
+    void resize(std::size_t width, std::size_t height);
+
+    const auto get_layer(std::size_t layer) const { return layers_[layer]; }
+    auto get_layer(std::size_t layer) { return layers_[layer]; }
+};
+
+class OBSEntry
+{
+public:
+    uint16_t object_id;
+    uint8_t type;
+    uint8_t unknown;
+    uint16_t event_arg;
+    uint16_t event_index;
+    uint8_t flags[12];
+
+    OBSEntry() = default;
+    OBSEntry(const void *data) { read(data); }
+
+    void read(const void *data);
+    void write(void *data) const;
+};
+
+class OBSData
+{
+private:
+    std::size_t sz_;
+    FileBuf data_;
+
+public:
+    OBSData() = default;
+    OBSData(std::wstring path) { read(path); }
+
+    void read(std::wstring path);
+    void write(std::wstring path) const;
+
+    const uint8_t *operator[](std::size_t index) const { return (uint8_t*)&data_[index * 20]; }
+    uint8_t *operator[](std::size_t index) { return (uint8_t*)&data_[index * 20]; }
+
+    OBSEntry get_entry(std::size_t index) const { return OBSEntry((*this)[index]); }
+    void set_entry(const OBSEntry& entry, std::size_t index) { entry.write((*this)[index]); }
+
+    auto size() const { return sz_; }
+    auto num_entries() const { return sz_ / 20; }
 };
 
 /* parses csv files and splits each field into a separate string */
