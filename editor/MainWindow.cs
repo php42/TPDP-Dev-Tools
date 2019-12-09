@@ -62,6 +62,8 @@ namespace editor
                     return;
             }
 
+            InitDesign();
+
             try
             {
                 var str = File.ReadAllText(path, Encoding.GetEncoding(932));
@@ -430,6 +432,7 @@ namespace editor
                 if(!File.Exists(dolldata))
                 {
                     ErrMsg("Could not locate DollData.json");
+                    ConsoleOutput.Clear();
                     return;
                 }
             }
@@ -438,6 +441,7 @@ namespace editor
             if(!File.Exists(versiondata))
             {
                 ErrMsg("Seems like you're using an old JSON dump from an alpha build. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
+                ConsoleOutput.Clear();
                 return;
             }
 
@@ -451,14 +455,17 @@ namespace editor
                 {
                     bool newer = (ver.major > 1) || (ver.major == 1 && (ver.minor > 0));
                     ErrMsg("Current JSON dump is for " + (newer ? "a newer" : "an older") + " version of TPDP-Dev-Tools. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
+                    ConsoleOutput.Clear();
                     return;
                 }
             }
             catch(Exception ex)
             {
-                ErrMsg("Error parsing file: " + versiondata + "\r\n" + ex.Message);
+                ErrMsg("Error reading file: " + versiondata + "\r\n" + ex.Message);
                 return;
             }
+
+            working_dir_ = wkdir;
 
             // Parse puppets
             puppets_.Clear();
@@ -685,8 +692,19 @@ namespace editor
                 return;
             }
 
+            // Populate Design tab
+            try
+            {
+                LoadDesign();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error initializing level designer: " + ex.Message);
+                Reset();
+                return;
+            }
+
             ConsoleOutput.AppendText("Done.\r\n");
-            working_dir_ = wkdir;
         }
     }
 }

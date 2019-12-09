@@ -2,6 +2,10 @@
 
 namespace editor.json
 {
+    // Compiler can't detect members being set
+    // by the JSON serializer and complains a lot
+#pragma warning disable CS0649
+
     [DataContract]
     class VersionJson
     {
@@ -121,14 +125,11 @@ namespace editor.json
         [DataMember]
         public uint cave = 0;
 
-        // shush
-#pragma warning disable CS0649
         [DataMember]
-        public MadEncounter[] special_encounters;
+        public MadEncounter[] special_encounters = new MadEncounter[5];
 
         [DataMember]
-        public MadEncounter[] normal_encounters;
-#pragma warning restore CS0649
+        public MadEncounter[] normal_encounters = new MadEncounter[10];
 
         public string filepath;
         public int id;
@@ -159,7 +160,10 @@ namespace editor.json
         public uint unknown_3;
 
         [DataMember]
-        public string[] layers;
+        public string[] layers = new string[13];
+
+        public string filepath = "";
+        //public int id;
     }
 
     [DataContract]
@@ -184,7 +188,7 @@ namespace editor.json
         public uint event_index;
 
         [DataMember]
-        public uint[] flags;
+        public uint[] flags = new uint[12];
     }
 
     [DataContract]
@@ -192,6 +196,9 @@ namespace editor.json
     {
         [DataMember]
         public ObsEntry[] entries;
+
+        public string filepath = "";
+        //public int id;
     }
 
     [DataContract]
@@ -298,10 +305,8 @@ namespace editor.json
     [DataContract]
     class SkillJson
     {
-        // shush
-#pragma warning disable CS0649
         [DataMember]
         public SkillData[] skills;
-#pragma warning restore CS0649
     }
+#pragma warning restore CS0649
 }

@@ -224,11 +224,33 @@
             this.SkillDataNameLabel = new System.Windows.Forms.Label();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.DesignSaveBT = new System.Windows.Forms.Button();
+            this.MapImgPanel = new System.Windows.Forms.Panel();
+            this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
+            this.Tileset3SC = new System.Windows.Forms.NumericUpDown();
+            this.Tileset2SC = new System.Windows.Forms.NumericUpDown();
+            this.label84 = new System.Windows.Forms.Label();
+            this.Tileset1SC = new System.Windows.Forms.NumericUpDown();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.BrushValueSC = new System.Windows.Forms.NumericUpDown();
+            this.label85 = new System.Windows.Forms.Label();
+            this.TilesetImgPanel = new System.Windows.Forms.Panel();
+            this.label83 = new System.Windows.Forms.Label();
+            this.BrushTilesetSC = new System.Windows.Forms.NumericUpDown();
+            this.label82 = new System.Windows.Forms.Label();
+            this.BrushLayerCB = new System.Windows.Forms.ComboBox();
+            this.groupBox12 = new System.Windows.Forms.GroupBox();
+            this.LayerVisibiltyCB = new System.Windows.Forms.CheckedListBox();
+            this.MapDesignCB = new System.Windows.Forms.ComboBox();
+            this.label81 = new System.Windows.Forms.Label();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
+            this.DesignLabelCB = new System.Windows.Forms.CheckBox();
+            this.DesignResizeBT = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -283,6 +305,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).BeginInit();
+            this.groupBox13.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrushValueSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BrushTilesetSC)).BeginInit();
+            this.groupBox12.SuspendLayout();
             this.SuspendLayout();
             // 
             // TabControl
@@ -759,6 +790,7 @@
             // 
             // SkillCardLB
             // 
+            this.SkillCardLB.CheckOnClick = true;
             this.SkillCardLB.FormattingEnabled = true;
             this.SkillCardLB.Location = new System.Drawing.Point(6, 19);
             this.SkillCardLB.Name = "SkillCardLB";
@@ -2575,6 +2607,20 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button1);
+            this.tabPage2.Controls.Add(this.DesignResizeBT);
+            this.tabPage2.Controls.Add(this.DesignLabelCB);
+            this.tabPage2.Controls.Add(this.DesignSaveBT);
+            this.tabPage2.Controls.Add(this.MapImgPanel);
+            this.tabPage2.Controls.Add(this.Tileset4SC);
+            this.tabPage2.Controls.Add(this.Tileset3SC);
+            this.tabPage2.Controls.Add(this.Tileset2SC);
+            this.tabPage2.Controls.Add(this.label84);
+            this.tabPage2.Controls.Add(this.Tileset1SC);
+            this.tabPage2.Controls.Add(this.groupBox13);
+            this.tabPage2.Controls.Add(this.groupBox12);
+            this.tabPage2.Controls.Add(this.MapDesignCB);
+            this.tabPage2.Controls.Add(this.label81);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -2582,6 +2628,237 @@
             this.tabPage2.TabIndex = 7;
             this.tabPage2.Text = "Maps (Design)";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // DesignSaveBT
+            // 
+            this.DesignSaveBT.Location = new System.Drawing.Point(167, 4);
+            this.DesignSaveBT.Name = "DesignSaveBT";
+            this.DesignSaveBT.Size = new System.Drawing.Size(49, 23);
+            this.DesignSaveBT.TabIndex = 0;
+            this.DesignSaveBT.Text = "Save";
+            this.DesignSaveBT.UseVisualStyleBackColor = true;
+            this.DesignSaveBT.Click += new System.EventHandler(this.DesignSaveBT_Click);
+            // 
+            // MapImgPanel
+            // 
+            this.MapImgPanel.AutoScroll = true;
+            this.MapImgPanel.Location = new System.Drawing.Point(222, 6);
+            this.MapImgPanel.Name = "MapImgPanel";
+            this.MapImgPanel.Size = new System.Drawing.Size(540, 542);
+            this.MapImgPanel.TabIndex = 11;
+            // 
+            // Tileset4SC
+            // 
+            this.Tileset4SC.Location = new System.Drawing.Point(178, 33);
+            this.Tileset4SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset4SC.Name = "Tileset4SC";
+            this.Tileset4SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset4SC.TabIndex = 10;
+            this.Tileset4SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // Tileset3SC
+            // 
+            this.Tileset3SC.Location = new System.Drawing.Point(137, 33);
+            this.Tileset3SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset3SC.Name = "Tileset3SC";
+            this.Tileset3SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset3SC.TabIndex = 9;
+            this.Tileset3SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // Tileset2SC
+            // 
+            this.Tileset2SC.Location = new System.Drawing.Point(96, 33);
+            this.Tileset2SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset2SC.Name = "Tileset2SC";
+            this.Tileset2SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset2SC.TabIndex = 8;
+            this.Tileset2SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // label84
+            // 
+            this.label84.AutoSize = true;
+            this.label84.Location = new System.Drawing.Point(6, 35);
+            this.label84.Name = "label84";
+            this.label84.Size = new System.Drawing.Size(43, 13);
+            this.label84.TabIndex = 7;
+            this.label84.Text = "Tilesets";
+            // 
+            // Tileset1SC
+            // 
+            this.Tileset1SC.Location = new System.Drawing.Point(55, 33);
+            this.Tileset1SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset1SC.Name = "Tileset1SC";
+            this.Tileset1SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset1SC.TabIndex = 6;
+            this.Tileset1SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.BrushValueSC);
+            this.groupBox13.Controls.Add(this.label85);
+            this.groupBox13.Controls.Add(this.TilesetImgPanel);
+            this.groupBox13.Controls.Add(this.label83);
+            this.groupBox13.Controls.Add(this.BrushTilesetSC);
+            this.groupBox13.Controls.Add(this.label82);
+            this.groupBox13.Controls.Add(this.BrushLayerCB);
+            this.groupBox13.Location = new System.Drawing.Point(9, 297);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(207, 251);
+            this.groupBox13.TabIndex = 5;
+            this.groupBox13.TabStop = false;
+            this.groupBox13.Text = "Brush";
+            // 
+            // BrushValueSC
+            // 
+            this.BrushValueSC.Location = new System.Drawing.Point(128, 46);
+            this.BrushValueSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.BrushValueSC.Name = "BrushValueSC";
+            this.BrushValueSC.Size = new System.Drawing.Size(73, 20);
+            this.BrushValueSC.TabIndex = 11;
+            this.BrushValueSC.ValueChanged += new System.EventHandler(this.BrushValueSC_ValueChanged);
+            // 
+            // label85
+            // 
+            this.label85.AutoSize = true;
+            this.label85.Location = new System.Drawing.Point(88, 48);
+            this.label85.Name = "label85";
+            this.label85.Size = new System.Drawing.Size(34, 13);
+            this.label85.TabIndex = 11;
+            this.label85.Text = "Value";
+            // 
+            // TilesetImgPanel
+            // 
+            this.TilesetImgPanel.AutoScroll = true;
+            this.TilesetImgPanel.Location = new System.Drawing.Point(6, 72);
+            this.TilesetImgPanel.Name = "TilesetImgPanel";
+            this.TilesetImgPanel.Size = new System.Drawing.Size(195, 173);
+            this.TilesetImgPanel.TabIndex = 7;
+            // 
+            // label83
+            // 
+            this.label83.AutoSize = true;
+            this.label83.Location = new System.Drawing.Point(6, 48);
+            this.label83.Name = "label83";
+            this.label83.Size = new System.Drawing.Size(38, 13);
+            this.label83.TabIndex = 6;
+            this.label83.Text = "Tileset";
+            // 
+            // BrushTilesetSC
+            // 
+            this.BrushTilesetSC.Location = new System.Drawing.Point(50, 46);
+            this.BrushTilesetSC.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.BrushTilesetSC.Name = "BrushTilesetSC";
+            this.BrushTilesetSC.Size = new System.Drawing.Size(32, 20);
+            this.BrushTilesetSC.TabIndex = 6;
+            this.BrushTilesetSC.ValueChanged += new System.EventHandler(this.BrushTilesetSC_ValueChanged);
+            // 
+            // label82
+            // 
+            this.label82.AutoSize = true;
+            this.label82.Location = new System.Drawing.Point(6, 22);
+            this.label82.Name = "label82";
+            this.label82.Size = new System.Drawing.Size(66, 13);
+            this.label82.TabIndex = 6;
+            this.label82.Text = "Active Layer";
+            // 
+            // BrushLayerCB
+            // 
+            this.BrushLayerCB.FormattingEnabled = true;
+            this.BrushLayerCB.Items.AddRange(new object[] {
+            "Geometry 1",
+            "Geometry 2",
+            "Geometry 3",
+            "Geometry 4",
+            "Geometry 5",
+            "Geometry 6",
+            "Geometry 7",
+            "Geometry 8",
+            "Collision/Zone Mask",
+            "Layer 10",
+            "Objects 1",
+            "Objects 2",
+            "Layer 13"});
+            this.BrushLayerCB.Location = new System.Drawing.Point(80, 19);
+            this.BrushLayerCB.Name = "BrushLayerCB";
+            this.BrushLayerCB.Size = new System.Drawing.Size(121, 21);
+            this.BrushLayerCB.TabIndex = 0;
+            this.BrushLayerCB.SelectedIndexChanged += new System.EventHandler(this.BrushLayerCB_SelectedIndexChanged);
+            // 
+            // groupBox12
+            // 
+            this.groupBox12.Controls.Add(this.LayerVisibiltyCB);
+            this.groupBox12.Location = new System.Drawing.Point(9, 62);
+            this.groupBox12.Name = "groupBox12";
+            this.groupBox12.Size = new System.Drawing.Size(136, 229);
+            this.groupBox12.TabIndex = 4;
+            this.groupBox12.TabStop = false;
+            this.groupBox12.Text = "Layer Visibility";
+            // 
+            // LayerVisibiltyCB
+            // 
+            this.LayerVisibiltyCB.CheckOnClick = true;
+            this.LayerVisibiltyCB.FormattingEnabled = true;
+            this.LayerVisibiltyCB.Items.AddRange(new object[] {
+            "Geometry 1",
+            "Geometry 2",
+            "Geometry 3",
+            "Geometry 4",
+            "Geometry 5",
+            "Geometry 6",
+            "Geometry 7",
+            "Geometry 8",
+            "Collision/Zone Mask",
+            "Layer 10",
+            "Objects 1",
+            "Objects 2",
+            "Layer 13"});
+            this.LayerVisibiltyCB.Location = new System.Drawing.Point(6, 19);
+            this.LayerVisibiltyCB.Name = "LayerVisibiltyCB";
+            this.LayerVisibiltyCB.Size = new System.Drawing.Size(124, 199);
+            this.LayerVisibiltyCB.TabIndex = 0;
+            this.LayerVisibiltyCB.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.LayerVisibiltyCB_ItemCheck);
+            // 
+            // MapDesignCB
+            // 
+            this.MapDesignCB.FormattingEnabled = true;
+            this.MapDesignCB.Location = new System.Drawing.Point(40, 6);
+            this.MapDesignCB.Name = "MapDesignCB";
+            this.MapDesignCB.Size = new System.Drawing.Size(121, 21);
+            this.MapDesignCB.TabIndex = 2;
+            this.MapDesignCB.SelectedIndexChanged += new System.EventHandler(this.MapDesignCB_SelectedIndexChanged);
+            // 
+            // label81
+            // 
+            this.label81.AutoSize = true;
+            this.label81.Location = new System.Drawing.Point(6, 9);
+            this.label81.Name = "label81";
+            this.label81.Size = new System.Drawing.Size(28, 13);
+            this.label81.TabIndex = 1;
+            this.label81.Text = "Map";
             // 
             // GameDirBrowser
             // 
@@ -2601,6 +2878,37 @@
             // 
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
+            // 
+            // DesignLabelCB
+            // 
+            this.DesignLabelCB.AutoSize = true;
+            this.DesignLabelCB.Checked = true;
+            this.DesignLabelCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DesignLabelCB.Location = new System.Drawing.Point(151, 81);
+            this.DesignLabelCB.Name = "DesignLabelCB";
+            this.DesignLabelCB.Size = new System.Drawing.Size(57, 17);
+            this.DesignLabelCB.TabIndex = 0;
+            this.DesignLabelCB.Text = "Labels";
+            this.DesignLabelCB.UseVisualStyleBackColor = true;
+            this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
+            // 
+            // DesignResizeBT
+            // 
+            this.DesignResizeBT.Location = new System.Drawing.Point(151, 104);
+            this.DesignResizeBT.Name = "DesignResizeBT";
+            this.DesignResizeBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignResizeBT.TabIndex = 0;
+            this.DesignResizeBT.Text = "Resize";
+            this.DesignResizeBT.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(151, 133);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(65, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Shift";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // EditorMainWindow
             // 
@@ -2679,6 +2987,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).EndInit();
+            this.groupBox13.ResumeLayout(false);
+            this.groupBox13.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BrushValueSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BrushTilesetSC)).EndInit();
+            this.groupBox12.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -2883,6 +3202,28 @@
         private System.Windows.Forms.Label label74;
         private System.Windows.Forms.NumericUpDown PortraitIDSC;
         private System.Windows.Forms.Label label80;
+        private System.Windows.Forms.GroupBox groupBox12;
+        private System.Windows.Forms.CheckedListBox LayerVisibiltyCB;
+        private System.Windows.Forms.ComboBox MapDesignCB;
+        private System.Windows.Forms.Label label81;
+        private System.Windows.Forms.GroupBox groupBox13;
+        private System.Windows.Forms.Panel TilesetImgPanel;
+        private System.Windows.Forms.Label label83;
+        private System.Windows.Forms.NumericUpDown BrushTilesetSC;
+        private System.Windows.Forms.Label label82;
+        private System.Windows.Forms.ComboBox BrushLayerCB;
+        private System.Windows.Forms.NumericUpDown Tileset4SC;
+        private System.Windows.Forms.NumericUpDown Tileset3SC;
+        private System.Windows.Forms.NumericUpDown Tileset2SC;
+        private System.Windows.Forms.Label label84;
+        private System.Windows.Forms.NumericUpDown Tileset1SC;
+        private System.Windows.Forms.NumericUpDown BrushValueSC;
+        private System.Windows.Forms.Label label85;
+        private System.Windows.Forms.Panel MapImgPanel;
+        private System.Windows.Forms.Button DesignSaveBT;
+        private System.Windows.Forms.CheckBox DesignLabelCB;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button DesignResizeBT;
     }
 }
 
