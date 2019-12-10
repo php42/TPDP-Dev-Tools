@@ -193,7 +193,7 @@
             this.MapNameTextBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.MapListBox = new System.Windows.Forms.ListBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.SkillsTabPage = new System.Windows.Forms.TabPage();
             this.label71 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
@@ -223,7 +223,10 @@
             this.SkillDataTB = new System.Windows.Forms.TextBox();
             this.SkillDataNameLabel = new System.Windows.Forms.Label();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.DesignTabPage = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.DesignResizeBT = new System.Windows.Forms.Button();
+            this.DesignLabelCB = new System.Windows.Forms.CheckBox();
             this.DesignSaveBT = new System.Windows.Forms.Button();
             this.MapImgPanel = new System.Windows.Forms.Panel();
             this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
@@ -248,9 +251,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
-            this.DesignLabelCB = new System.Windows.Forms.CheckBox();
-            this.DesignResizeBT = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.EventTabPage = new System.Windows.Forms.TabPage();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -293,7 +294,7 @@
             this.MapsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
-            this.tabPage1.SuspendLayout();
+            this.SkillsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).BeginInit();
             this.groupBox10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataEffectTypeSC)).BeginInit();
@@ -305,7 +306,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).BeginInit();
-            this.tabPage2.SuspendLayout();
+            this.DesignTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).BeginInit();
@@ -321,9 +322,10 @@
             this.TabControl.Controls.Add(this.FilesTabPage);
             this.TabControl.Controls.Add(this.PuppetsTabPage);
             this.TabControl.Controls.Add(this.TrainersTabPage);
+            this.TabControl.Controls.Add(this.SkillsTabPage);
             this.TabControl.Controls.Add(this.MapsTabPage);
-            this.TabControl.Controls.Add(this.tabPage1);
-            this.TabControl.Controls.Add(this.tabPage2);
+            this.TabControl.Controls.Add(this.DesignTabPage);
+            this.TabControl.Controls.Add(this.EventTabPage);
             this.TabControl.Location = new System.Drawing.Point(12, 12);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
@@ -2237,36 +2239,36 @@
             this.MapListBox.TabIndex = 0;
             this.MapListBox.SelectedIndexChanged += new System.EventHandler(this.MapListBox_SelectedIndexChanged);
             // 
-            // tabPage1
+            // SkillsTabPage
             // 
-            this.tabPage1.Controls.Add(this.label71);
-            this.tabPage1.Controls.Add(this.label70);
-            this.tabPage1.Controls.Add(this.label69);
-            this.tabPage1.Controls.Add(this.SkillDataIDSC);
-            this.tabPage1.Controls.Add(this.groupBox10);
-            this.tabPage1.Controls.Add(this.groupBox9);
-            this.tabPage1.Controls.Add(this.SkillDataPrioSC);
-            this.tabPage1.Controls.Add(this.label63);
-            this.tabPage1.Controls.Add(this.SkillDataPowerSC);
-            this.tabPage1.Controls.Add(this.label62);
-            this.tabPage1.Controls.Add(this.SkillDataAccSC);
-            this.tabPage1.Controls.Add(this.label61);
-            this.tabPage1.Controls.Add(this.SkillDataSPSC);
-            this.tabPage1.Controls.Add(this.label60);
-            this.tabPage1.Controls.Add(this.SkillDataTypeCB);
-            this.tabPage1.Controls.Add(this.label59);
-            this.tabPage1.Controls.Add(this.SkillDataElementCB);
-            this.tabPage1.Controls.Add(this.SkillDataElementLabel);
-            this.tabPage1.Controls.Add(this.SkillDataTB);
-            this.tabPage1.Controls.Add(this.SkillDataNameLabel);
-            this.tabPage1.Controls.Add(this.SkillDataCB);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(768, 554);
-            this.tabPage1.TabIndex = 6;
-            this.tabPage1.Text = "Skills";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.SkillsTabPage.Controls.Add(this.label71);
+            this.SkillsTabPage.Controls.Add(this.label70);
+            this.SkillsTabPage.Controls.Add(this.label69);
+            this.SkillsTabPage.Controls.Add(this.SkillDataIDSC);
+            this.SkillsTabPage.Controls.Add(this.groupBox10);
+            this.SkillsTabPage.Controls.Add(this.groupBox9);
+            this.SkillsTabPage.Controls.Add(this.SkillDataPrioSC);
+            this.SkillsTabPage.Controls.Add(this.label63);
+            this.SkillsTabPage.Controls.Add(this.SkillDataPowerSC);
+            this.SkillsTabPage.Controls.Add(this.label62);
+            this.SkillsTabPage.Controls.Add(this.SkillDataAccSC);
+            this.SkillsTabPage.Controls.Add(this.label61);
+            this.SkillsTabPage.Controls.Add(this.SkillDataSPSC);
+            this.SkillsTabPage.Controls.Add(this.label60);
+            this.SkillsTabPage.Controls.Add(this.SkillDataTypeCB);
+            this.SkillsTabPage.Controls.Add(this.label59);
+            this.SkillsTabPage.Controls.Add(this.SkillDataElementCB);
+            this.SkillsTabPage.Controls.Add(this.SkillDataElementLabel);
+            this.SkillsTabPage.Controls.Add(this.SkillDataTB);
+            this.SkillsTabPage.Controls.Add(this.SkillDataNameLabel);
+            this.SkillsTabPage.Controls.Add(this.SkillDataCB);
+            this.SkillsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.SkillsTabPage.Name = "SkillsTabPage";
+            this.SkillsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.SkillsTabPage.Size = new System.Drawing.Size(768, 554);
+            this.SkillsTabPage.TabIndex = 6;
+            this.SkillsTabPage.Text = "Skills";
+            this.SkillsTabPage.UseVisualStyleBackColor = true;
             // 
             // label71
             // 
@@ -2605,29 +2607,60 @@
             this.SkillDataCB.Text = "Skill";
             this.SkillDataCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataCB_SelectedIndexChanged);
             // 
-            // tabPage2
+            // DesignTabPage
             // 
-            this.tabPage2.Controls.Add(this.button1);
-            this.tabPage2.Controls.Add(this.DesignResizeBT);
-            this.tabPage2.Controls.Add(this.DesignLabelCB);
-            this.tabPage2.Controls.Add(this.DesignSaveBT);
-            this.tabPage2.Controls.Add(this.MapImgPanel);
-            this.tabPage2.Controls.Add(this.Tileset4SC);
-            this.tabPage2.Controls.Add(this.Tileset3SC);
-            this.tabPage2.Controls.Add(this.Tileset2SC);
-            this.tabPage2.Controls.Add(this.label84);
-            this.tabPage2.Controls.Add(this.Tileset1SC);
-            this.tabPage2.Controls.Add(this.groupBox13);
-            this.tabPage2.Controls.Add(this.groupBox12);
-            this.tabPage2.Controls.Add(this.MapDesignCB);
-            this.tabPage2.Controls.Add(this.label81);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(768, 554);
-            this.tabPage2.TabIndex = 7;
-            this.tabPage2.Text = "Maps (Design)";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.DesignTabPage.Controls.Add(this.button1);
+            this.DesignTabPage.Controls.Add(this.DesignResizeBT);
+            this.DesignTabPage.Controls.Add(this.DesignLabelCB);
+            this.DesignTabPage.Controls.Add(this.DesignSaveBT);
+            this.DesignTabPage.Controls.Add(this.MapImgPanel);
+            this.DesignTabPage.Controls.Add(this.Tileset4SC);
+            this.DesignTabPage.Controls.Add(this.Tileset3SC);
+            this.DesignTabPage.Controls.Add(this.Tileset2SC);
+            this.DesignTabPage.Controls.Add(this.label84);
+            this.DesignTabPage.Controls.Add(this.Tileset1SC);
+            this.DesignTabPage.Controls.Add(this.groupBox13);
+            this.DesignTabPage.Controls.Add(this.groupBox12);
+            this.DesignTabPage.Controls.Add(this.MapDesignCB);
+            this.DesignTabPage.Controls.Add(this.label81);
+            this.DesignTabPage.Location = new System.Drawing.Point(4, 22);
+            this.DesignTabPage.Name = "DesignTabPage";
+            this.DesignTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.DesignTabPage.Size = new System.Drawing.Size(768, 554);
+            this.DesignTabPage.TabIndex = 7;
+            this.DesignTabPage.Text = "Maps (Design)";
+            this.DesignTabPage.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(151, 133);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(65, 23);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Shift";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // DesignResizeBT
+            // 
+            this.DesignResizeBT.Location = new System.Drawing.Point(151, 104);
+            this.DesignResizeBT.Name = "DesignResizeBT";
+            this.DesignResizeBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignResizeBT.TabIndex = 0;
+            this.DesignResizeBT.Text = "Resize";
+            this.DesignResizeBT.UseVisualStyleBackColor = true;
+            // 
+            // DesignLabelCB
+            // 
+            this.DesignLabelCB.AutoSize = true;
+            this.DesignLabelCB.Checked = true;
+            this.DesignLabelCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DesignLabelCB.Location = new System.Drawing.Point(151, 81);
+            this.DesignLabelCB.Name = "DesignLabelCB";
+            this.DesignLabelCB.Size = new System.Drawing.Size(57, 17);
+            this.DesignLabelCB.TabIndex = 0;
+            this.DesignLabelCB.Text = "Labels";
+            this.DesignLabelCB.UseVisualStyleBackColor = true;
+            this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
             // 
             // DesignSaveBT
             // 
@@ -2879,36 +2912,15 @@
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
             // 
-            // DesignLabelCB
+            // EventTabPage
             // 
-            this.DesignLabelCB.AutoSize = true;
-            this.DesignLabelCB.Checked = true;
-            this.DesignLabelCB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DesignLabelCB.Location = new System.Drawing.Point(151, 81);
-            this.DesignLabelCB.Name = "DesignLabelCB";
-            this.DesignLabelCB.Size = new System.Drawing.Size(57, 17);
-            this.DesignLabelCB.TabIndex = 0;
-            this.DesignLabelCB.Text = "Labels";
-            this.DesignLabelCB.UseVisualStyleBackColor = true;
-            this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
-            // 
-            // DesignResizeBT
-            // 
-            this.DesignResizeBT.Location = new System.Drawing.Point(151, 104);
-            this.DesignResizeBT.Name = "DesignResizeBT";
-            this.DesignResizeBT.Size = new System.Drawing.Size(65, 23);
-            this.DesignResizeBT.TabIndex = 0;
-            this.DesignResizeBT.Text = "Resize";
-            this.DesignResizeBT.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(151, 133);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(65, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Shift";
-            this.button1.UseVisualStyleBackColor = true;
+            this.EventTabPage.Location = new System.Drawing.Point(4, 22);
+            this.EventTabPage.Name = "EventTabPage";
+            this.EventTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.EventTabPage.Size = new System.Drawing.Size(768, 554);
+            this.EventTabPage.TabIndex = 8;
+            this.EventTabPage.Text = "Maps (Events/Objects)";
+            this.EventTabPage.UseVisualStyleBackColor = true;
             // 
             // EditorMainWindow
             // 
@@ -2972,8 +2984,8 @@
             this.MapsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.SkillsTabPage.ResumeLayout(false);
+            this.SkillsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).EndInit();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
@@ -2987,8 +2999,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).EndInit();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.DesignTabPage.ResumeLayout(false);
+            this.DesignTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).EndInit();
@@ -3157,7 +3169,7 @@
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.Button ExportPuppetButton;
         private System.Windows.Forms.SaveFileDialog ExportPuppetDialog;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage SkillsTabPage;
         private System.Windows.Forms.ComboBox SkillDataCB;
         private System.Windows.Forms.Label SkillDataNameLabel;
         private System.Windows.Forms.Label label69;
@@ -3187,7 +3199,7 @@
         private System.Windows.Forms.TextBox SkillDataTB;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.Label label71;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage DesignTabPage;
         private System.Windows.Forms.GroupBox groupBox11;
         private System.Windows.Forms.Label label73;
         private System.Windows.Forms.NumericUpDown EndTextSC;
@@ -3224,6 +3236,7 @@
         private System.Windows.Forms.CheckBox DesignLabelCB;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button DesignResizeBT;
+        private System.Windows.Forms.TabPage EventTabPage;
     }
 }
 

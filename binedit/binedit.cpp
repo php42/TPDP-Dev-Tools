@@ -871,22 +871,24 @@ static void patch_obs(const Path& data, const Path& json)
         auto& node = it.second;
         libtpdp::OBSEntry entry;
 
-        auto index = node.get<std::size_t>("index");
+        // For some reason std::stoul is a million times
+        // faster than the built-in conversion???
+        auto index = std::stoull(node.get<std::string>("index"));
         if(index > obs.num_entries())
             throw BineditException("OBS entry out of range.");
 
-        entry.object_id = node.get<uint16_t>("object_id");
-        entry.type = node.get<uint8_t>("type");
-        entry.unknown = node.get<uint8_t>("unknown");
-        entry.event_arg = node.get<uint16_t>("event_arg");
-        entry.event_index = node.get<uint16_t>("event_index");
+        entry.object_id = (uint16_t)std::stoul(node.get<std::string>("object_id"));
+        entry.type = (uint8_t)std::stoul(node.get<std::string>("type"));
+        entry.unknown = (uint8_t)std::stoul(node.get<std::string>("unknown"));
+        entry.event_arg = (uint16_t)std::stoul(node.get<std::string>("event_arg"));
+        entry.event_index = (uint16_t)std::stoul(node.get<std::string>("event_index"));
 
         if(node.get_child("flags").size() != 12)
             throw BineditException("OBS entry must have 12 flags.");
 
         auto i = 0;
         for(auto& flag : node.get_child("flags"))
-            entry.flags[i++] = flag.second.get_value<uint8_t>();
+            entry.flags[i++] = (uint8_t)std::stoul(flag.second.get_value<std::string>());
 
         entry.write(obs[index]);
     }
@@ -1103,6 +1105,13 @@ bool patch(const Path& input)
     if(!rand_data || rand_sz != 65536)
         throw BineditException("Error opening file: " + rand_path.string() + "\r\nThis file is REQUIRED for converting .dod files.");
 
+    std::vector<std::future<void>> futures;
+    auto max_threads = std::thread::hardware_concurrency();
+    if(max_threads < 1)
+        max_threads = 1;
+
+    std::cout << "Using up to " << max_threads << " concurrent threads" << std::endl;
+
     auto count_mad = 0;
     auto count_dod = 0;
     auto count_fmf = 0;
@@ -1115,59 +1124,70 @@ bool patch(const Path& input)
         Path json;
         try
         {
-            if(algo::iequals(entry.path().extension().wstring(), L".mad"))
+            auto in = entry.path();
+            if(algo::iequals(in.extension().wstring(), L".mad"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    patch_mad(entry.path(), json);
+                    //patch_mad(in, json);
                     ++count_mad;
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_mad, in, json)));
                 }
             }
-            else if(algo::iequals(entry.path().extension().wstring(), L".fmf"))
+            else if(algo::iequals(in.extension().wstring(), L".fmf"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_filename(json.stem().wstring() + L"_fmf.json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    patch_fmf(entry.path(), json);
+                    //patch_fmf(in, json);
                     ++count_fmf;
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_fmf, in, json)));
                 }
             }
-            else if(algo::iequals(entry.path().extension().wstring(), L".obs"))
+            else if(algo::iequals(in.extension().wstring(), L".obs"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_filename(json.stem().wstring() + L"_obs.json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    patch_obs(entry.path(), json);
+                    //patch_obs(in, json);
                     ++count_obs;
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_obs, in, json)));
                 }
             }
-            else if(algo::iequals(entry.path().extension().wstring(), L".dod"))
+            else if(algo::iequals(in.extension().wstring(), L".dod"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    patch_dod(entry.path(), json, rand_data.get());
+                    //patch_dod(in, json, rand_data.get());
                     ++count_dod;
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_dod, in, json, rand_data.get())));
                 }
             }
-            else if(algo::iequals(entry.path().filename().wstring(), L"DollData.dbs"))
+            else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
-                    patch_nerds(entry.path(), json);
+                {
+                    //patch_nerds(in, json);
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_nerds, in, json)));
+                }
             }
-            else if(algo::iequals(entry.path().filename().wstring(), L"SkillData.sbs"))
+            else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
             {
-                json = entry.path();
+                json = in;
                 json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
-                    patch_skills(entry.path(), json);
+                {
+                    //patch_skills(in, json);
+                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_skills, in, json)));
+                }
             }
         }
         catch(const std::exception& ex)
@@ -1175,8 +1195,51 @@ bool patch(const Path& input)
             ScopedConsoleColorChanger color(COLOR_CRITICAL);
             std::cerr << "Error: " << json.string() << std::endl;
             std::cerr << ex.what() << std::endl;
-            return false;
         }
+
+        for(;;)
+        {
+            for(auto it = futures.begin(); it != futures.end();)
+            {
+                try
+                {
+                    if(it->wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+                    {
+                        it->get();
+                        it = futures.erase(it);
+                    }
+                    else
+                    {
+                        ++it;
+                    }
+                }
+                catch(const WorkerError & ex)
+                {
+                    ScopedConsoleColorMT color(COLOR_CRITICAL);
+                    std::cerr << ex.what() << std::endl;
+                    it = futures.erase(it);
+                }
+            }
+            if(futures.size() >= max_threads)
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            else
+                break;
+        }
+    }
+
+    while(!futures.empty())
+    {
+        try
+        {
+            if(futures.back().valid())
+                futures.back().get();
+        }
+        catch(const WorkerError & ex)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::cerr << ex.what() << std::endl;
+        }
+        futures.pop_back();
     }
 
     std::cout << "patched " << count_dod << " .dod files." << std::endl;

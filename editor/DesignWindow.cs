@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using editor.json;
 using System.Runtime.Serialization.Json;
-using System.Text.RegularExpressions;
 
 // Design tab of MainWindow
 
@@ -463,6 +462,21 @@ namespace editor
             if(BitConverter.ToUInt16(map_layers_[layer], (int)index * 2) == brush_val)
                 return;
 
+            if(ModifierKeys == Keys.Control)
+            {
+                if(layer < 8)
+                {
+                    BrushTilesetSC.Value = map_layers_[layer][(index * 2) + 1];
+                    BrushValueSC.Value = map_layers_[layer][index * 2];
+                }
+                else
+                {
+                    BrushValueSC.Value = BitConverter.ToUInt16(map_layers_[layer], (int)index * 2);
+                }
+
+                return;
+            }
+
             UpdateMapIndex((uint)layer, (uint)index, brush_val);
         }
 
@@ -500,6 +514,8 @@ namespace editor
             {
                 ErrMsg("Error saving map: " + map.filepath + "\r\n" + ex.Message);
             }
+
+            MessageBox.Show("Map save successful.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void DesignLabelCB_CheckedChanged(object sender, EventArgs e)
