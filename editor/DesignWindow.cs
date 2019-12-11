@@ -206,14 +206,15 @@ namespace editor
                                         fmt.Alignment = StringAlignment.Center;
                                         fmt.LineAlignment = StringAlignment.Center;
                                         fmt.FormatFlags = StringFormatFlags.NoWrap;
+                                        fmt.Trimming = StringTrimming.None;
                                         var text_sz = g.MeasureString(str, fnt);
-                                        var bkgrnd_rect = dst_rect;
-                                        bkgrnd_rect.Width = (int)text_sz.Width;
-                                        bkgrnd_rect.Height = (int)text_sz.Height;
-                                        bkgrnd_rect.X += ((32 - bkgrnd_rect.Width) / 2);
-                                        bkgrnd_rect.Y += ((32 - bkgrnd_rect.Height) / 2);
-                                        g.FillRectangle(bkgrnd_brush, bkgrnd_rect);
-                                        g.DrawString(str, fnt, text_brush, dst_rect, fmt);
+                                        var text_rect = dst_rect;
+                                        text_rect.Width = (int)text_sz.Width;
+                                        text_rect.Height = (int)text_sz.Height;
+                                        text_rect.X += ((32 - text_rect.Width) / 2);
+                                        text_rect.Y += 16 + ((16 - text_rect.Height) / 2);
+                                        g.FillRectangle(bkgrnd_brush, text_rect);
+                                        g.DrawString(str, fnt, text_brush, text_rect, fmt);
                                     }
                                 }
                             }
