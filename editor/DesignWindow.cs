@@ -40,6 +40,7 @@ namespace editor
             map_display_.Location = new Point(5, 5);
             map_display_.MouseDown += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseClick;
+            map_display_.MouseMove += MapDisplay_MouseMove;
             MapImgPanel.Controls.Add(map_display_);
 
             tileset_display_ = new TilesetDisplay();
@@ -444,6 +445,12 @@ namespace editor
             if((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right))
                 return;
 
+            if((e.X < 0) || (e.Y < 0))
+                return;
+
+            if(((e.X / 16) >= fmf_data_.width) || ((e.Y / 16) >= fmf_data_.height))
+                return;
+
             var tileset_index = (uint)BrushTilesetSC.Value;
             var brush_val = (uint)BrushValueSC.Value;
             var index = (e.X / 16) + ((e.Y / 16) * fmf_data_.width);
@@ -523,6 +530,130 @@ namespace editor
         private void DesignLabelCB_CheckedChanged(object sender, EventArgs e)
         {
             RenderMap();
+        }
+
+        private void DesignResizeBT_Click(object sender, EventArgs e)
+        {
+            var mapindex = MapDesignCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
+            {
+                ErrMsg("No map loaded.");
+                return;
+            }
+
+            using(var dialog = new ResizeDialog(fmf_data_.width, fmf_data_.height))
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var w = dialog.W;
+                    var h = dialog.H;
+
+                    var new_sz = w * h * 2;
+
+                    var old_stride = (int)(fmf_data_.width * 2);
+                    var new_stride = w * 2;
+
+                    var copy_sz = Math.Min(old_stride, new_stride);
+
+                    for(var i = 0; i < fmf_data_.num_layers; ++i)
+                    {
+                        var buf = new byte[new_sz];
+                        for(var j = 0; j < Math.Min(h, fmf_data_.height); ++j)
+                        {
+                            var src_pos = j * old_stride;
+                            var dst_pos = j * new_stride;
+                            Array.Copy(map_layers_[i], src_pos, buf, dst_pos, copy_sz);
+                        }
+                        map_layers_[i] = buf;
+                    }
+
+                    fmf_data_.width = (uint)w;
+                    fmf_data_.height = (uint)h;
+                    fmf_data_.payload_length = (uint)new_sz * fmf_data_.num_layers;
+                    RenderMap();
+                }
+            }
+        }
+
+        private void DesignShiftBT_Click(object sender, EventArgs e)
+        {
+            var mapindex = MapDesignCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
+            {
+                ErrMsg("No map loaded.");
+                return;
+            }
+
+            using(var dialog = new ShiftDialog())
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var x = dialog.X;
+                    var y = dialog.Y;
+
+                    var w = (int)fmf_data_.width;
+                    var h = (int)fmf_data_.height;
+
+                    if((Math.Abs(x) >= w) || (Math.Abs(y) >= h))
+                    {
+                        ErrMsg("Coordinates out of range!");
+                        return;
+                    }
+
+                    var layer_sz = w * h * 2;
+                    var stride = w * 2;
+
+                    var copy_sz = stride - (Math.Abs(x) * 2);
+                    var src_offset = Math.Max(0, -x) * 2;
+                    var dst_offset = Math.Max(0, x) * 2;
+
+                    for(var i = 0; i < fmf_data_.num_layers; ++i)
+                    {
+                        var buf = new byte[layer_sz];
+                        for(var j = 0; j < h; ++j)
+                        {
+                            var k = (j - y);
+                            if((k < 0) || (k >= h))
+                                continue;
+
+                            var src_pos = (k * stride) + src_offset;
+                            var dst_pos = (j * stride) + dst_offset;
+                            Array.Copy(map_layers_[i], src_pos, buf, dst_pos, copy_sz);
+                        }
+                        map_layers_[i] = buf;
+                    }
+
+                    RenderMap();
+                }
+            }
+        }
+
+        private void DesignClearBT_Click(object sender, EventArgs e)
+        {
+            var mapindex = MapDesignCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
+            {
+                ErrMsg("No map loaded.");
+                return;
+            }
+
+            if(MessageBox.Show("Are you sure you want to clear the entire map?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                var layer_sz = fmf_data_.width * fmf_data_.height * 2;
+                for(var i = 0; i < map_layers_.Length; ++i)
+                {
+                    for(var j = 0; j < layer_sz; ++j)
+                        map_layers_[i][j] = 0;
+                }
+                RenderMap();
+            }
+        }
+
+        private void MapDisplay_MouseMove(object sender, MouseEventArgs e)
+        {
+            var str = (e.X / 16).ToString() + ", " + (e.Y / 16).ToString();
+            if(DesignCoordLabel.Text != str)
+                DesignCoordLabel.Text = str;
         }
     }
 }

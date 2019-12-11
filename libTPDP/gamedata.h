@@ -201,7 +201,9 @@ public:
     uint8_t weather;
     uint8_t overworld_theme;
     uint8_t battle_background;
+    uint8_t forbid_bike;
     uint8_t encounter_type;
+    uint8_t unknown;
 
     /* encounters in normal grass */
     uint16_t puppet_ids[10];            /* IDs of puppets found in normal grass */

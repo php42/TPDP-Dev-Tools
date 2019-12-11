@@ -706,5 +706,14 @@ namespace editor
 
             ConsoleOutput.AppendText("Done.\r\n");
         }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(TabControl.SelectedIndex == 5)
+            {
+                MessageBox.Show("Right click to erase.\r\nCtrl + left click to select brush from active layer.\r\nChanging the selected map will revert all changes to map geometry. Make sure to save before switching maps.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;
+            }
+        }
     }
 }

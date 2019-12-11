@@ -10,6 +10,7 @@ If the sum of weights is very low (minimum in vanilla SoD is 28) you run the ris
 "overworld_theme": song id
 "battle_background": background id
 "encounter_type": 0 = grass encounters, 1 = encounters everywhere (e.g. inside caves)
+"forbid_bike": disallow riding the bike on this map (e.g. indoor maps)
 
 "special" encounters are blue grass encounters
 
@@ -19,8 +20,8 @@ http://thpp.supersanctuary.net/forum/index.php?topic=493.msg3141#msg3141
 0x00: u16 tilesets[4]        |
 0x08: u8 weather             |
 0x09: u8 overworld_theme     |
-0x0A: u8 battle_backgound    | (maybe u16?)
-0x0B: ???                    |
+0x0A: u8 battle_backgound    |
+0x0B: u8 forbid_bike         |
 0x0C: u8 encounter_type      |
 0x0D: ???                    |
 0x0E: u16 encounters[10]     |

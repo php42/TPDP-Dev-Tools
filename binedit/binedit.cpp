@@ -403,7 +403,9 @@ static void convert_mad(const Path& in, const Path& out)
     tree.put("weather", data.weather);
     tree.put("overworld_theme", data.overworld_theme);
     tree.put("battle_background", data.battle_background);
+    tree.put("forbid_bike", data.forbid_bike);
     tree.put("encounter_type", data.encounter_type);
+    tree.put("unknown", data.unknown);
 
     if(data.weather > 9)
     {
@@ -414,6 +416,11 @@ static void convert_mad(const Path& in, const Path& out)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
         std::cerr << "Warning: " << in.string() << "\r\nUnknown encounter_type value: " << (unsigned int)data.encounter_type << std::endl;
+    }
+    if(data.forbid_bike > 1)
+    {
+        ScopedConsoleColorMT color(COLOR_WARN);
+        std::cerr << "Warning: " << in.string() << "\r\nUnknown forbid_bike value: " << (unsigned int)data.forbid_bike << std::endl;
     }
 
     for(auto i = 0; i < 10; ++i)
@@ -465,7 +472,9 @@ static void patch_mad(const Path& data, const Path& json)
     mad.weather = tree.get<uint8_t>("weather");
     mad.overworld_theme = tree.get<uint8_t>("overworld_theme");
     mad.battle_background = tree.get<uint8_t>("battle_background");
+    mad.forbid_bike = tree.get<uint8_t>("forbid_bike");
     mad.encounter_type = tree.get<uint8_t>("encounter_type");
+    mad.unknown = tree.get<uint8_t>("unknown");
 
     if(tree.get_child("special_encounters").size() > 5)
         throw BineditException("Too many special encounters! Max is 5");

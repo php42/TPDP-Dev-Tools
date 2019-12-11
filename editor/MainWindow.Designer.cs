@@ -207,6 +207,7 @@
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
             this.MapsTabPage = new System.Windows.Forms.TabPage();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.ForbidBikeCB = new System.Windows.Forms.CheckBox();
             this.label89 = new System.Windows.Forms.Label();
             this.MapEncounterTypeCB = new System.Windows.Forms.ComboBox();
             this.label88 = new System.Windows.Forms.Label();
@@ -233,7 +234,9 @@
             this.label7 = new System.Windows.Forms.Label();
             this.MapListBox = new System.Windows.Forms.ListBox();
             this.DesignTabPage = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
+            this.DesignCoordLabel = new System.Windows.Forms.Label();
+            this.DesignClearBT = new System.Windows.Forms.Button();
+            this.DesignShiftBT = new System.Windows.Forms.Button();
             this.DesignResizeBT = new System.Windows.Forms.Button();
             this.DesignLabelCB = new System.Windows.Forms.CheckBox();
             this.DesignSaveBT = new System.Windows.Forms.Button();
@@ -343,6 +346,7 @@
             this.TabControl.SelectedIndex = 0;
             this.TabControl.Size = new System.Drawing.Size(776, 580);
             this.TabControl.TabIndex = 1;
+            this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
             // FilesTabPage
             // 
@@ -2444,6 +2448,7 @@
             // 
             // groupBox14
             // 
+            this.groupBox14.Controls.Add(this.ForbidBikeCB);
             this.groupBox14.Controls.Add(this.label89);
             this.groupBox14.Controls.Add(this.MapEncounterTypeCB);
             this.groupBox14.Controls.Add(this.label88);
@@ -2454,10 +2459,21 @@
             this.groupBox14.Controls.Add(this.label87);
             this.groupBox14.Location = new System.Drawing.Point(132, 218);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(217, 139);
+            this.groupBox14.Size = new System.Drawing.Size(217, 160);
             this.groupBox14.TabIndex = 24;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Overworld Metadata";
+            // 
+            // ForbidBikeCB
+            // 
+            this.ForbidBikeCB.AutoSize = true;
+            this.ForbidBikeCB.Location = new System.Drawing.Point(6, 129);
+            this.ForbidBikeCB.Name = "ForbidBikeCB";
+            this.ForbidBikeCB.Size = new System.Drawing.Size(118, 17);
+            this.ForbidBikeCB.TabIndex = 25;
+            this.ForbidBikeCB.Text = "Disable Bike Riding";
+            this.ForbidBikeCB.UseVisualStyleBackColor = true;
+            this.ForbidBikeCB.CheckedChanged += new System.EventHandler(this.ForbidBikeCB_CheckedChanged);
             // 
             // label89
             // 
@@ -2723,7 +2739,9 @@
             // 
             // DesignTabPage
             // 
-            this.DesignTabPage.Controls.Add(this.button1);
+            this.DesignTabPage.Controls.Add(this.DesignCoordLabel);
+            this.DesignTabPage.Controls.Add(this.DesignClearBT);
+            this.DesignTabPage.Controls.Add(this.DesignShiftBT);
             this.DesignTabPage.Controls.Add(this.DesignResizeBT);
             this.DesignTabPage.Controls.Add(this.DesignLabelCB);
             this.DesignTabPage.Controls.Add(this.DesignSaveBT);
@@ -2745,14 +2763,34 @@
             this.DesignTabPage.Text = "Maps (Design)";
             this.DesignTabPage.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // DesignCoordLabel
             // 
-            this.button1.Location = new System.Drawing.Point(151, 133);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(65, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Shift";
-            this.button1.UseVisualStyleBackColor = true;
+            this.DesignCoordLabel.AutoSize = true;
+            this.DesignCoordLabel.Location = new System.Drawing.Point(151, 56);
+            this.DesignCoordLabel.Name = "DesignCoordLabel";
+            this.DesignCoordLabel.Size = new System.Drawing.Size(23, 13);
+            this.DesignCoordLabel.TabIndex = 13;
+            this.DesignCoordLabel.Text = "x, y";
+            // 
+            // DesignClearBT
+            // 
+            this.DesignClearBT.Location = new System.Drawing.Point(151, 162);
+            this.DesignClearBT.Name = "DesignClearBT";
+            this.DesignClearBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignClearBT.TabIndex = 12;
+            this.DesignClearBT.Text = "Clear";
+            this.DesignClearBT.UseVisualStyleBackColor = true;
+            this.DesignClearBT.Click += new System.EventHandler(this.DesignClearBT_Click);
+            // 
+            // DesignShiftBT
+            // 
+            this.DesignShiftBT.Location = new System.Drawing.Point(151, 133);
+            this.DesignShiftBT.Name = "DesignShiftBT";
+            this.DesignShiftBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignShiftBT.TabIndex = 0;
+            this.DesignShiftBT.Text = "Shift";
+            this.DesignShiftBT.UseVisualStyleBackColor = true;
+            this.DesignShiftBT.Click += new System.EventHandler(this.DesignShiftBT_Click);
             // 
             // DesignResizeBT
             // 
@@ -2762,6 +2800,7 @@
             this.DesignResizeBT.TabIndex = 0;
             this.DesignResizeBT.Text = "Resize";
             this.DesignResizeBT.UseVisualStyleBackColor = true;
+            this.DesignResizeBT.Click += new System.EventHandler(this.DesignResizeBT_Click);
             // 
             // DesignLabelCB
             // 
@@ -3352,7 +3391,7 @@
         private System.Windows.Forms.Panel MapImgPanel;
         private System.Windows.Forms.Button DesignSaveBT;
         private System.Windows.Forms.CheckBox DesignLabelCB;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button DesignShiftBT;
         private System.Windows.Forms.Button DesignResizeBT;
         private System.Windows.Forms.TabPage EventTabPage;
         private System.Windows.Forms.GroupBox groupBox14;
@@ -3364,6 +3403,9 @@
         private System.Windows.Forms.ComboBox MapWeatherCB;
         private System.Windows.Forms.Label label89;
         private System.Windows.Forms.ComboBox MapEncounterTypeCB;
+        private System.Windows.Forms.Button DesignClearBT;
+        private System.Windows.Forms.Label DesignCoordLabel;
+        private System.Windows.Forms.CheckBox ForbidBikeCB;
     }
 }
 

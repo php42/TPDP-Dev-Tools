@@ -179,6 +179,7 @@ namespace editor
                 MapMusicSC.Value = map.overworld_theme;
                 MapWeatherCB.SelectedIndex = (int)map.weather;
                 MapEncounterTypeCB.SelectedIndex = (int)map.encounter_type;
+                ForbidBikeCB.Checked = map.forbid_bike > 0;
                 RefreshEncounter();
             }
         }
@@ -319,6 +320,15 @@ namespace editor
                 return;
 
             maps_[mapindex].encounter_type = (uint)index;
+        }
+
+        private void ForbidBikeCB_CheckedChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            if(mapindex < 0)
+                return;
+
+            maps_[mapindex].forbid_bike = (ForbidBikeCB.Checked ? 1u : 0u);
         }
     }
 }

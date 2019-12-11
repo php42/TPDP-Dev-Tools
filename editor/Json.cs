@@ -123,7 +123,13 @@ namespace editor.json
         public uint battle_background = 0;
 
         [DataMember]
+        public uint forbid_bike = 0;
+
+        [DataMember]
         public uint encounter_type = 0;
+
+        [DataMember]
+        public uint unknown = 0;
 
         [DataMember]
         public MadEncounter[] special_encounters = new MadEncounter[5];

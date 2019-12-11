@@ -403,7 +403,9 @@ void MADData::read(const void *data)
     weather = buf[8];
     overworld_theme = buf[9];
     battle_background = buf[10];
+    forbid_bike = buf[11];
     encounter_type = buf[12];
+    unknown = buf[13];
 
     /* area name */
     memcpy(location_name, &buf[0x59], sizeof(location_name));
@@ -429,7 +431,9 @@ void MADData::write(void *data) const
     buf[8] = weather;
     buf[9] = overworld_theme;
     buf[10] = battle_background;
+    buf[11] = forbid_bike;
     buf[12] = encounter_type;
+    buf[13] = unknown;
 
     /* area name */
     memcpy(&buf[0x59], location_name, sizeof(location_name));
