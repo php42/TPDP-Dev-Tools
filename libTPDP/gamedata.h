@@ -198,10 +198,10 @@ class MADData
 {
 public:
     uint16_t tilesets[4];
-    uint8_t overworld_fog;
+    uint8_t weather;
     uint8_t overworld_theme;
     uint8_t battle_background;
-    uint8_t cave;
+    uint8_t encounter_type;
 
     /* encounters in normal grass */
     uint16_t puppet_ids[10];            /* IDs of puppets found in normal grass */

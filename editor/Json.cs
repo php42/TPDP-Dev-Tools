@@ -114,7 +114,7 @@ namespace editor.json
         public uint[] tilesets = new uint[4];
 
         [DataMember]
-        public uint overworld_fog = 0;
+        public uint weather = 0;
 
         [DataMember]
         public uint overworld_theme = 0;
@@ -123,7 +123,7 @@ namespace editor.json
         public uint battle_background = 0;
 
         [DataMember]
-        public uint cave = 0;
+        public uint encounter_type = 0;
 
         [DataMember]
         public MadEncounter[] special_encounters = new MadEncounter[5];

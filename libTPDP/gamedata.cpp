@@ -400,10 +400,10 @@ void MADData::read(const void *data)
     const uint8_t *buf = (const uint8_t*)data;
 
     memcpy(tilesets, buf, sizeof(tilesets));
-    overworld_fog = buf[8];
+    weather = buf[8];
     overworld_theme = buf[9];
     battle_background = buf[10];
-    cave = buf[12];
+    encounter_type = buf[12];
 
     /* area name */
     memcpy(location_name, &buf[0x59], sizeof(location_name));
@@ -426,10 +426,10 @@ void MADData::write(void *data) const
     uint8_t *buf = (uint8_t*)data;
 
     memcpy(buf, tilesets, sizeof(tilesets));
-    buf[8] = overworld_fog;
+    buf[8] = weather;
     buf[9] = overworld_theme;
     buf[10] = battle_background;
-    buf[12] = cave;
+    buf[12] = encounter_type;
 
     /* area name */
     memcpy(&buf[0x59], location_name, sizeof(location_name));

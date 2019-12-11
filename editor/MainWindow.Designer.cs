@@ -175,24 +175,6 @@
             this.TrainerTitleTB = new System.Windows.Forms.TextBox();
             this.TrainerNameTB = new System.Windows.Forms.TextBox();
             this.TrainerLB = new System.Windows.Forms.ListBox();
-            this.MapsTabPage = new System.Windows.Forms.TabPage();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.MapDispNameBox = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.MapStyleComboBox = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.MapWeightSpinCtrl = new System.Windows.Forms.NumericUpDown();
-            this.MapLvlSpinCtrl = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.MapPuppetComboBox = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.MapFilenameTextBox = new System.Windows.Forms.TextBox();
-            this.EncounterComboBox = new System.Windows.Forms.ComboBox();
-            this.MapNameTextBox = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.MapListBox = new System.Windows.Forms.ListBox();
             this.SkillsTabPage = new System.Windows.Forms.TabPage();
             this.label71 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
@@ -223,6 +205,33 @@
             this.SkillDataTB = new System.Windows.Forms.TextBox();
             this.SkillDataNameLabel = new System.Windows.Forms.Label();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
+            this.MapsTabPage = new System.Windows.Forms.TabPage();
+            this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.label89 = new System.Windows.Forms.Label();
+            this.MapEncounterTypeCB = new System.Windows.Forms.ComboBox();
+            this.label88 = new System.Windows.Forms.Label();
+            this.label86 = new System.Windows.Forms.Label();
+            this.MapWeatherCB = new System.Windows.Forms.ComboBox();
+            this.MapMusicSC = new System.Windows.Forms.NumericUpDown();
+            this.MapBackgroundSC = new System.Windows.Forms.NumericUpDown();
+            this.label87 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.MapDispNameBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.MapStyleComboBox = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.MapWeightSpinCtrl = new System.Windows.Forms.NumericUpDown();
+            this.MapLvlSpinCtrl = new System.Windows.Forms.NumericUpDown();
+            this.label9 = new System.Windows.Forms.Label();
+            this.MapPuppetComboBox = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.MapFilenameTextBox = new System.Windows.Forms.TextBox();
+            this.EncounterComboBox = new System.Windows.Forms.ComboBox();
+            this.MapNameTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.MapListBox = new System.Windows.Forms.ListBox();
             this.DesignTabPage = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.DesignResizeBT = new System.Windows.Forms.Button();
@@ -246,12 +255,12 @@
             this.LayerVisibiltyCB = new System.Windows.Forms.CheckedListBox();
             this.MapDesignCB = new System.Windows.Forms.ComboBox();
             this.label81 = new System.Windows.Forms.Label();
+            this.EventTabPage = new System.Windows.Forms.TabPage();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
-            this.EventTabPage = new System.Windows.Forms.TabPage();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -291,9 +300,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.IV2SC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IV1SC)).BeginInit();
             this.groupBox6.SuspendLayout();
-            this.MapsTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
             this.SkillsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).BeginInit();
             this.groupBox10.SuspendLayout();
@@ -306,6 +312,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).BeginInit();
+            this.MapsTabPage.SuspendLayout();
+            this.groupBox14.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MapMusicSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapBackgroundSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
             this.DesignTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).BeginInit();
@@ -2034,211 +2046,6 @@
             this.TrainerLB.TabIndex = 0;
             this.TrainerLB.SelectedIndexChanged += new System.EventHandler(this.TrainerLB_SelectedIndexChanged);
             // 
-            // MapsTabPage
-            // 
-            this.MapsTabPage.Controls.Add(this.label14);
-            this.MapsTabPage.Controls.Add(this.label13);
-            this.MapsTabPage.Controls.Add(this.label12);
-            this.MapsTabPage.Controls.Add(this.MapDispNameBox);
-            this.MapsTabPage.Controls.Add(this.label11);
-            this.MapsTabPage.Controls.Add(this.MapStyleComboBox);
-            this.MapsTabPage.Controls.Add(this.label10);
-            this.MapsTabPage.Controls.Add(this.MapWeightSpinCtrl);
-            this.MapsTabPage.Controls.Add(this.MapLvlSpinCtrl);
-            this.MapsTabPage.Controls.Add(this.label9);
-            this.MapsTabPage.Controls.Add(this.MapPuppetComboBox);
-            this.MapsTabPage.Controls.Add(this.label8);
-            this.MapsTabPage.Controls.Add(this.MapFilenameTextBox);
-            this.MapsTabPage.Controls.Add(this.EncounterComboBox);
-            this.MapsTabPage.Controls.Add(this.MapNameTextBox);
-            this.MapsTabPage.Controls.Add(this.label7);
-            this.MapsTabPage.Controls.Add(this.MapListBox);
-            this.MapsTabPage.Location = new System.Drawing.Point(4, 22);
-            this.MapsTabPage.Name = "MapsTabPage";
-            this.MapsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.MapsTabPage.Size = new System.Drawing.Size(768, 554);
-            this.MapsTabPage.TabIndex = 5;
-            this.MapsTabPage.Text = "Maps (Wild Puppets)";
-            this.MapsTabPage.UseVisualStyleBackColor = true;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(132, 142);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(67, 13);
-            this.label14.TabIndex = 17;
-            this.label14.Text = "Puppet Style";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(132, 115);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(41, 13);
-            this.label13.TabIndex = 16;
-            this.label13.Text = "Puppet";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(132, 87);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(77, 13);
-            this.label12.TabIndex = 15;
-            this.label12.Text = "Encounter Slot";
-            // 
-            // MapDispNameBox
-            // 
-            this.MapDispNameBox.Location = new System.Drawing.Point(215, 32);
-            this.MapDispNameBox.Name = "MapDispNameBox";
-            this.MapDispNameBox.Size = new System.Drawing.Size(467, 20);
-            this.MapDispNameBox.TabIndex = 2;
-            this.MapDispNameBox.TextChanged += new System.EventHandler(this.MapDispNameBox_TextChanged);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(132, 35);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(72, 13);
-            this.label11.TabIndex = 13;
-            this.label11.Text = "Display Name";
-            // 
-            // MapStyleComboBox
-            // 
-            this.MapStyleComboBox.FormattingEnabled = true;
-            this.MapStyleComboBox.Location = new System.Drawing.Point(215, 139);
-            this.MapStyleComboBox.Name = "MapStyleComboBox";
-            this.MapStyleComboBox.Size = new System.Drawing.Size(121, 21);
-            this.MapStyleComboBox.TabIndex = 6;
-            this.MapStyleComboBox.Text = "Style";
-            this.MapStyleComboBox.SelectedIndexChanged += new System.EventHandler(this.MapStyleComboBox_SelectedIndexChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(212, 194);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 13);
-            this.label10.TabIndex = 11;
-            this.label10.Text = "Weight";
-            // 
-            // MapWeightSpinCtrl
-            // 
-            this.MapWeightSpinCtrl.Location = new System.Drawing.Point(259, 192);
-            this.MapWeightSpinCtrl.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.MapWeightSpinCtrl.Name = "MapWeightSpinCtrl";
-            this.MapWeightSpinCtrl.Size = new System.Drawing.Size(77, 20);
-            this.MapWeightSpinCtrl.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.MapWeightSpinCtrl, resources.GetString("MapWeightSpinCtrl.ToolTip"));
-            this.MapWeightSpinCtrl.ValueChanged += new System.EventHandler(this.MapWeightSpinCtrl_ValueChanged);
-            // 
-            // MapLvlSpinCtrl
-            // 
-            this.MapLvlSpinCtrl.Location = new System.Drawing.Point(259, 166);
-            this.MapLvlSpinCtrl.Name = "MapLvlSpinCtrl";
-            this.MapLvlSpinCtrl.Size = new System.Drawing.Size(77, 20);
-            this.MapLvlSpinCtrl.TabIndex = 7;
-            this.MapLvlSpinCtrl.ValueChanged += new System.EventHandler(this.MapLvlSpinCtrl_ValueChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(212, 168);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(33, 13);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "Level";
-            // 
-            // MapPuppetComboBox
-            // 
-            this.MapPuppetComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.MapPuppetComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.MapPuppetComboBox.FormattingEnabled = true;
-            this.MapPuppetComboBox.Location = new System.Drawing.Point(215, 112);
-            this.MapPuppetComboBox.Name = "MapPuppetComboBox";
-            this.MapPuppetComboBox.Size = new System.Drawing.Size(121, 21);
-            this.MapPuppetComboBox.TabIndex = 5;
-            this.MapPuppetComboBox.Text = "Puppet";
-            this.MapPuppetComboBox.SelectedIndexChanged += new System.EventHandler(this.MapPuppetComboBox_SelectedIndexChanged);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(132, 61);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(44, 13);
-            this.label8.TabIndex = 5;
-            this.label8.Text = "Filepath";
-            // 
-            // MapFilenameTextBox
-            // 
-            this.MapFilenameTextBox.Location = new System.Drawing.Point(215, 58);
-            this.MapFilenameTextBox.Name = "MapFilenameTextBox";
-            this.MapFilenameTextBox.ReadOnly = true;
-            this.MapFilenameTextBox.Size = new System.Drawing.Size(467, 20);
-            this.MapFilenameTextBox.TabIndex = 3;
-            // 
-            // EncounterComboBox
-            // 
-            this.EncounterComboBox.FormattingEnabled = true;
-            this.EncounterComboBox.Items.AddRange(new object[] {
-            "Normal 1",
-            "Normal 2",
-            "Normal 3",
-            "Normal 4",
-            "Normal 5",
-            "Normal 6",
-            "Normal 7",
-            "Normal 8",
-            "Normal 9",
-            "Normal 10",
-            "Blue Grass 1",
-            "Blue Grass 2",
-            "Blue Grass 3",
-            "Blue Grass 4",
-            "Blue Grass 5"});
-            this.EncounterComboBox.Location = new System.Drawing.Point(215, 84);
-            this.EncounterComboBox.Name = "EncounterComboBox";
-            this.EncounterComboBox.Size = new System.Drawing.Size(121, 21);
-            this.EncounterComboBox.TabIndex = 4;
-            this.EncounterComboBox.Text = "Encounter";
-            this.EncounterComboBox.SelectedIndexChanged += new System.EventHandler(this.EncounterComboBox_SelectedIndexChanged);
-            // 
-            // MapNameTextBox
-            // 
-            this.MapNameTextBox.Location = new System.Drawing.Point(215, 6);
-            this.MapNameTextBox.MaxLength = 31;
-            this.MapNameTextBox.Name = "MapNameTextBox";
-            this.MapNameTextBox.Size = new System.Drawing.Size(467, 20);
-            this.MapNameTextBox.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.MapNameTextBox, "Note: name may not exceed 31 bytes");
-            this.MapNameTextBox.TextChanged += new System.EventHandler(this.MapNameTextBox_TextChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(132, 9);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(35, 13);
-            this.label7.TabIndex = 1;
-            this.label7.Text = "Name";
-            // 
-            // MapListBox
-            // 
-            this.MapListBox.FormattingEnabled = true;
-            this.MapListBox.HorizontalScrollbar = true;
-            this.MapListBox.Location = new System.Drawing.Point(6, 6);
-            this.MapListBox.Name = "MapListBox";
-            this.MapListBox.Size = new System.Drawing.Size(120, 537);
-            this.MapListBox.TabIndex = 0;
-            this.MapListBox.SelectedIndexChanged += new System.EventHandler(this.MapListBox_SelectedIndexChanged);
-            // 
             // SkillsTabPage
             // 
             this.SkillsTabPage.Controls.Add(this.label71);
@@ -2607,6 +2414,313 @@
             this.SkillDataCB.Text = "Skill";
             this.SkillDataCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataCB_SelectedIndexChanged);
             // 
+            // MapsTabPage
+            // 
+            this.MapsTabPage.Controls.Add(this.groupBox14);
+            this.MapsTabPage.Controls.Add(this.label14);
+            this.MapsTabPage.Controls.Add(this.label13);
+            this.MapsTabPage.Controls.Add(this.label12);
+            this.MapsTabPage.Controls.Add(this.MapDispNameBox);
+            this.MapsTabPage.Controls.Add(this.label11);
+            this.MapsTabPage.Controls.Add(this.MapStyleComboBox);
+            this.MapsTabPage.Controls.Add(this.label10);
+            this.MapsTabPage.Controls.Add(this.MapWeightSpinCtrl);
+            this.MapsTabPage.Controls.Add(this.MapLvlSpinCtrl);
+            this.MapsTabPage.Controls.Add(this.label9);
+            this.MapsTabPage.Controls.Add(this.MapPuppetComboBox);
+            this.MapsTabPage.Controls.Add(this.label8);
+            this.MapsTabPage.Controls.Add(this.MapFilenameTextBox);
+            this.MapsTabPage.Controls.Add(this.EncounterComboBox);
+            this.MapsTabPage.Controls.Add(this.MapNameTextBox);
+            this.MapsTabPage.Controls.Add(this.label7);
+            this.MapsTabPage.Controls.Add(this.MapListBox);
+            this.MapsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.MapsTabPage.Name = "MapsTabPage";
+            this.MapsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.MapsTabPage.Size = new System.Drawing.Size(768, 554);
+            this.MapsTabPage.TabIndex = 5;
+            this.MapsTabPage.Text = "Maps (Encounters/OW)";
+            this.MapsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox14
+            // 
+            this.groupBox14.Controls.Add(this.label89);
+            this.groupBox14.Controls.Add(this.MapEncounterTypeCB);
+            this.groupBox14.Controls.Add(this.label88);
+            this.groupBox14.Controls.Add(this.label86);
+            this.groupBox14.Controls.Add(this.MapWeatherCB);
+            this.groupBox14.Controls.Add(this.MapMusicSC);
+            this.groupBox14.Controls.Add(this.MapBackgroundSC);
+            this.groupBox14.Controls.Add(this.label87);
+            this.groupBox14.Location = new System.Drawing.Point(132, 218);
+            this.groupBox14.Name = "groupBox14";
+            this.groupBox14.Size = new System.Drawing.Size(217, 139);
+            this.groupBox14.TabIndex = 24;
+            this.groupBox14.TabStop = false;
+            this.groupBox14.Text = "Overworld Metadata";
+            // 
+            // label89
+            // 
+            this.label89.AutoSize = true;
+            this.label89.Location = new System.Drawing.Point(6, 105);
+            this.label89.Name = "label89";
+            this.label89.Size = new System.Drawing.Size(61, 13);
+            this.label89.TabIndex = 25;
+            this.label89.Text = "Encounters";
+            // 
+            // MapEncounterTypeCB
+            // 
+            this.MapEncounterTypeCB.FormattingEnabled = true;
+            this.MapEncounterTypeCB.Items.AddRange(new object[] {
+            "Grass Only",
+            "Everywhere"});
+            this.MapEncounterTypeCB.Location = new System.Drawing.Point(83, 102);
+            this.MapEncounterTypeCB.Name = "MapEncounterTypeCB";
+            this.MapEncounterTypeCB.Size = new System.Drawing.Size(121, 21);
+            this.MapEncounterTypeCB.TabIndex = 25;
+            this.MapEncounterTypeCB.SelectedIndexChanged += new System.EventHandler(this.MapEncounterTypeCB_SelectedIndexChanged);
+            // 
+            // label88
+            // 
+            this.label88.AutoSize = true;
+            this.label88.Location = new System.Drawing.Point(6, 78);
+            this.label88.Name = "label88";
+            this.label88.Size = new System.Drawing.Size(48, 13);
+            this.label88.TabIndex = 26;
+            this.label88.Text = "Weather";
+            // 
+            // label86
+            // 
+            this.label86.AutoSize = true;
+            this.label86.Location = new System.Drawing.Point(6, 25);
+            this.label86.Name = "label86";
+            this.label86.Size = new System.Drawing.Size(127, 13);
+            this.label86.TabIndex = 20;
+            this.label86.Text = "Battle Background Image";
+            // 
+            // MapWeatherCB
+            // 
+            this.MapWeatherCB.FormattingEnabled = true;
+            this.MapWeatherCB.Items.AddRange(new object[] {
+            "None",
+            "Darkness",
+            "Fog",
+            "Red Fog",
+            "Snow",
+            "Cherry Blossoms",
+            "Heat",
+            "Spirits?",
+            "Light Orbs",
+            "Rain"});
+            this.MapWeatherCB.Location = new System.Drawing.Point(83, 75);
+            this.MapWeatherCB.Name = "MapWeatherCB";
+            this.MapWeatherCB.Size = new System.Drawing.Size(121, 21);
+            this.MapWeatherCB.TabIndex = 25;
+            this.MapWeatherCB.SelectedIndexChanged += new System.EventHandler(this.MapWeatherCB_SelectedIndexChanged);
+            // 
+            // MapMusicSC
+            // 
+            this.MapMusicSC.Location = new System.Drawing.Point(139, 49);
+            this.MapMusicSC.Name = "MapMusicSC";
+            this.MapMusicSC.Size = new System.Drawing.Size(65, 20);
+            this.MapMusicSC.TabIndex = 23;
+            this.MapMusicSC.ValueChanged += new System.EventHandler(this.MapMusicSC_ValueChanged);
+            // 
+            // MapBackgroundSC
+            // 
+            this.MapBackgroundSC.Location = new System.Drawing.Point(139, 23);
+            this.MapBackgroundSC.Name = "MapBackgroundSC";
+            this.MapBackgroundSC.Size = new System.Drawing.Size(65, 20);
+            this.MapBackgroundSC.TabIndex = 21;
+            this.MapBackgroundSC.ValueChanged += new System.EventHandler(this.MapBackgroundSC_ValueChanged);
+            // 
+            // label87
+            // 
+            this.label87.AutoSize = true;
+            this.label87.Location = new System.Drawing.Point(6, 51);
+            this.label87.Name = "label87";
+            this.label87.Size = new System.Drawing.Size(86, 13);
+            this.label87.TabIndex = 22;
+            this.label87.Text = "Overworld Music";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(132, 142);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(67, 13);
+            this.label14.TabIndex = 17;
+            this.label14.Text = "Puppet Style";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(132, 115);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(41, 13);
+            this.label13.TabIndex = 16;
+            this.label13.Text = "Puppet";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(132, 87);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(77, 13);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "Encounter Slot";
+            // 
+            // MapDispNameBox
+            // 
+            this.MapDispNameBox.Location = new System.Drawing.Point(215, 32);
+            this.MapDispNameBox.Name = "MapDispNameBox";
+            this.MapDispNameBox.Size = new System.Drawing.Size(467, 20);
+            this.MapDispNameBox.TabIndex = 2;
+            this.MapDispNameBox.TextChanged += new System.EventHandler(this.MapDispNameBox_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(132, 35);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(72, 13);
+            this.label11.TabIndex = 13;
+            this.label11.Text = "Display Name";
+            // 
+            // MapStyleComboBox
+            // 
+            this.MapStyleComboBox.FormattingEnabled = true;
+            this.MapStyleComboBox.Location = new System.Drawing.Point(215, 139);
+            this.MapStyleComboBox.Name = "MapStyleComboBox";
+            this.MapStyleComboBox.Size = new System.Drawing.Size(121, 21);
+            this.MapStyleComboBox.TabIndex = 6;
+            this.MapStyleComboBox.Text = "Style";
+            this.MapStyleComboBox.SelectedIndexChanged += new System.EventHandler(this.MapStyleComboBox_SelectedIndexChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(212, 194);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 13);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "Weight";
+            // 
+            // MapWeightSpinCtrl
+            // 
+            this.MapWeightSpinCtrl.Location = new System.Drawing.Point(259, 192);
+            this.MapWeightSpinCtrl.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.MapWeightSpinCtrl.Name = "MapWeightSpinCtrl";
+            this.MapWeightSpinCtrl.Size = new System.Drawing.Size(77, 20);
+            this.MapWeightSpinCtrl.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.MapWeightSpinCtrl, resources.GetString("MapWeightSpinCtrl.ToolTip"));
+            this.MapWeightSpinCtrl.ValueChanged += new System.EventHandler(this.MapWeightSpinCtrl_ValueChanged);
+            // 
+            // MapLvlSpinCtrl
+            // 
+            this.MapLvlSpinCtrl.Location = new System.Drawing.Point(259, 166);
+            this.MapLvlSpinCtrl.Name = "MapLvlSpinCtrl";
+            this.MapLvlSpinCtrl.Size = new System.Drawing.Size(77, 20);
+            this.MapLvlSpinCtrl.TabIndex = 7;
+            this.MapLvlSpinCtrl.ValueChanged += new System.EventHandler(this.MapLvlSpinCtrl_ValueChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(212, 168);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(33, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "Level";
+            // 
+            // MapPuppetComboBox
+            // 
+            this.MapPuppetComboBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.MapPuppetComboBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.MapPuppetComboBox.FormattingEnabled = true;
+            this.MapPuppetComboBox.Location = new System.Drawing.Point(215, 112);
+            this.MapPuppetComboBox.Name = "MapPuppetComboBox";
+            this.MapPuppetComboBox.Size = new System.Drawing.Size(121, 21);
+            this.MapPuppetComboBox.TabIndex = 5;
+            this.MapPuppetComboBox.Text = "Puppet";
+            this.MapPuppetComboBox.SelectedIndexChanged += new System.EventHandler(this.MapPuppetComboBox_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(132, 61);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(44, 13);
+            this.label8.TabIndex = 5;
+            this.label8.Text = "Filepath";
+            // 
+            // MapFilenameTextBox
+            // 
+            this.MapFilenameTextBox.Location = new System.Drawing.Point(215, 58);
+            this.MapFilenameTextBox.Name = "MapFilenameTextBox";
+            this.MapFilenameTextBox.ReadOnly = true;
+            this.MapFilenameTextBox.Size = new System.Drawing.Size(467, 20);
+            this.MapFilenameTextBox.TabIndex = 3;
+            // 
+            // EncounterComboBox
+            // 
+            this.EncounterComboBox.FormattingEnabled = true;
+            this.EncounterComboBox.Items.AddRange(new object[] {
+            "Normal 1",
+            "Normal 2",
+            "Normal 3",
+            "Normal 4",
+            "Normal 5",
+            "Normal 6",
+            "Normal 7",
+            "Normal 8",
+            "Normal 9",
+            "Normal 10",
+            "Blue Grass 1",
+            "Blue Grass 2",
+            "Blue Grass 3",
+            "Blue Grass 4",
+            "Blue Grass 5"});
+            this.EncounterComboBox.Location = new System.Drawing.Point(215, 84);
+            this.EncounterComboBox.Name = "EncounterComboBox";
+            this.EncounterComboBox.Size = new System.Drawing.Size(121, 21);
+            this.EncounterComboBox.TabIndex = 4;
+            this.EncounterComboBox.Text = "Encounter";
+            this.EncounterComboBox.SelectedIndexChanged += new System.EventHandler(this.EncounterComboBox_SelectedIndexChanged);
+            // 
+            // MapNameTextBox
+            // 
+            this.MapNameTextBox.Location = new System.Drawing.Point(215, 6);
+            this.MapNameTextBox.MaxLength = 31;
+            this.MapNameTextBox.Name = "MapNameTextBox";
+            this.MapNameTextBox.Size = new System.Drawing.Size(467, 20);
+            this.MapNameTextBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.MapNameTextBox, "Note: name may not exceed 31 bytes");
+            this.MapNameTextBox.TextChanged += new System.EventHandler(this.MapNameTextBox_TextChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(132, 9);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Name";
+            // 
+            // MapListBox
+            // 
+            this.MapListBox.FormattingEnabled = true;
+            this.MapListBox.HorizontalScrollbar = true;
+            this.MapListBox.Location = new System.Drawing.Point(6, 6);
+            this.MapListBox.Name = "MapListBox";
+            this.MapListBox.Size = new System.Drawing.Size(120, 537);
+            this.MapListBox.TabIndex = 0;
+            this.MapListBox.SelectedIndexChanged += new System.EventHandler(this.MapListBox_SelectedIndexChanged);
+            // 
             // DesignTabPage
             // 
             this.DesignTabPage.Controls.Add(this.button1);
@@ -2893,6 +3007,16 @@
             this.label81.TabIndex = 1;
             this.label81.Text = "Map";
             // 
+            // EventTabPage
+            // 
+            this.EventTabPage.Location = new System.Drawing.Point(4, 22);
+            this.EventTabPage.Name = "EventTabPage";
+            this.EventTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.EventTabPage.Size = new System.Drawing.Size(768, 554);
+            this.EventTabPage.TabIndex = 8;
+            this.EventTabPage.Text = "Maps (Events/Objects)";
+            this.EventTabPage.UseVisualStyleBackColor = true;
+            // 
             // GameDirBrowser
             // 
             this.GameDirBrowser.Description = "Locate Game Folder";
@@ -2911,16 +3035,6 @@
             // 
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
-            // 
-            // EventTabPage
-            // 
-            this.EventTabPage.Location = new System.Drawing.Point(4, 22);
-            this.EventTabPage.Name = "EventTabPage";
-            this.EventTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.EventTabPage.Size = new System.Drawing.Size(768, 554);
-            this.EventTabPage.TabIndex = 8;
-            this.EventTabPage.Text = "Maps (Events/Objects)";
-            this.EventTabPage.UseVisualStyleBackColor = true;
             // 
             // EditorMainWindow
             // 
@@ -2980,10 +3094,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.IV2SC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IV1SC)).EndInit();
             this.groupBox6.ResumeLayout(false);
-            this.MapsTabPage.ResumeLayout(false);
-            this.MapsTabPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
             this.SkillsTabPage.ResumeLayout(false);
             this.SkillsTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataIDSC)).EndInit();
@@ -2999,6 +3109,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataPowerSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).EndInit();
+            this.MapsTabPage.ResumeLayout(false);
+            this.MapsTabPage.PerformLayout();
+            this.groupBox14.ResumeLayout(false);
+            this.groupBox14.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MapMusicSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapBackgroundSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
             this.DesignTabPage.ResumeLayout(false);
             this.DesignTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).EndInit();
@@ -3237,6 +3355,15 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button DesignResizeBT;
         private System.Windows.Forms.TabPage EventTabPage;
+        private System.Windows.Forms.GroupBox groupBox14;
+        private System.Windows.Forms.Label label86;
+        private System.Windows.Forms.NumericUpDown MapMusicSC;
+        private System.Windows.Forms.NumericUpDown MapBackgroundSC;
+        private System.Windows.Forms.Label label87;
+        private System.Windows.Forms.Label label88;
+        private System.Windows.Forms.ComboBox MapWeatherCB;
+        private System.Windows.Forms.Label label89;
+        private System.Windows.Forms.ComboBox MapEncounterTypeCB;
     }
 }
 

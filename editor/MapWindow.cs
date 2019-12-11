@@ -13,6 +13,7 @@ using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
 
 // Map tab of MainWindow
+// TODO: Clean up this disaster
 
 namespace editor
 {
@@ -174,6 +175,10 @@ namespace editor
                     MapDispNameBox.Text = map_names_[map.id];
                 else
                     MapDispNameBox.Text = "";
+                MapBackgroundSC.Value = map.battle_background;
+                MapMusicSC.Value = map.overworld_theme;
+                MapWeatherCB.SelectedIndex = (int)map.weather;
+                MapEncounterTypeCB.SelectedIndex = (int)map.encounter_type;
                 RefreshEncounter();
             }
         }
@@ -276,6 +281,44 @@ namespace editor
             var id = maps_[mapindex].id;
             if(id > 0 && id < map_names_.Length)
                 map_names_[id] = MapDispNameBox.Text;
+        }
+
+        private void MapBackgroundSC_ValueChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            if(mapindex < 0)
+                return;
+
+            maps_[mapindex].battle_background = (uint)MapBackgroundSC.Value;
+        }
+
+        private void MapMusicSC_ValueChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            if(mapindex < 0)
+                return;
+
+            maps_[mapindex].overworld_theme = (uint)MapMusicSC.Value;
+        }
+
+        private void MapWeatherCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            var index = MapWeatherCB.SelectedIndex;
+            if(mapindex < 0 || index < 0)
+                return;
+
+            maps_[mapindex].weather = (uint)index;
+        }
+
+        private void MapEncounterTypeCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            var index = MapEncounterTypeCB.SelectedIndex;
+            if(mapindex < 0 || index < 0)
+                return;
+
+            maps_[mapindex].encounter_type = (uint)index;
         }
     }
 }

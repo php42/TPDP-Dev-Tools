@@ -256,7 +256,10 @@ static void patch_nerds(const Path& data, const Path& json)
     if((file == nullptr) || sz < libtpdp::PUPPET_DATA_SIZE)
         throw BineditException("failed to open file: " + data.string());
 
-    std::cout << json.string() << " >> " << data.string() << std::endl;
+    {
+        ScopedConsoleLock lock;
+        std::cout << json.string() << " >> " << data.string() << std::endl;
+    }
 
     for(auto& it : tree.get_child("puppets")) // iterate puppets
     {
@@ -397,10 +400,21 @@ static void convert_mad(const Path& in, const Path& out)
     for(auto i : data.tilesets)
         tree.add("tilesets.", i);
 
-    tree.put("overworld_fog", data.overworld_fog);
+    tree.put("weather", data.weather);
     tree.put("overworld_theme", data.overworld_theme);
     tree.put("battle_background", data.battle_background);
-    tree.put("cave", data.cave);
+    tree.put("encounter_type", data.encounter_type);
+
+    if(data.weather > 9)
+    {
+        ScopedConsoleColorMT color(COLOR_WARN);
+        std::cerr << "Warning: " << in.string() << "\r\nUnknown weather value: " << (unsigned int)data.weather << std::endl;
+    }
+    if(data.encounter_type > 1)
+    {
+        ScopedConsoleColorMT color(COLOR_WARN);
+        std::cerr << "Warning: " << in.string() << "\r\nUnknown encounter_type value: " << (unsigned int)data.encounter_type << std::endl;
+    }
 
     for(auto i = 0; i < 10; ++i)
     {
@@ -448,10 +462,10 @@ static void patch_mad(const Path& data, const Path& json)
     mad.location_name[location_name.size()] = 0;
     mad.clear_encounters();
 
-    mad.overworld_fog = tree.get<uint8_t>("overworld_fog");
+    mad.weather = tree.get<uint8_t>("weather");
     mad.overworld_theme = tree.get<uint8_t>("overworld_theme");
     mad.battle_background = tree.get<uint8_t>("battle_background");
-    mad.cave = tree.get<uint8_t>("cave");
+    mad.encounter_type = tree.get<uint8_t>("encounter_type");
 
     if(tree.get_child("special_encounters").size() > 5)
         throw BineditException("Too many special encounters! Max is 5");
@@ -699,7 +713,10 @@ static void patch_skills(const Path& data, const Path& json)
     if(!file || sz != 0x1DC00)
         throw BineditException("Error reading file: " + data.string());
 
-    std::cout << json.string() << " >> " << data.string() << std::endl;
+    {
+        ScopedConsoleLock lock;
+        std::cout << json.string() << " >> " << data.string() << std::endl;
+    }
 
     boost::property_tree::ptree tree;
     read_as_utf8(json, tree);
@@ -1192,7 +1209,7 @@ bool patch(const Path& input)
         }
         catch(const std::exception& ex)
         {
-            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
             std::cerr << "Error: " << json.string() << std::endl;
             std::cerr << ex.what() << std::endl;
         }

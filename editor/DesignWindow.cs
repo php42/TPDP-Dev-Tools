@@ -299,8 +299,9 @@ namespace editor
             }
             tileset_display_.SetBitmap(chp_bmps_[(int)BrushTilesetSC.Value]);
             var brush_val = (uint)BrushValueSC.Value;
+            var tileset_index = (uint)BrushTilesetSC.Value;
             if(brush_val < 256)
-                tileset_display_.SelectedIndex = (int)chp_data_[index].index_map[brush_val];
+                tileset_display_.SelectedIndex = (int)chp_data_[tileset_index].index_map[brush_val];
 
             Tileset1SC.ValueChanged -= TilesetSC_ValueChanged;
             Tileset2SC.ValueChanged -= TilesetSC_ValueChanged;
