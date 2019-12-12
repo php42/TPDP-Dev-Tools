@@ -346,6 +346,18 @@ namespace editor
                 return;
             }
 
+            // Save Skills
+            string skills = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.json" : "/gn_dat3.arc/doll/skill/SkillData.json");
+            try
+            {
+                SaveSkills(skills);
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Failed to save skills: " + ex.Message);
+                return;
+            }
+
             String args = "-i \"" + wkdir + "\" --patch";
 
             if(RunConsoleCmd(app, args))

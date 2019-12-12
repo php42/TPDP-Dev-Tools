@@ -37,6 +37,24 @@ namespace editor
             }
         }
 
+        private void SaveSkills(string filepath)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(SkillJson));
+            var buf = File.ReadAllBytes(filepath);
+            MemoryStream s = new MemoryStream(buf);
+            var tmp = (SkillJson)ser.ReadObject(s);
+            for(var i = 0; i < tmp.skills.Length; ++i)
+            {
+                if(skills_.ContainsKey(tmp.skills[i].id))
+                {
+                    tmp.skills[i] = skills_[tmp.skills[i].id];
+                }
+            }
+            s = new MemoryStream();
+            ser.WriteObject(s, tmp);
+            File.WriteAllBytes(filepath, s.ToArray());
+        }
+
         private void SkillDataCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             var index = SkillDataCB.SelectedIndex;
