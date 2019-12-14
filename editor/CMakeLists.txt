@@ -23,6 +23,7 @@ set(editor_sources
     "ShiftDialog.cs"
     "ShiftDialog.Designer.cs"
     "ShiftDialog.resx"
+    "EventWindow.cs"
     "Properties/AssemblyInfo.cs"
     "Properties/Resources.Designer.cs"
     "Properties/Resources.resx"

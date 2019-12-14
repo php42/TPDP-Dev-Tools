@@ -7,7 +7,8 @@ the first 8 layers are used for tileset layout and are handled differently.
 layers 0-7 instead contain pairs of 1 byte values. first byte being an index into the tileset sprite sheet (see chp.txt) and second byte being an index into the tileset array in the mad file (see mad.txt).
 layer 8 contains a collision/zone mask.
 layer 10 and 11 contain placement of objects and events. each 2 byte value is an index into the obs file (see obs.txt).
-layers 9 and 12 seem to be unused but occasionally contain garbage(?).
+layer 12 contains a pattern of tiles to be used as the background in the top left corner.
+layer 9 seems to be unused but occasionally contains garbage(?).
 
 "width" and "height": size of the map in tiles
 "payload_length": size of the layer data following the header. (width * height * num_layers * 2)

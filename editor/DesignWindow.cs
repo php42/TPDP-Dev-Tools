@@ -27,6 +27,12 @@ namespace editor
         private MapDisplay map_display_;
         private TilesetDisplay tileset_display_;
 
+        private bool dragging_ = false;
+        private Rectangle drag_rect_ = new Rectangle(0, 0, 0, 0);
+        private byte[][][] clipboard_;
+        private int paste_x_ = -1;
+        private int paste_y_ = -1;
+
         private void InitDesign()
         {
             for(var i = 0; i < 8; ++i)
@@ -41,12 +47,15 @@ namespace editor
             map_display_.MouseDown += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseMove;
+            map_display_.MouseUp += MapDisplay_MouseClick;
             MapImgPanel.Controls.Add(map_display_);
 
             tileset_display_ = new TilesetDisplay();
             tileset_display_.Location = new Point(5, 5);
             tileset_display_.MouseClick += TilesetDisplay_MouseClick;
             TilesetImgPanel.Controls.Add(tileset_display_);
+
+            BrushLayerCB.SelectedIndex = 0;
         }
 
         private void LoadDesign()
@@ -70,6 +79,14 @@ namespace editor
             fmf_data_ = fmf;
         }
 
+        private void SaveFmf()
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FmfJson));
+            MemoryStream s = new MemoryStream();
+            ser.WriteObject(s, fmf_data_);
+            File.WriteAllBytes(fmf_data_.filepath, s.ToArray());
+        }
+
         private void LoadObs(string path)
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ObsJson));
@@ -78,6 +95,14 @@ namespace editor
             var obs = (ObsJson)ser.ReadObject(s);
             obs.filepath = path;
             obs_data_ = obs;
+        }
+
+        private void SaveObs()
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ObsJson));
+            MemoryStream s = new MemoryStream();
+            ser.WriteObject(s, obs_data_);
+            File.WriteAllBytes(obs_data_.filepath, s.ToArray());
         }
 
         private ChipJson LoadChp(uint id)
@@ -164,7 +189,7 @@ namespace editor
                     if(!layers.Contains(i))
                         continue;
 
-                    if(i < 8)
+                    if((i < 8) || (i == 12))
                     {
                         for(var j = 0; j < (width * height); ++j)
                         {
@@ -177,7 +202,7 @@ namespace editor
                                 g.DrawImage(chp_bmps_[tileset], dst_rect, src_rect, GraphicsUnit.Pixel);
                         }
                     }
-                    else
+                    if(i >= 8)
                     {
                         using(var fnt = new Font("Arial", 9))
                         using(var bkgrnd_brush = new SolidBrush(Color.DarkSlateGray))
@@ -192,7 +217,7 @@ namespace editor
 
                                 if(index > 0)
                                 {
-                                    if((i != 8) && (obj_id > 0))
+                                    if((obj_id > 0) && (i != 8) && (i != 12))
                                     {
                                         if(!objects_.ContainsKey(obj_id))
                                             objects_[obj_id] = LoadObjectBmp(obj_id);
@@ -200,7 +225,7 @@ namespace editor
                                         g.DrawImage(obj_bmp, dst_rect, src_rect, GraphicsUnit.Pixel);
                                     }
 
-                                    if(DesignLabelCB.Checked)
+                                    if(DesignLabelCB.Checked || (i == 8))
                                     {
                                         var str = index.ToString();
                                         var fmt = new StringFormat();
@@ -235,6 +260,14 @@ namespace editor
             map_display_.SetBitmap(RenderMap(layers, rect));
         }
 
+        private Bitmap RenderMap(Rectangle clipping_rect)
+        {
+            List<int> layers = new List<int>();
+            foreach(var i in LayerVisibiltyCB.CheckedIndices)
+                layers.Add((int)i);
+            return RenderMap(layers, clipping_rect);
+        }
+
         private void RenderMap()
         {
             List<int> layers = new List<int>();
@@ -261,7 +294,8 @@ namespace editor
 
             var rect = new Rectangle(x, y, 64, 32);
 
-            map_display_.UpdateIndex(RenderMap(layers, rect), index);
+            //map_display_.UpdateIndex(RenderMap(layers, rect), index);
+            map_display_.UpdateRegion(RenderMap(layers, rect), x, y);
         }
 
         private void MapDesignCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -434,6 +468,110 @@ namespace editor
             BrushValueSC.Value = val;
         }
 
+        private void MapDrag(int x, int y)
+        {
+            if(!dragging_)
+            {
+                drag_rect_.X = x;
+                drag_rect_.Y = y;
+                drag_rect_.Width = 1;
+                drag_rect_.Height = 1;
+                dragging_ = true;
+            }
+
+            var clipping_rect = drag_rect_;
+
+            clipping_rect.X *= 16;
+            clipping_rect.Y *= 16;
+            clipping_rect.Width *= 16;
+            clipping_rect.Height *= 16;
+
+            var bmp = RenderMap(clipping_rect);
+            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y);
+
+            if(x < drag_rect_.X)
+                drag_rect_.X = x;
+            if(y < drag_rect_.Y)
+                drag_rect_.Y = y;
+            drag_rect_.Width = (x + 1) - drag_rect_.X;
+            drag_rect_.Height = (y + 1) - drag_rect_.Y;
+
+            clipping_rect = drag_rect_;
+            clipping_rect.X *= 16;
+            clipping_rect.Y *= 16;
+            clipping_rect.Width *= 16;
+            clipping_rect.Height *= 16;
+
+            bmp = RenderMap(clipping_rect);
+
+            using(var p = new Pen(Color.Red, 3))
+            using(var g = Graphics.FromImage(bmp))
+            {
+                g.DrawRectangle(p, 0, 0, bmp.Width, bmp.Height);
+            }
+
+            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y);
+        }
+
+        private void MapEndDrag()
+        {
+            if(!dragging_)
+                return;
+
+            dragging_ = false;
+
+            var x = drag_rect_.X;
+            var y = drag_rect_.Y;
+            var w = drag_rect_.Width;
+            var h = drag_rect_.Height;
+            var stride = w * 2;
+
+            clipboard_ = new byte[12][][];
+            for(var layer = 0; layer < 12; ++layer)
+            {
+                clipboard_[layer] = new byte[h][];
+                for(var i = 0; i < h; ++i)
+                {
+                    clipboard_[layer][i] = new byte[stride];
+                    Array.Copy(map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), clipboard_[layer][i], 0, stride);
+                }
+            }
+
+            RenderMap();
+        }
+
+        private void MapPasteClipboard(int x, int y)
+        {
+            if(clipboard_ == null)
+                return;
+            if((x >= fmf_data_.width) || (y >= fmf_data_.height))
+                return;
+            if((x < 0) || (y < 0))
+                return;
+            if((x == paste_x_) && (y == paste_y_))
+                return;
+
+            paste_x_ = x;
+            paste_y_ = y;
+
+            var w = clipboard_[0][0].Length;
+            var h = clipboard_[0].Length;
+            var dst_w = ((int)fmf_data_.width - x) * 2;
+            var dst_h = (int)fmf_data_.height - y;
+
+            w = Math.Min(w, dst_w);
+            h = Math.Min(h, dst_h);
+
+            for(var layer = 0; layer < 12; ++layer)
+            {
+                for(var i = 0; i < h; ++i)
+                {
+                    Array.Copy(clipboard_[layer][i], 0, map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), w);
+                }
+            }
+
+            RenderMap();
+        }
 
         private void MapDisplay_MouseClick(Object sender, MouseEventArgs e)
         {
@@ -442,18 +580,42 @@ namespace editor
             if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0) || (layer < 0))
                 return;
 
+            var tile_x = e.X / 16;
+            var tile_y = e.Y / 16;
+
             if((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right))
+            {
+                if(dragging_)
+                    MapEndDrag();
                 return;
+            }
 
             if((e.X < 0) || (e.Y < 0))
                 return;
 
-            if(((e.X / 16) >= fmf_data_.width) || ((e.Y / 16) >= fmf_data_.height))
+            if((tile_x >= fmf_data_.width) || (tile_y >= fmf_data_.height))
                 return;
+
+            if((e.Button == MouseButtons.Left) && (ModifierKeys == Keys.Shift))
+            {
+                MapDrag(tile_x, tile_y);
+                return;
+            }
+
+            if((e.Button == MouseButtons.Left) && (ModifierKeys == Keys.Alt))
+            {
+                MapPasteClipboard(tile_x, tile_y);
+                return;
+            }
+            else
+            {
+                paste_x_ = -1;
+                paste_y_ = -1;
+            }
 
             var tileset_index = (uint)BrushTilesetSC.Value;
             var brush_val = (uint)BrushValueSC.Value;
-            var index = (e.X / 16) + ((e.Y / 16) * fmf_data_.width);
+            var index = tile_x + (tile_y * fmf_data_.width);
 
             if(e.Button == MouseButtons.Right)
             {
@@ -500,14 +662,21 @@ namespace editor
 
             try
             {
-                var ser = new DataContractJsonSerializer(typeof(FmfJson));
-                var s = new MemoryStream();
-                ser.WriteObject(s, fmf_data_);
-                File.WriteAllBytes(fmf_data_.filepath, s.ToArray());
+                SaveFmf();
             }
             catch(Exception ex)
             {
                 ErrMsg("Error saving file: " + fmf_data_.filepath + "\r\n" + ex.Message);
+                return;
+            }
+
+            try
+            {
+                SaveObs();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error saving file: " + obs_data_.filepath + "\r\n" + ex.Message);
                 return;
             }
 

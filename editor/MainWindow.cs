@@ -31,6 +31,7 @@ namespace editor
         private string[] puppet_names_ = new string[1] { "" };
         private string[] map_names_ = new string[1] { "" };
         private string working_dir_;
+        private SettingsJson cfg_ = new SettingsJson();
 
         private void Reset()
         {
@@ -81,6 +82,45 @@ namespace editor
             catch
             {
                 GameDirTextBox.Text = "";
+            }
+
+            ReadCfg();
+
+            if(!string.IsNullOrEmpty(cfg_.game_dir))
+                GameDirTextBox.Text = cfg_.game_dir;
+            if(!string.IsNullOrEmpty(cfg_.working_dir))
+                WorkingDirTextBox.Text = cfg_.working_dir;
+            if(!cfg_.map_popup)
+                TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;
+        }
+
+        private void ReadCfg()
+        {
+            try
+            {
+                var buf = File.ReadAllBytes("config.json");
+                var ser = new DataContractJsonSerializer(typeof(SettingsJson));
+                var s = new MemoryStream(buf);
+                cfg_ = (SettingsJson)ser.ReadObject(s);
+            }
+            catch
+            {
+                cfg_ = new SettingsJson();
+            }
+        }
+
+        private void WriteCfg()
+        {
+            try
+            {
+                var ser = new DataContractJsonSerializer(typeof(SettingsJson));
+                var s = new MemoryStream();
+                ser.WriteObject(s, cfg_);
+                File.WriteAllBytes("config.json", s.ToArray());
+            }
+            catch
+            {
+                // ...
             }
         }
 
@@ -231,6 +271,10 @@ namespace editor
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void ConvertButton_Click(object sender, EventArgs e)
@@ -248,6 +292,10 @@ namespace editor
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void ApplyButton_Click(object sender, EventArgs e)
@@ -362,6 +410,10 @@ namespace editor
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void RepackButton_Click(object sender, EventArgs e)
@@ -386,6 +438,10 @@ namespace editor
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void DiffButton_Click(object sender, EventArgs e)
@@ -422,6 +478,10 @@ namespace editor
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void LoadButton_Click(object sender, EventArgs e)
@@ -717,14 +777,24 @@ namespace editor
             }
 
             ConsoleOutput.AppendText("Done.\r\n");
+
+            cfg_.game_dir = GameDirTextBox.Text;
+            cfg_.working_dir = WorkingDirTextBox.Text;
+            WriteCfg();
         }
 
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(TabControl.SelectedIndex == 5)
             {
-                MessageBox.Show("Right click to erase.\r\nCtrl + left click to select brush from active layer.\r\nChanging the selected map will revert all changes to map geometry. Make sure to save before switching maps.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string msg = "Right click to erase.\r\nCtrl + left click to select brush from active layer.\r\nShift + drag left to copy.\r\nAlt + left click to paste.\r\n\r\n";
+                msg += "Changing the selected map will revert changes to map geometry and event tables. Make sure to save before switching maps.\r\n\r\n";
+                msg += "Please see \"MAP EDITOR README.txt\" in the docs folder.";
+
+                MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;
+                cfg_.map_popup = false;
+                WriteCfg();
             }
         }
     }

@@ -5,16 +5,17 @@ it's an array of 1024 20-byte structures.
 
 "index": index into the array
 "object_id": overworld sprite for this object
-"type": type of event (object/trainer/warp/etc)
+"movement_mode": type of movement (static in different directions, wandering, etc)
+"movement_delay": delay between movements (i.e. speed, lower is faster)
 "event_arg": depends on 'type'. typically this is the ID of a script file. for warps, it is the id of the map to warp to.
 "event_index": depends on 'type'. for warps, this is the location to warp to on the other map.
-"flags": an array of 12 1-byte values that seem to mostly be boolean flags, though values larger than 1 can occur for some events.
+"flags": an array of 12 1-byte values that seem to mostly be boolean flags, though some bytes may contain larger values.
 
 --- BINARY FORMAT ---
-                    _
-0x00: u16 object_id  |
-0x02: u8 type        |
-0x03: u8 unknown     | possibly unused
-0x04: u16 event_arg  |--0x14 (20-byte entry)
-0x06: u16 event_index|
-0x08: u8 flags[12]  _|
+                        _
+0x00: u16 object_id      |
+0x02: u8 movement_mode   |
+0x03: u8 movement_delay  |
+0x04: u16 event_arg      |--0x14 (20-byte entry)
+0x06: u16 event_index    |
+0x08: u8 flags[12]      _|

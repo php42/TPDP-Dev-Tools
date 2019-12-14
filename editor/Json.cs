@@ -170,6 +170,8 @@ namespace editor.json
 
         public string filepath = "";
         //public int id;
+
+        //public byte[][] layer_data;
     }
 
     [DataContract]
@@ -182,10 +184,10 @@ namespace editor.json
         public uint object_id;
 
         [DataMember]
-        public uint type;
+        public uint movement_mode;
 
         [DataMember]
-        public uint unknown;
+        public uint movement_delay;
 
         [DataMember]
         public uint event_arg;
@@ -314,5 +316,19 @@ namespace editor.json
         [DataMember]
         public SkillData[] skills;
     }
+
+    [DataContract]
+    class SettingsJson
+    {
+        [DataMember]
+        public string game_dir = "";
+
+        [DataMember]
+        public string working_dir = "";
+
+        [DataMember]
+        public bool map_popup = true;
+    }
+
 #pragma warning restore CS0649
 }

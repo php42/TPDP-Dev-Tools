@@ -39,11 +39,16 @@ namespace editor
             e.Graphics.DrawImage(bmp_, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel);
         }
 
-        public void UpdateIndex(Bitmap bmp, uint index)
+        /*public void UpdateIndex(Bitmap bmp, uint index)
         {
             var x = (((int)index * 16) % bmp_.Width) - (bmp.Width / 2);
             var y = ((((int)index * 16) / bmp_.Width) * 16) - (bmp.Height / 2);
 
+            UpdateRegion(bmp, x, y);
+        }*/
+
+        public void UpdateRegion(Bitmap bmp, int x, int y)
+        {
             using(var g = Graphics.FromImage(bmp_))
             {
                 g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;

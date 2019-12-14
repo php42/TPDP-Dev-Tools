@@ -273,8 +273,8 @@ class OBSEntry
 {
 public:
     uint16_t object_id;
-    uint8_t type;
-    uint8_t unknown;
+    uint8_t movement_mode;
+    uint8_t movement_delay;
     uint16_t event_arg;
     uint16_t event_index;
     uint8_t flags[12];

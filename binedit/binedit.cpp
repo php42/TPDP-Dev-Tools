@@ -872,8 +872,8 @@ static void convert_obs(const Path& in, const Path& out)
         // faster than the built-in conversion???
         node.put("index", std::to_string(i));
         node.put("object_id", std::to_string(entry.object_id));
-        node.put("type", std::to_string(entry.type));
-        node.put("unknown", std::to_string(entry.unknown));
+        node.put("movement_mode", std::to_string(entry.movement_mode));
+        node.put("movement_delay", std::to_string(entry.movement_delay));
         node.put("event_arg", std::to_string(entry.event_arg));
         node.put("event_index", std::to_string(entry.event_index));
 
@@ -904,8 +904,8 @@ static void patch_obs(const Path& data, const Path& json)
             throw BineditException("OBS entry out of range.");
 
         entry.object_id = (uint16_t)std::stoul(node.get<std::string>("object_id"));
-        entry.type = (uint8_t)std::stoul(node.get<std::string>("type"));
-        entry.unknown = (uint8_t)std::stoul(node.get<std::string>("unknown"));
+        entry.movement_mode = (uint8_t)std::stoul(node.get<std::string>("movement_mode"));
+        entry.movement_delay = (uint8_t)std::stoul(node.get<std::string>("movement_delay"));
         entry.event_arg = (uint16_t)std::stoul(node.get<std::string>("event_arg"));
         entry.event_index = (uint16_t)std::stoul(node.get<std::string>("event_index"));
 

@@ -522,6 +522,8 @@ void FMFData::read(std::wstring path)
 
     if(!data_ || (sz_ < 20))
         throw std::runtime_error("Failed to read FMF file.");
+    if(memcmp(data_.get(), "FMF_", 4) != 0)
+        throw std::runtime_error("Bad FMF file signature.");
 
     payload_len = read_le32(&data_[4]);
     map_width = read_le32(&data_[8]);
@@ -534,6 +536,8 @@ void FMFData::read(std::wstring path)
     auto stride = map_width * map_height * 2;
 
     if((stride * num_layers) != payload_len)
+        throw std::runtime_error("Invalid FMF payload length.");
+    if(sz_ != (payload_len + 20))
         throw std::runtime_error("Corrupt FMF file.");
 
     for(std::size_t i = 0; i < num_layers; ++i)
@@ -545,12 +549,13 @@ void FMFData::read(std::wstring path)
 
 void FMFData::write(std::wstring path)
 {
-    write_le32(&data_[4], (uint32_t)payload_len);
-    write_le32(&data_[8], (uint32_t)map_width);
-    write_le32(&data_[12], (uint32_t)map_height);
-    data_[0x12] = (uint8_t)num_layers;
+    memcpy(data_.get(), "FMF_", 4);
+    write_le32(&data_[0x04], (uint32_t)payload_len);
+    write_le32(&data_[0x08], (uint32_t)map_width);
+    write_le32(&data_[0x0C], (uint32_t)map_height);
     data_[0x10] = unk1;
     data_[0x11] = unk2;
+    data_[0x12] = (uint8_t)num_layers;
     data_[0x13] = unk3;
 
     if(!write_file(path, data_.get(), sz_))
@@ -560,7 +565,7 @@ void FMFData::write(std::wstring path)
 void FMFData::resize(std::size_t width, std::size_t height)
 {
     const auto new_payload_len = width * height * num_layers * 2;
-    const auto new_sz = payload_len + 20;
+    const auto new_sz = new_payload_len + 20;
 
     const auto layer_sz = map_width * map_height * 2;
     const auto new_layer_sz = width * height * 2;
@@ -588,12 +593,13 @@ void FMFData::resize(std::size_t width, std::size_t height)
     map_width = width;
     map_height = height;
 
-    write_le32(&new_buf[4], (uint32_t)payload_len);
-    write_le32(&new_buf[8], (uint32_t)map_width);
-    write_le32(&new_buf[12], (uint32_t)map_height);
-    new_buf[0x12] = (uint8_t)num_layers;
+    memcpy(new_buf.get(), "FMF_", 4);
+    write_le32(&new_buf[0x04], (uint32_t)payload_len);
+    write_le32(&new_buf[0x08], (uint32_t)map_width);
+    write_le32(&new_buf[0x0C], (uint32_t)map_height);
     new_buf[0x10] = unk1;
     new_buf[0x11] = unk2;
+    new_buf[0x12] = (uint8_t)num_layers;
     new_buf[0x13] = unk3;
 
     data_ = std::move(new_buf);
@@ -623,8 +629,8 @@ void OBSEntry::read(const void *data)
 {
     const uint8_t *buf = (const uint8_t*)data;
     object_id = read_le16(buf);
-    type = buf[2];
-    unknown = buf[3];
+    movement_mode = buf[2];
+    movement_delay = buf[3];
     event_arg = read_le16(&buf[4]);
     event_index = read_le16(&buf[6]);
     memcpy(flags, &buf[8], sizeof(flags));
@@ -634,8 +640,8 @@ void OBSEntry::write(void *data) const
 {
     uint8_t *buf = (uint8_t*)data;
     write_le16(buf, object_id);
-    buf[2] = type;
-    buf[3] = unknown;
+    buf[2] = movement_mode;
+    buf[3] = movement_delay;
     write_le16(&buf[4], event_arg);
     write_le16(&buf[6], event_index);
     memcpy(&buf[8], flags, sizeof(flags));

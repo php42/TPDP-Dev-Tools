@@ -649,7 +649,11 @@ Archive::iterator Archive::insert(const void *file, std::size_t size, const std:
     if(dir_it >= dir_end())
         return end();
 
-    auto it = end(dir_it);
+    iterator it;
+    if(dir_it->num_files == 0)
+        it = end();
+    else
+        it = end(dir_it);
 
     it = insert(it, header);
 
@@ -678,6 +682,16 @@ Archive::directory_iterator Archive::insert(const directory_iterator& it, const 
 
     header_.size += sizeof(header);
     header_.write(data_.get());
+
+    // fix references to relocated headers
+    for(auto hdr = dir_begin(); hdr < dir_end(); ++hdr)
+    {
+        if(hdr->parent_dir_offset == ARCHIVE_NPOS)
+            continue;
+        if(hdr->parent_dir_offset >= (it.offset() - dir_table_offset_))
+            hdr->parent_dir_offset += sizeof(header);
+    }
+
     return make_dir_iterator(it.offset());
 }
 
@@ -749,6 +763,8 @@ Archive::directory_iterator Archive::create_dir(const std::string& path)
         }
 
         auto parent_path = get_path(dir_it); // insert_filename_header invalidates iterators, save path so we can find it again
+        //auto ptr = (ArchiveDirHeader*)dir_it.data();
+        //auto fileptr = (ArchiveFileHeader*)make_iterator(dir_it->dir_offset + file_table_offset_).data();
 
         auto name_begin = current_path.find_last_of("/\\");
         name_begin = (name_begin == std::string::npos) ? 0u : current_path.find_first_not_of("/\\", name_begin);
@@ -759,13 +775,17 @@ Archive::directory_iterator Archive::create_dir(const std::string& path)
         auto filename_offset = insert_filename_header(dir_name);
 
         dir_it = find_dir(parent_path);
-        it = end(dir_it);
+        if(dir_it->num_files == 0)
+            it = end();
+        else
+            it = end(dir_it);
 
         ArchiveFileHeader hdr;
         memset(&hdr, 0, sizeof(hdr));
         hdr.attributes = FILE_ATTRIBUTE_DIRECTORY;
         hdr.compressed_size = ARCHIVE_NO_COMPRESSION;
         hdr.filename_offset = (uint32_t)filename_offset - header_.filename_table_offset;
+        hdr.data_offset = (uint32_t)(dir_end().offset() - dir_table_offset_);
         it = insert(it, hdr);
 
         dir_it = find_dir(parent_path);
