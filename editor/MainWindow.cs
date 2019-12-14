@@ -776,6 +776,18 @@ namespace editor
                 return;
             }
 
+            // Populate Event tab
+            try
+            {
+                LoadEvents();
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error initializing event editor: " + ex.Message);
+                Reset();
+                return;
+            }
+
             ConsoleOutput.AppendText("Done.\r\n");
 
             cfg_.game_dir = GameDirTextBox.Text;
@@ -788,8 +800,7 @@ namespace editor
             if(TabControl.SelectedIndex == 5)
             {
                 string msg = "Right click to erase.\r\nCtrl + left click to select brush from active layer.\r\nShift + drag left to copy.\r\nAlt + left click to paste.\r\n\r\n";
-                msg += "Changing the selected map will revert changes to map geometry and event tables. Make sure to save before switching maps.\r\n\r\n";
-                msg += "Please see \"MAP EDITOR README.txt\" in the docs folder.";
+                msg += "Please see \"MAP EDITOR README.txt\" in the docs folder for more information.";
 
                 MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;

@@ -19,6 +19,52 @@ namespace editor
 {
     public partial class EditorMainWindow : Form
     {
+        private List<FmfJson> fmfs_ = new List<FmfJson>();
+        private List<ObsJson> obss_ = new List<ObsJson>();
+        private FmfJson fmf_data_;
+        private ObsJson obs_data_;
+        private byte[][] map_layers_ = new byte[13][];
+        private int selected_map_;
+
+        private void LoadMad(string filepath, int id)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MadJson));
+            var buf = File.ReadAllBytes(filepath);
+            var s = new MemoryStream(buf);
+            var map = (MadJson)ser.ReadObject(s);
+
+            map.id = id;
+            map.filepath = filepath;
+
+            maps_.Add(map);
+        }
+
+        private void LoadFmf(string filepath, int id)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FmfJson));
+            var buf = File.ReadAllBytes(filepath);
+            var s = new MemoryStream(buf);
+            var fmf = (FmfJson)ser.ReadObject(s);
+
+            fmf.id = id;
+            fmf.filepath = filepath;
+
+            fmfs_.Add(fmf);
+        }
+
+        private void LoadObs(string filepath, int id)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ObsJson));
+            var buf = File.ReadAllBytes(filepath);
+            var s = new MemoryStream(buf);
+            var obs = (ObsJson)ser.ReadObject(s);
+
+            obs.id = id;
+            obs.filepath = filepath;
+
+            obss_.Add(obs);
+        }
+
         private void LoadMaps(string dir)
         {
             DirectoryInfo di = new DirectoryInfo(dir);
@@ -28,6 +74,8 @@ namespace editor
             }
 
             maps_.Clear();
+            fmfs_.Clear();
+            obss_.Clear();
 
             try
             {
@@ -35,32 +83,20 @@ namespace editor
 
                 foreach(var file in files)
                 {
-                    DataContractJsonSerializer s = new DataContractJsonSerializer(typeof(MadJson));
-                    var fs = file.OpenRead();
+                    Regex rx = new Regex(@"(?<id>\d{3})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var match = rx.Match(file.Name);
 
-                    try
+                    if(match.Success)
                     {
-                        var map = (MadJson)s.ReadObject(fs);
-                        map.filepath = file.FullName;
-
-                        Regex rx = new Regex(@"(?<id>\d{3})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        var match = rx.Match(map.filepath);
-
-                        if(match.Success)
-                            map.id = int.Parse(match.Groups["id"].Value);
-                        else
+                        var fmf = file.FullName.Replace(".json", "_fmf.json");
+                        var obs = file.FullName.Replace(".json", "_obs.json");
+                        if(!File.Exists(fmf) || !File.Exists(obs))
                             continue;
 
-                        maps_.Add(map);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new Exception("Error parsing file: " + file.FullName + "\r\n" + e.Message);
-                    }
-                    finally
-                    {
-                        if(fs != null)
-                            fs.Close();
+                        var id = int.Parse(match.Groups["id"].Value);
+                        LoadMad(file.FullName, id);
+                        LoadFmf(fmf, id);
+                        LoadObs(obs, id);
                     }
                 }
             }
@@ -71,13 +107,15 @@ namespace editor
 
             MapListBox.ClearSelected();
             MapListBox.Items.Clear();
-            //MapListBox.DataSource = maps_;
-            //MapListBox.DisplayMember = "location_name";
-            //MapListBox.ValueMember = "location_name";
 
             MapNameTextBox.Clear();
             MapFilenameTextBox.Clear();
             ClearEncounter();
+
+            fmf_data_ = null;
+            obs_data_ = null;
+            map_layers_ = new byte[13][];
+            selected_map_ = -1;
 
             foreach(var map in maps_)
             {
@@ -98,9 +136,72 @@ namespace editor
                 }
                 catch(Exception e)
                 {
-                    throw new Exception("Error saving map: " + map.filepath + "\r\n" + e.Message);
+                    throw new Exception("Error saving mad: " + map.filepath + "\r\n" + e.Message);
                 }
             }
+
+            foreach(var fmf in fmfs_)
+            {
+                try
+                {
+                    var ser = new DataContractJsonSerializer(typeof(FmfJson));
+                    var s = new MemoryStream();
+                    ser.WriteObject(s, fmf);
+                    File.WriteAllBytes(fmf.filepath, s.ToArray());
+                }
+                catch(Exception e)
+                {
+                    throw new Exception("Error saving fmf: " + fmf.filepath + "\r\n" + e.Message);
+                }
+            }
+
+            foreach(var obs in obss_)
+            {
+                try
+                {
+                    var ser = new DataContractJsonSerializer(typeof(ObsJson));
+                    var s = new MemoryStream();
+                    ser.WriteObject(s, obs);
+                    File.WriteAllBytes(obs.filepath, s.ToArray());
+                }
+                catch(Exception e)
+                {
+                    throw new Exception("Error saving obs: " + obs.filepath + "\r\n" + e.Message);
+                }
+            }
+        }
+
+        private void SelectMap(int index)
+        {
+            if((index < 0) || (index >= maps_.Count))
+                return;
+
+            if(selected_map_ >= 0)
+            {
+                for(var i = 0; i < 13; ++i)
+                    fmf_data_.layers[i] = Convert.ToBase64String(map_layers_[i]);
+
+                fmfs_[selected_map_] = fmf_data_;
+                obss_[selected_map_] = obs_data_;
+            }
+
+            selected_map_ = index;
+            fmf_data_ = fmfs_[index];
+            obs_data_ = obss_[index];
+
+            MapListBox.SelectedIndexChanged -= MapListBox_SelectedIndexChanged;
+            MapDesignCB.SelectedIndexChanged -= MapDesignCB_SelectedIndexChanged;
+            EventMapCB.SelectedIndexChanged -= EventMapCB_SelectedIndexChanged;
+            MapListBox.SelectedIndex = index;
+            MapDesignCB.SelectedIndex = index;
+            EventMapCB.SelectedIndex = index;
+            MapListBox.SelectedIndexChanged += MapListBox_SelectedIndexChanged;
+            MapDesignCB.SelectedIndexChanged += MapDesignCB_SelectedIndexChanged;
+            EventMapCB.SelectedIndexChanged += EventMapCB_SelectedIndexChanged;
+
+            RefreshMad();
+            RefreshFmf();
+            RefreshEvent();
         }
 
         private void ClearEncounter()
@@ -163,7 +264,7 @@ namespace editor
             }
         }
 
-        private void MapListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void RefreshMad()
         {
             var index = MapListBox.SelectedIndex;
             if(index >= 0 && index < maps_.Count)
@@ -182,6 +283,13 @@ namespace editor
                 ForbidBikeCB.Checked = map.forbid_bike > 0;
                 RefreshEncounter();
             }
+        }
+
+        private void MapListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var index = MapListBox.SelectedIndex;
+            if(index >= 0)
+                SelectMap(index);
         }
 
         private void EncounterComboBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -17,11 +17,8 @@ namespace editor
 {
     public partial class EditorMainWindow : Form
     {
-        private FmfJson fmf_data_;
-        private ObsJson obs_data_;
         private ChipJson[] chp_data_ = new ChipJson[4];
         private Bitmap[] chp_bmps_ = new Bitmap[4];
-        private byte[][] map_layers_ = new byte[13][];
         private Dictionary<uint, Bitmap> objects_ = new Dictionary<uint, Bitmap>();
 
         private MapDisplay map_display_;
@@ -63,46 +60,20 @@ namespace editor
             MapDesignCB.SelectedIndex = -1;
             MapDesignCB.Items.Clear();
 
+            chp_data_ = new ChipJson[4];
+            chp_bmps_ = new Bitmap[4];
+            objects_ = new Dictionary<uint, Bitmap>();
+
+            dragging_ = false;
+            drag_rect_ = new Rectangle(0, 0, 0, 0);
+            clipboard_ = null;
+            paste_x_ = -1;
+            paste_y_ = -1;
+
             foreach(var map in maps_)
             {
                 MapDesignCB.Items.Add(map.location_name);
             }
-        }
-
-        private void LoadFmf(string path)
-        {
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FmfJson));
-            var buf = File.ReadAllBytes(path);
-            MemoryStream s = new MemoryStream(buf);
-            var fmf = (FmfJson)ser.ReadObject(s);
-            fmf.filepath = path;
-            fmf_data_ = fmf;
-        }
-
-        private void SaveFmf()
-        {
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(FmfJson));
-            MemoryStream s = new MemoryStream();
-            ser.WriteObject(s, fmf_data_);
-            File.WriteAllBytes(fmf_data_.filepath, s.ToArray());
-        }
-
-        private void LoadObs(string path)
-        {
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ObsJson));
-            var buf = File.ReadAllBytes(path);
-            MemoryStream s = new MemoryStream(buf);
-            var obs = (ObsJson)ser.ReadObject(s);
-            obs.filepath = path;
-            obs_data_ = obs;
-        }
-
-        private void SaveObs()
-        {
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ObsJson));
-            MemoryStream s = new MemoryStream();
-            ser.WriteObject(s, obs_data_);
-            File.WriteAllBytes(obs_data_.filepath, s.ToArray());
         }
 
         private ChipJson LoadChp(uint id)
@@ -298,35 +269,13 @@ namespace editor
             map_display_.UpdateRegion(RenderMap(layers, rect), x, y);
         }
 
-        private void MapDesignCB_SelectedIndexChanged(object sender, EventArgs e)
+        private void RefreshFmf()
         {
             var index = MapDesignCB.SelectedIndex;
             if(index < 0)
                 return;
 
             var map = maps_[index];
-            var fmfpath = map.filepath.Replace(".json", "_fmf.json");
-            var obspath = map.filepath.Replace(".json", "_obs.json");
-
-            try
-            {
-                LoadFmf(fmfpath);
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Failed to load file: " + fmfpath + "\r\n" + ex.Message);
-                return;
-            }
-
-            try
-            {
-                LoadObs(obspath);
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Failed to load file: " + obspath + "\r\n" + ex.Message);
-                return;
-            }
 
             for(uint i = 0; i < 4; ++i)
             {
@@ -358,6 +307,13 @@ namespace editor
             }
 
             RenderMap();
+        }
+
+        private void MapDesignCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var index = MapDesignCB.SelectedIndex;
+            if(index >= 0)
+                SelectMap(index);
         }
 
         private void BrushTilesetSC_ValueChanged(object sender, EventArgs e)
@@ -649,51 +605,6 @@ namespace editor
             }
 
             UpdateMapIndex((uint)layer, (uint)index, brush_val);
-        }
-
-        private void DesignSaveBT_Click(object sender, EventArgs e)
-        {
-            var mapindex = MapDesignCB.SelectedIndex;
-            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
-                return;
-
-            for(var i = 0; i < 13; ++i)
-                fmf_data_.layers[i] = Convert.ToBase64String(map_layers_[i]);
-
-            try
-            {
-                SaveFmf();
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Error saving file: " + fmf_data_.filepath + "\r\n" + ex.Message);
-                return;
-            }
-
-            try
-            {
-                SaveObs();
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Error saving file: " + obs_data_.filepath + "\r\n" + ex.Message);
-                return;
-            }
-
-            var map = maps_[mapindex];
-            try
-            {
-                var ser = new DataContractJsonSerializer(typeof(MadJson));
-                var s = new MemoryStream();
-                ser.WriteObject(s, map);
-                File.WriteAllBytes(map.filepath, s.ToArray());
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Error saving map: " + map.filepath + "\r\n" + ex.Message);
-            }
-
-            MessageBox.Show("Map save successful.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void DesignLabelCB_CheckedChanged(object sender, EventArgs e)

@@ -169,9 +169,7 @@ namespace editor.json
         public string[] layers = new string[13];
 
         public string filepath = "";
-        //public int id;
-
-        //public byte[][] layer_data;
+        public int id;
     }
 
     [DataContract]
@@ -206,7 +204,7 @@ namespace editor.json
         public ObsEntry[] entries;
 
         public string filepath = "";
-        //public int id;
+        public int id;
     }
 
     [DataContract]

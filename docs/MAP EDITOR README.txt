@@ -38,7 +38,7 @@ To make a new map, copy one of the existing map folders and rename everything.
 You can then open it in the editor as ususal.
 However warps seem to be broken in new maps as they will all be "locked".
 You can warp in but you will be trapped there.
-I've yet to determine the exact cause of this but it seems to be controlled by some external mechanism.
+I've yet to determine the exact cause of this, but it seems to be external to the map files themselves.
 If you really need entirely new maps you can repurpose the unused ones as warps do work correctly on those.
 
 Expect weirdness as the event system is not fully understood yet.

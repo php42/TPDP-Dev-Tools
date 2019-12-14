@@ -17,7 +17,18 @@ namespace editor
 {
     public partial class EditorMainWindow : Form
     {
-        private void EventIDSC_ValueChanged(object sender, EventArgs e)
+        private void LoadEvents()
+        {
+            EventMapCB.SelectedIndex = -1;
+            EventMapCB.Items.Clear();
+
+            foreach(var map in maps_)
+            {
+                EventMapCB.Items.Add(map.location_name);
+            }
+        }
+
+        private void RefreshEvent()
         {
             var mapindex = MapDesignCB.SelectedIndex;
             var id = (uint)EventIDSC.Value;
@@ -36,6 +47,11 @@ namespace editor
             for(var i = 1; i < obj.flags.Length; ++i)
                 str += "," + obj.flags[i].ToString();
             EventFlagsTB.Text = str;
+        }
+
+        private void EventIDSC_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshEvent();
         }
 
         private void EventObjIDSC_ValueChanged(object sender, EventArgs e)
@@ -108,6 +124,13 @@ namespace editor
             {
                 ErrMsg("Error parsing flag string: " + ex.Message);
             }
+        }
+
+        private void EventMapCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var index = EventMapCB.SelectedIndex;
+            if(index > 0)
+                SelectMap(index);
         }
     }
 }

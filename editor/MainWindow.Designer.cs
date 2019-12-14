@@ -119,7 +119,6 @@
             System.Windows.Forms.Label label83;
             System.Windows.Forms.Label label82;
             System.Windows.Forms.Label label81;
-            System.Windows.Forms.Label label90;
             System.Windows.Forms.Label label91;
             System.Windows.Forms.Label label92;
             System.Windows.Forms.Label label93;
@@ -135,6 +134,7 @@
             System.Windows.Forms.Label label101;
             System.Windows.Forms.Label label103;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
+            System.Windows.Forms.Label label90;
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
             this.DiffModeCB = new System.Windows.Forms.CheckBox();
@@ -259,7 +259,6 @@
             this.DesignShiftBT = new System.Windows.Forms.Button();
             this.DesignResizeBT = new System.Windows.Forms.Button();
             this.DesignLabelCB = new System.Windows.Forms.CheckBox();
-            this.DesignSaveBT = new System.Windows.Forms.Button();
             this.MapImgPanel = new System.Windows.Forms.Panel();
             this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
             this.Tileset3SC = new System.Windows.Forms.NumericUpDown();
@@ -277,7 +276,6 @@
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.label102 = new System.Windows.Forms.Label();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
-            this.EventSaveBT = new System.Windows.Forms.Button();
             this.groupBox15 = new System.Windows.Forms.GroupBox();
             this.EventFlagsTB = new System.Windows.Forms.TextBox();
             this.EventIndexArgSC = new System.Windows.Forms.NumericUpDown();
@@ -292,6 +290,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
+            this.EventMapCB = new System.Windows.Forms.ComboBox();
             label6 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
@@ -382,7 +381,6 @@
             label83 = new System.Windows.Forms.Label();
             label82 = new System.Windows.Forms.Label();
             label81 = new System.Windows.Forms.Label();
-            label90 = new System.Windows.Forms.Label();
             label91 = new System.Windows.Forms.Label();
             label92 = new System.Windows.Forms.Label();
             label93 = new System.Windows.Forms.Label();
@@ -397,6 +395,7 @@
             label97 = new System.Windows.Forms.Label();
             label101 = new System.Windows.Forms.Label();
             label103 = new System.Windows.Forms.Label();
+            label90 = new System.Windows.Forms.Label();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -1289,19 +1288,10 @@
             label81.TabIndex = 1;
             label81.Text = "Map";
             // 
-            // label90
-            // 
-            label90.AutoSize = true;
-            label90.Location = new System.Drawing.Point(6, 16);
-            label90.Name = "label90";
-            label90.Size = new System.Drawing.Size(185, 13);
-            label90.TabIndex = 0;
-            label90.Text = "Note: Select map from the design tab.";
-            // 
             // label91
             // 
             label91.AutoSize = true;
-            label91.Location = new System.Drawing.Point(6, 34);
+            label91.Location = new System.Drawing.Point(6, 35);
             label91.Name = "label91";
             label91.Size = new System.Drawing.Size(64, 13);
             label91.TabIndex = 1;
@@ -1346,7 +1336,7 @@
             // label96
             // 
             label96.AutoSize = true;
-            label96.Location = new System.Drawing.Point(202, 34);
+            label96.Location = new System.Drawing.Point(202, 35);
             label96.Name = "label96";
             label96.Size = new System.Drawing.Size(140, 13);
             label96.TabIndex = 7;
@@ -3079,7 +3069,6 @@
             this.DesignTabPage.Controls.Add(this.DesignShiftBT);
             this.DesignTabPage.Controls.Add(this.DesignResizeBT);
             this.DesignTabPage.Controls.Add(this.DesignLabelCB);
-            this.DesignTabPage.Controls.Add(this.DesignSaveBT);
             this.DesignTabPage.Controls.Add(this.MapImgPanel);
             this.DesignTabPage.Controls.Add(this.Tileset4SC);
             this.DesignTabPage.Controls.Add(this.Tileset3SC);
@@ -3149,16 +3138,6 @@
             this.DesignLabelCB.Text = "Labels";
             this.DesignLabelCB.UseVisualStyleBackColor = true;
             this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
-            // 
-            // DesignSaveBT
-            // 
-            this.DesignSaveBT.Location = new System.Drawing.Point(167, 4);
-            this.DesignSaveBT.Name = "DesignSaveBT";
-            this.DesignSaveBT.Size = new System.Drawing.Size(49, 23);
-            this.DesignSaveBT.TabIndex = 3;
-            this.DesignSaveBT.Text = "Save";
-            this.DesignSaveBT.UseVisualStyleBackColor = true;
-            this.DesignSaveBT.Click += new System.EventHandler(this.DesignSaveBT_Click);
             // 
             // MapImgPanel
             // 
@@ -3339,21 +3318,21 @@
             this.MapDesignCB.FormattingEnabled = true;
             this.MapDesignCB.Location = new System.Drawing.Point(40, 6);
             this.MapDesignCB.Name = "MapDesignCB";
-            this.MapDesignCB.Size = new System.Drawing.Size(121, 21);
+            this.MapDesignCB.Size = new System.Drawing.Size(176, 21);
             this.MapDesignCB.TabIndex = 2;
             this.MapDesignCB.SelectedIndexChanged += new System.EventHandler(this.MapDesignCB_SelectedIndexChanged);
             // 
             // EventTabPage
             // 
+            this.EventTabPage.Controls.Add(label90);
+            this.EventTabPage.Controls.Add(this.EventMapCB);
             this.EventTabPage.Controls.Add(this.groupBox17);
             this.EventTabPage.Controls.Add(this.groupBox16);
-            this.EventTabPage.Controls.Add(this.EventSaveBT);
             this.EventTabPage.Controls.Add(label96);
             this.EventTabPage.Controls.Add(this.groupBox15);
             this.EventTabPage.Controls.Add(this.EventObjectPB);
             this.EventTabPage.Controls.Add(this.EventIDSC);
             this.EventTabPage.Controls.Add(label91);
-            this.EventTabPage.Controls.Add(label90);
             this.EventTabPage.Location = new System.Drawing.Point(4, 22);
             this.EventTabPage.Name = "EventTabPage";
             this.EventTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -3365,7 +3344,7 @@
             // groupBox17
             // 
             this.groupBox17.Controls.Add(this.label102);
-            this.groupBox17.Location = new System.Drawing.Point(61, 329);
+            this.groupBox17.Location = new System.Drawing.Point(61, 330);
             this.groupBox17.Name = "groupBox17";
             this.groupBox17.Size = new System.Drawing.Size(335, 79);
             this.groupBox17.TabIndex = 10;
@@ -3384,22 +3363,12 @@
             // groupBox16
             // 
             this.groupBox16.Controls.Add(label101);
-            this.groupBox16.Location = new System.Drawing.Point(61, 247);
+            this.groupBox16.Location = new System.Drawing.Point(61, 248);
             this.groupBox16.Name = "groupBox16";
             this.groupBox16.Size = new System.Drawing.Size(335, 76);
             this.groupBox16.TabIndex = 9;
             this.groupBox16.TabStop = false;
             this.groupBox16.Text = "Event Types by Index Value";
-            // 
-            // EventSaveBT
-            // 
-            this.EventSaveBT.Location = new System.Drawing.Point(6, 247);
-            this.EventSaveBT.Name = "EventSaveBT";
-            this.EventSaveBT.Size = new System.Drawing.Size(49, 23);
-            this.EventSaveBT.TabIndex = 18;
-            this.EventSaveBT.Text = "Save";
-            this.EventSaveBT.UseVisualStyleBackColor = true;
-            this.EventSaveBT.Click += new System.EventHandler(this.DesignSaveBT_Click);
             // 
             // groupBox15
             // 
@@ -3420,7 +3389,7 @@
             this.groupBox15.Controls.Add(label93);
             this.groupBox15.Controls.Add(this.EventObjIDSC);
             this.groupBox15.Controls.Add(label92);
-            this.groupBox15.Location = new System.Drawing.Point(9, 58);
+            this.groupBox15.Location = new System.Drawing.Point(9, 59);
             this.groupBox15.Name = "groupBox15";
             this.groupBox15.Size = new System.Drawing.Size(387, 183);
             this.groupBox15.TabIndex = 6;
@@ -3513,7 +3482,7 @@
             // 
             // EventIDSC
             // 
-            this.EventIDSC.Location = new System.Drawing.Point(76, 32);
+            this.EventIDSC.Location = new System.Drawing.Point(76, 33);
             this.EventIDSC.Maximum = new decimal(new int[] {
             1023,
             0,
@@ -3542,6 +3511,24 @@
             // 
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
+            // 
+            // EventMapCB
+            // 
+            this.EventMapCB.FormattingEnabled = true;
+            this.EventMapCB.Location = new System.Drawing.Point(76, 6);
+            this.EventMapCB.Name = "EventMapCB";
+            this.EventMapCB.Size = new System.Drawing.Size(120, 21);
+            this.EventMapCB.TabIndex = 19;
+            this.EventMapCB.SelectedIndexChanged += new System.EventHandler(this.EventMapCB_SelectedIndexChanged);
+            // 
+            // label90
+            // 
+            label90.AutoSize = true;
+            label90.Location = new System.Drawing.Point(6, 9);
+            label90.Name = "label90";
+            label90.Size = new System.Drawing.Size(28, 13);
+            label90.TabIndex = 20;
+            label90.Text = "Map";
             // 
             // EditorMainWindow
             // 
@@ -3786,7 +3773,6 @@
         private System.Windows.Forms.NumericUpDown Tileset1SC;
         private System.Windows.Forms.NumericUpDown BrushValueSC;
         private System.Windows.Forms.Panel MapImgPanel;
-        private System.Windows.Forms.Button DesignSaveBT;
         private System.Windows.Forms.CheckBox DesignLabelCB;
         private System.Windows.Forms.Button DesignShiftBT;
         private System.Windows.Forms.Button DesignResizeBT;
@@ -3808,10 +3794,10 @@
         private System.Windows.Forms.NumericUpDown EventObjIDSC;
         private System.Windows.Forms.PictureBox EventObjectPB;
         private System.Windows.Forms.NumericUpDown EventIDSC;
-        private System.Windows.Forms.Button EventSaveBT;
         private System.Windows.Forms.GroupBox groupBox16;
         private System.Windows.Forms.GroupBox groupBox17;
         private System.Windows.Forms.Label label102;
+        private System.Windows.Forms.ComboBox EventMapCB;
     }
 }
 
