@@ -90,7 +90,7 @@ void SkillData::read(const void *data)
     zero = buf[38];
 	effect_id = read_le16(&buf[39]);
 	effect_chance = buf[41];
-    effect_type = buf[42];
+    ynk_classification = buf[42];
 	effect_target = buf[43];
     ynk_id = read_le16(&buf[44]);
 }
@@ -108,7 +108,7 @@ void SkillData::write(void *data) const
     buf[38] = zero;
     write_le16(&buf[39], effect_id);
     buf[41] = effect_chance;
-    buf[42] = effect_type;
+    buf[42] = ynk_classification;
     buf[43] = effect_target;
     write_le16(&buf[44], ynk_id);
 }

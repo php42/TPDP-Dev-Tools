@@ -301,7 +301,7 @@ namespace editor.json
         public uint effect_target = 0;
 
         [DataMember]
-        public uint ynk_effect_type = 0;
+        public uint ynk_classification = 0;
 
         //[DataMember]
         //public uint ynk_id = 0;

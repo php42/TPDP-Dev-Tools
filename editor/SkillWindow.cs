@@ -75,7 +75,7 @@ namespace editor
             SkillDataEffectChanceSC.Value = skill.effect_chance;
             SkillDataEffectIDSC.Value = skill.effect_id;
             SkillDataEffectTargetSC.Value = skill.effect_target;
-            SkillDataEffectTypeSC.Value = skill.ynk_effect_type;
+            SkillDataClassCB.SelectedIndex = (int)skill.ynk_classification;
         }
 
         private void SkillDataChanged(object sender, EventArgs e)
@@ -146,10 +146,12 @@ namespace editor
                 var val = SkillDataEffectTargetSC.Value;
                 skills_[id].effect_target = (uint)val;
             }
-            else if(sender == (object)SkillDataEffectTypeSC)    // effect type
+            else if(sender == (object)SkillDataClassCB)         // skill classification
             {
-                var val = SkillDataEffectTypeSC.Value;
-                skills_[id].ynk_effect_type = (uint)val;
+                var val = SkillDataClassCB.SelectedIndex;
+                if(val < 0)
+                    return;
+                skills_[id].ynk_classification = (uint)val;
             }
         }
     }

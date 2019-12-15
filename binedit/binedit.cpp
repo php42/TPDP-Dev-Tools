@@ -706,7 +706,7 @@ static void convert_skills(const Path& in, const Path& out)
         node.put("effect_chance", skill.effect_chance);
         node.put("effect_id", skill.effect_id);
         node.put("effect_target", skill.effect_target);
-        node.put("ynk_effect_type", skill.effect_type);
+        node.put("ynk_classification", skill.ynk_classification);
         //node.put("ynk_id", skill.ynk_id);
 
         tree.add_child("skills.", node);
@@ -761,7 +761,7 @@ static void patch_skills(const Path& data, const Path& json)
         skill.effect_chance = node.get<uint8_t>("effect_chance");
         skill.effect_id = node.get<uint16_t>("effect_id");
         skill.effect_target = node.get<uint8_t>("effect_target");
-        skill.effect_type = node.get<uint8_t>("ynk_effect_type");
+        skill.ynk_classification = node.get<uint8_t>("ynk_classification");
         //skill.ynk_id = node.get<uint16_t>("ynk_id");
 
         skill.write(&file[pos]);
