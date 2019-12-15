@@ -3,27 +3,28 @@ YnK: gn_dat6.arc/doll/SkillData.sbs
 This file contains definitions for all the skills in the game.
 The json should be mostly self-explanatory.
 
+"ynk_classification": skill classification (YnK/SoD only) 0 = None, 1 = BU, 2 = EN
+
 the following fields are speculative and untested:
 "effect_chance": chance for an effect (e.g. burn) to be applied upon successful hit
 "effect_id": id of the effect to be applied
 "effect_target": whether the effect is applied to you or your opponent (0 = self, 1 = opponent)
-"ynk_effect_type": type of effect (present only in YnK/SoD)
 "ynk_id": redundant id field present only in YnK/SoD
 
 
 ---BINARY FORMAT---
-                         _
-0x00: char name[32]       |
-0x20: u8   element        |
-0x21: u8   power          |
-0x22: u8   accuracy       |
-0x23: u8   sp             |
-0x24: u8   priority       |
-0x25: u8   type           |
-0x26: u8   ???            |--0x77
-0x27: u16  effect_id      |
-0x29: u8   effect_chance  |
-0x2A: u8   effect_type    | (YnK/SoD)
-0x2B: u8   effect_target  |
-0x2C: u16   id(???)       | (YnK/SoD)
-0x2E-0x76: ???           _|
+                             _
+0x00: char name[32]           |
+0x20: u8   element            |
+0x21: u8   power              |
+0x22: u8   accuracy           |
+0x23: u8   sp                 |
+0x24: u8   priority           |
+0x25: u8   type               |
+0x26: u8   ???                |--0x77
+0x27: u16  effect_id          |
+0x29: u8   effect_chance      |
+0x2A: u8   ynk_classification | (YnK/SoD)
+0x2B: u8   effect_target      |
+0x2C: u16   ynk_id(???)       | (YnK/SoD)
+0x2E-0x76: ???               _|
