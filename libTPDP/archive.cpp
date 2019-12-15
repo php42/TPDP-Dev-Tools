@@ -763,8 +763,6 @@ Archive::directory_iterator Archive::create_dir(const std::string& path)
         }
 
         auto parent_path = get_path(dir_it); // insert_filename_header invalidates iterators, save path so we can find it again
-        //auto ptr = (ArchiveDirHeader*)dir_it.data();
-        //auto fileptr = (ArchiveFileHeader*)make_iterator(dir_it->dir_offset + file_table_offset_).data();
 
         auto name_begin = current_path.find_last_of("/\\");
         name_begin = (name_begin == std::string::npos) ? 0u : current_path.find_first_not_of("/\\", name_begin);

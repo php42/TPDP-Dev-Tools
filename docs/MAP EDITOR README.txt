@@ -7,7 +7,7 @@ Right click: Erase.
 Some important notes about map editing:
 
 1. Event IDs can be used only once per map. you will need to make copies if you want more of them.
-2. Mapping multiple events onto the same trainer/script file will not work properly.
+2. Mapping multiple events onto the same trainer/script file will not work properly for events that save state (e.g. trainers and items).
 3. The type of event (e.g. trainer, item, etc) is determined by the value of it's ID.
 
 The meaning of the "Event Arg" field depends on the type of event.
@@ -37,9 +37,10 @@ You'll just have to identify them by finding where they're used in the game.
 To make a new map, copy one of the existing map folders and rename everything.
 You can then open it in the editor as ususal.
 However warps seem to be broken in new maps as they will all be "locked".
-You can warp in but you will be trapped there.
+You can warp in but you will be trapped there unless you gap map out.
+In fact, dialogue events seem to be the only ones that work properly.
 I've yet to determine the exact cause of this, but it seems to be external to the map files themselves.
-If you really need entirely new maps you can repurpose the unused ones as warps do work correctly on those.
+If you really need entirely new maps you can repurpose the unused ones as events do work correctly on those.
 
 Expect weirdness as the event system is not fully understood yet.
 

@@ -288,6 +288,10 @@ namespace editor
             if(brush_val < 256)
                 tileset_display_.SelectedIndex = (int)chp_data_[tileset_index].index_map[brush_val];
 
+            paste_x_ = -1;
+            paste_y_ = -1;
+            dragging_ = false;
+
             Tileset1SC.ValueChanged -= TilesetSC_ValueChanged;
             Tileset2SC.ValueChanged -= TilesetSC_ValueChanged;
             Tileset3SC.ValueChanged -= TilesetSC_ValueChanged;

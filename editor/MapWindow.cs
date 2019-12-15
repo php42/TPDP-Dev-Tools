@@ -125,6 +125,15 @@ namespace editor
 
         private void SaveMaps()
         {
+            if(selected_map_ >= 0)
+            {
+                for(var i = 0; i < 13; ++i)
+                    fmf_data_.layers[i] = Convert.ToBase64String(map_layers_[i]);
+
+                fmfs_[selected_map_] = fmf_data_;
+                obss_[selected_map_] = obs_data_;
+            }
+
             foreach(var map in maps_)
             {
                 try

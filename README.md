@@ -5,7 +5,7 @@ An explanation of the individual tools follows below.
 
 ## Diffgen
 This is a patching utility, you don't need to use it if you'd prefer to use xdelta or whatever.  
-Like most romhack patchers, it produces differential patches so that the original game assets need not be redistributed.  
+Like most romhack patchers, it produces [differential](https://en.wikipedia.org/wiki/Data_differencing) patches so that the original game assets need not be redistributed.  
 It provides TPDP specific functionality such as bypassing the encryption and compression on the archives which reduces diff sizes and allows file-level patching within the archive.  
 It also provides a convenient way to extract all the files from the archives for editing.  
 Invoke with --help for syntax.
@@ -40,7 +40,7 @@ This is intended to make it easy for end-users to apply a mod to their game
 
 ## Editor
 This is a C# GUI front-end for diffgen and binedit.  
-It also helps with some of the editing, providing cross-referencing of names and IDs and similar quality of life features.  
+It also helps with some of the editing, providing cross-referencing of names and IDs, a graphical map editor, and similar utilities.  
 Note that it is _not_ a complete substitute for manual editing and is provided as a convenience for certain tasks.
 
 ## Example Session

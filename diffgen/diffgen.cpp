@@ -726,7 +726,9 @@ static bool diff_archive(const Path& input, const Path& output, const Path& diff
         diff_file.write(data.data(), data.size());
     }
 
-    return true;
+    diff_file.close();
+    std::cout << "Compressing..." << std::endl;
+    return compress(diff_path);
 }
 
 bool extract(const Path& input, const Path& output)
