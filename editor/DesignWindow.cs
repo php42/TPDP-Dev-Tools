@@ -266,7 +266,7 @@ namespace editor
             var rect = new Rectangle(x, y, 64, 32);
 
             //map_display_.UpdateIndex(RenderMap(layers, rect), index);
-            map_display_.UpdateRegion(RenderMap(layers, rect), x, y);
+            map_display_.UpdateRegion(RenderMap(layers, rect), x, y, true);
         }
 
         private void RefreshFmf()
@@ -438,6 +438,10 @@ namespace editor
                 drag_rect_.Height = 1;
                 dragging_ = true;
             }
+            else if((((x - drag_rect_.X) + 1) == drag_rect_.Width) && (((y - drag_rect_.Y) + 1) == drag_rect_.Height))
+            {
+                return;
+            }
 
             var clipping_rect = drag_rect_;
 
@@ -447,7 +451,7 @@ namespace editor
             clipping_rect.Height *= 16;
 
             var bmp = RenderMap(clipping_rect);
-            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y);
+            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, false);
 
             if(x < drag_rect_.X)
                 drag_rect_.X = x;
@@ -467,10 +471,10 @@ namespace editor
             using(var p = new Pen(Color.Red, 3))
             using(var g = Graphics.FromImage(bmp))
             {
-                g.DrawRectangle(p, 0, 0, bmp.Width, bmp.Height);
+                g.DrawRectangle(p, 0, 0, bmp.Width - 1, bmp.Height - 1);
             }
 
-            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y);
+            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, true);
         }
 
         private void MapEndDrag()
@@ -547,6 +551,8 @@ namespace editor
             {
                 if(dragging_)
                     MapEndDrag();
+                paste_x_ = -1;
+                paste_y_ = -1;
                 return;
             }
 
@@ -566,11 +572,6 @@ namespace editor
             {
                 MapPasteClipboard(tile_x, tile_y);
                 return;
-            }
-            else
-            {
-                paste_x_ = -1;
-                paste_y_ = -1;
             }
 
             var tileset_index = (uint)BrushTilesetSC.Value;

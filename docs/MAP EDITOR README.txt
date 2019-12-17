@@ -1,8 +1,9 @@
 Controls:
 Left click: Paint.
+Right click: Erase.
 Ctrl + left click: Select brush from active layer.
 Shift + drag left click: Copy region (all layers).
-Right click: Erase.
+Alt + left click: Paste
 
 Some important notes about map editing:
 

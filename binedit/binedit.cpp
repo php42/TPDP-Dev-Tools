@@ -709,6 +709,13 @@ static void convert_skills(const Path& in, const Path& out)
         node.put("ynk_classification", skill.ynk_classification);
         //node.put("ynk_id", skill.ynk_id);
 
+        if(skill.ynk_classification > 2)
+        {
+            ScopedConsoleColorMT color(COLOR_WARN);
+            std::cerr << "Warning: unknown skill classification: " << (unsigned int)skill.ynk_classification << std::endl;
+            std::cerr << "For skill id: " << (i / libtpdp::SKILL_DATA_SIZE) << std::endl;
+        }
+
         tree.add_child("skills.", node);
     }
 

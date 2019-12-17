@@ -21,6 +21,7 @@ namespace editor
         public MapDisplay()
         {
             this.Cursor = Cursors.Hand;
+            this.DoubleBuffered = true;
         }
 
         public void SetBitmap(Bitmap bmp)
@@ -47,7 +48,7 @@ namespace editor
             UpdateRegion(bmp, x, y);
         }*/
 
-        public void UpdateRegion(Bitmap bmp, int x, int y)
+        public void UpdateRegion(Bitmap bmp, int x, int y, bool repaint)
         {
             using(var g = Graphics.FromImage(bmp_))
             {
@@ -56,7 +57,9 @@ namespace editor
             }
 
             Invalidate(new Rectangle(x, y, bmp.Width, bmp.Height));
-            Update();
+
+            if(repaint)
+                Update();
         }
     }
 }

@@ -22,6 +22,7 @@ namespace editor
         public TilesetDisplay()
         {
             this.Cursor = Cursors.Hand;
+            this.DoubleBuffered = true;
         }
 
         public void SetBitmap(Bitmap bmp)

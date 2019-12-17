@@ -133,8 +133,8 @@
             System.Windows.Forms.Label label101;
             System.Windows.Forms.Label label103;
             System.Windows.Forms.Label label90;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             System.Windows.Forms.Label label67;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
             this.DiffModeCB = new System.Windows.Forms.CheckBox();
@@ -221,6 +221,7 @@
             this.TrainerNameTB = new System.Windows.Forms.TextBox();
             this.TrainerLB = new System.Windows.Forms.ListBox();
             this.SkillsTabPage = new System.Windows.Forms.TabPage();
+            this.SkillDataClassCB = new System.Windows.Forms.ComboBox();
             this.label69 = new System.Windows.Forms.Label();
             this.SkillDataIDSC = new System.Windows.Forms.NumericUpDown();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
@@ -289,7 +290,6 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
-            this.SkillDataClassCB = new System.Windows.Forms.ComboBox();
             label6 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
@@ -1020,9 +1020,9 @@
             label71.AutoSize = true;
             label71.Location = new System.Drawing.Point(239, 317);
             label71.Name = "label71";
-            label71.Size = new System.Drawing.Size(110, 13);
+            label71.Size = new System.Drawing.Size(163, 13);
             label71.TabIndex = 20;
-            label71.Text = "0 = self, 1 = opponent";
+            label71.Text = "0 = self, 1 = opponent, 4 = terrain";
             // 
             // label70
             // 
@@ -1362,9 +1362,9 @@
             label100.AutoSize = true;
             label100.Location = new System.Drawing.Point(204, 125);
             label100.Name = "label100";
-            label100.Size = new System.Drawing.Size(163, 13);
+            label100.Size = new System.Drawing.Size(164, 13);
             label100.TabIndex = 18;
-            label100.Text = "Connected event index for warps";
+            label100.Text = "Destination event index for warps";
             // 
             // EventArgLabel
             // 
@@ -1411,6 +1411,15 @@
             label90.Size = new System.Drawing.Size(28, 13);
             label90.TabIndex = 20;
             label90.Text = "Map";
+            // 
+            // label67
+            // 
+            label67.AutoSize = true;
+            label67.Location = new System.Drawing.Point(6, 116);
+            label67.Name = "label67";
+            label67.Size = new System.Drawing.Size(68, 13);
+            label67.TabIndex = 21;
+            label67.Text = "Classification";
             // 
             // TabControl
             // 
@@ -2627,6 +2636,19 @@
             this.SkillsTabPage.Text = "Skills";
             this.SkillsTabPage.UseVisualStyleBackColor = true;
             // 
+            // SkillDataClassCB
+            // 
+            this.SkillDataClassCB.FormattingEnabled = true;
+            this.SkillDataClassCB.Items.AddRange(new object[] {
+            "None",
+            "BU",
+            "EN"});
+            this.SkillDataClassCB.Location = new System.Drawing.Point(80, 113);
+            this.SkillDataClassCB.Name = "SkillDataClassCB";
+            this.SkillDataClassCB.Size = new System.Drawing.Size(126, 21);
+            this.SkillDataClassCB.TabIndex = 7;
+            this.SkillDataClassCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
             // label69
             // 
             this.label69.AutoSize = true;
@@ -3494,28 +3516,6 @@
             // 
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
-            // 
-            // label67
-            // 
-            label67.AutoSize = true;
-            label67.Location = new System.Drawing.Point(6, 116);
-            label67.Name = "label67";
-            label67.Size = new System.Drawing.Size(68, 13);
-            label67.TabIndex = 21;
-            label67.Text = "Classification";
-            // 
-            // SkillDataClassCB
-            // 
-            this.SkillDataClassCB.FormattingEnabled = true;
-            this.SkillDataClassCB.Items.AddRange(new object[] {
-            "None",
-            "BU",
-            "EN"});
-            this.SkillDataClassCB.Location = new System.Drawing.Point(80, 113);
-            this.SkillDataClassCB.Name = "SkillDataClassCB";
-            this.SkillDataClassCB.Size = new System.Drawing.Size(126, 21);
-            this.SkillDataClassCB.TabIndex = 7;
-            this.SkillDataClassCB.SelectedIndexChanged += new System.EventHandler(this.SkillDataChanged);
             // 
             // EditorMainWindow
             // 
