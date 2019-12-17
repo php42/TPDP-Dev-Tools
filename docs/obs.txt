@@ -8,7 +8,7 @@ it's an array of 1024 20-byte structures.
 "movement_mode": type of movement (static in different directions, wandering, etc)
 "movement_delay": delay between movements (i.e. speed, lower is faster)
 "event_arg": depends on 'type'. typically this is the ID of a script file. for warps, it is the id of the map to warp to.
-"event_index": depends on 'type'. for warps, this is the location to warp to on the other map.
+"event_index": depends on 'type'. for warps, this is the event ID to warp to on the other map.
 "flags": an array of 12 1-byte values that seem to mostly be boolean flags, though some bytes may contain larger values.
 
 --- BINARY FORMAT ---
