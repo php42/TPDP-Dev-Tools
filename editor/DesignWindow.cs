@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -29,6 +30,7 @@ namespace editor
         private byte[][][] clipboard_;
         private int paste_x_ = -1;
         private int paste_y_ = -1;
+        private int zoom_ = 1;
 
         private void InitDesign()
         {
@@ -151,9 +153,11 @@ namespace editor
 
             using(var g = Graphics.FromImage(bmp))
             {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.CompositingMode = CompositingMode.SourceOver;
+                //g.CompositingQuality = CompositingQuality.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
                 g.Clear(Color.Transparent);
-                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
 
                 for(var i = 0; i < 13; ++i)
                 {
@@ -265,7 +269,6 @@ namespace editor
 
             var rect = new Rectangle(x, y, 64, 32);
 
-            //map_display_.UpdateIndex(RenderMap(layers, rect), index);
             map_display_.UpdateRegion(RenderMap(layers, rect), x, y, true);
         }
 
@@ -414,7 +417,7 @@ namespace editor
                 return;
 
             var tileset_index = (uint)BrushTilesetSC.Value;
-            var index = (e.X / 16) + ((e.Y / 16) * 8);
+            var index = (e.X / (16 * zoom_)) + ((e.Y / (16 * zoom_)) * 8);
             uint val = 0;
             for(uint i = 0; i < 256; ++i) // find the first frame of the selected animation
             {
@@ -520,6 +523,9 @@ namespace editor
 
             var w = clipboard_[0][0].Length;
             var h = clipboard_[0].Length;
+
+            var clipping_rect = new Rectangle((x * 16) - 32, (y * 16) - 32, ((w / 2) * 16) + 64, (h * 16) + 64);
+
             var dst_w = ((int)fmf_data_.width - x) * 2;
             var dst_h = (int)fmf_data_.height - y;
 
@@ -534,7 +540,7 @@ namespace editor
                 }
             }
 
-            RenderMap();
+            map_display_.UpdateRegion(RenderMap(clipping_rect), clipping_rect.X, clipping_rect.Y, true);
         }
 
         private void MapDisplay_MouseClick(Object sender, MouseEventArgs e)
@@ -544,8 +550,8 @@ namespace editor
             if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0) || (layer < 0))
                 return;
 
-            var tile_x = e.X / 16;
-            var tile_y = e.Y / 16;
+            var tile_x = e.X / (16 * zoom_);
+            var tile_y = e.Y / (16 * zoom_);
 
             if((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right))
             {
@@ -736,9 +742,31 @@ namespace editor
 
         private void MapDisplay_MouseMove(object sender, MouseEventArgs e)
         {
-            var str = (e.X / 16).ToString() + ", " + (e.Y / 16).ToString();
+            var str = (e.X / (16 * zoom_)).ToString() + ", " + (e.Y / (16 * zoom_)).ToString();
             if(DesignCoordLabel.Text != str)
                 DesignCoordLabel.Text = str;
+        }
+
+        private void DesignZoomSC_ValueChanged(object sender, EventArgs e)
+        {
+            var pos = MapImgPanel.AutoScrollPosition;
+            pos.X = Math.Abs(pos.X) / zoom_;
+            pos.Y = Math.Abs(pos.Y) / zoom_;
+            zoom_ = (int)DesignZoomSC.Value;
+            map_display_.Zoom = zoom_;
+            tileset_display_.Zoom = zoom_;
+
+            var mapindex = MapDesignCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
+                return;
+
+            var tileset_index = (uint)BrushTilesetSC.Value;
+            tileset_display_.SetBitmap(chp_bmps_[tileset_index]);
+            RenderMap();
+
+            pos.X *= zoom_;
+            pos.Y *= zoom_;
+            MapImgPanel.AutoScrollPosition = pos;
         }
     }
 }

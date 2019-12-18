@@ -24,6 +24,7 @@ set(editor_sources
     "ShiftDialog.Designer.cs"
     "ShiftDialog.resx"
     "EventWindow.cs"
+    "Bitmap.cs"
     "Properties/AssemblyInfo.cs"
     "Properties/Resources.Designer.cs"
     "Properties/Resources.resx"

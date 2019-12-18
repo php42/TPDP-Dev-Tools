@@ -435,9 +435,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>451, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>451, 17</value>
-  </metadata>
   <data name="MapWeightSpinCtrl.ToolTip" xml:space="preserve">
     <value>Encounter rate relative to other puppets in the same encounter type.
 Percentage calculated by weight divided by sum of weights (within the same encounter type).
@@ -445,6 +442,9 @@ Note that the sum of weights seems to determine (or at least influence) the freq
 If the sum of weights is very low (minimum in vanilla SoD is 28) you run the risk of encounters not spawning at all or taking an eternity to spawn.
 </value>
   </data>
+  <metadata name="label104.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="label102.Text" xml:space="preserve">
     <value>0: static, 1: face down, 2: face left, 3: face right, 4: face up
 5: look around, 6: wander, 7: run around, 8: face player

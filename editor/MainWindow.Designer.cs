@@ -135,6 +135,7 @@
             System.Windows.Forms.Label label90;
             System.Windows.Forms.Label label67;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
+            System.Windows.Forms.Label label104;
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
             this.DiffModeCB = new System.Windows.Forms.CheckBox();
@@ -290,6 +291,8 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
+            this.MapPercentLabel = new System.Windows.Forms.Label();
+            this.DesignZoomSC = new System.Windows.Forms.NumericUpDown();
             label6 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
@@ -395,6 +398,7 @@
             label103 = new System.Windows.Forms.Label();
             label90 = new System.Windows.Forms.Label();
             label67 = new System.Windows.Forms.Label();
+            label104 = new System.Windows.Forms.Label();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
@@ -470,6 +474,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).BeginInit();
             this.SuspendLayout();
             // 
             // label6
@@ -2847,6 +2852,7 @@
             // 
             // MapsTabPage
             // 
+            this.MapsTabPage.Controls.Add(this.MapPercentLabel);
             this.MapsTabPage.Controls.Add(this.groupBox14);
             this.MapsTabPage.Controls.Add(label14);
             this.MapsTabPage.Controls.Add(label13);
@@ -3060,6 +3066,8 @@
             // 
             // DesignTabPage
             // 
+            this.DesignTabPage.Controls.Add(label104);
+            this.DesignTabPage.Controls.Add(this.DesignZoomSC);
             this.DesignTabPage.Controls.Add(this.DesignCoordLabel);
             this.DesignTabPage.Controls.Add(this.DesignClearBT);
             this.DesignTabPage.Controls.Add(this.DesignShiftBT);
@@ -3517,6 +3525,47 @@
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
             // 
+            // MapPercentLabel
+            // 
+            this.MapPercentLabel.AutoSize = true;
+            this.MapPercentLabel.Location = new System.Drawing.Point(342, 194);
+            this.MapPercentLabel.Name = "MapPercentLabel";
+            this.MapPercentLabel.Size = new System.Drawing.Size(27, 13);
+            this.MapPercentLabel.TabIndex = 25;
+            this.MapPercentLabel.Text = "(0%)";
+            // 
+            // DesignZoomSC
+            // 
+            this.DesignZoomSC.Location = new System.Drawing.Point(188, 191);
+            this.DesignZoomSC.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.Name = "DesignZoomSC";
+            this.DesignZoomSC.Size = new System.Drawing.Size(28, 20);
+            this.DesignZoomSC.TabIndex = 14;
+            this.DesignZoomSC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.ValueChanged += new System.EventHandler(this.DesignZoomSC_ValueChanged);
+            // 
+            // label104
+            // 
+            label104.AutoSize = true;
+            label104.Location = new System.Drawing.Point(151, 193);
+            label104.Name = "label104";
+            label104.Size = new System.Drawing.Size(34, 13);
+            label104.TabIndex = 0;
+            label104.Text = "Zoom";
+            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3621,6 +3670,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -3781,6 +3831,8 @@
         private System.Windows.Forms.Label label102;
         private System.Windows.Forms.ComboBox EventMapCB;
         private System.Windows.Forms.ComboBox SkillDataClassCB;
+        private System.Windows.Forms.Label MapPercentLabel;
+        private System.Windows.Forms.NumericUpDown DesignZoomSC;
     }
 }
 

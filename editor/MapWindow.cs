@@ -374,10 +374,38 @@ namespace editor
             if(val < 0 || mapindex < 0 || encounterindex < 0)
                 return;
 
+            uint total = 0;
             if(encounterindex < 10 && encounterindex < maps_[mapindex].normal_encounters.Length)
+            {
                 maps_[mapindex].normal_encounters[encounterindex].weight = (uint)val;
+
+                for(var i = 0; i < 10; ++i)
+                {
+                    if(maps_[mapindex].normal_encounters[i].id != 0)
+                        total += maps_[mapindex].normal_encounters[i].weight;
+                }
+            }
             else if((encounterindex - 10) < maps_[mapindex].special_encounters.Length)
+            {
                 maps_[mapindex].special_encounters[encounterindex - 10].weight = (uint)val;
+
+                for(var i = 0; i < 5; ++i)
+                {
+                    if(maps_[mapindex].special_encounters[i].id != 0)
+                        total += maps_[mapindex].special_encounters[i].weight;
+                }
+            }
+
+            if(total > 0)
+            {
+                var p = ((double)val / (double)total) * 100.0;
+                string str = "(" + p.ToString("0.##") + "%)";
+                MapPercentLabel.Text = str;
+            }
+            else
+            {
+                MapPercentLabel.Text = "(0%)";
+            }
         }
 
         private void MapNameTextBox_TextChanged(object sender, EventArgs e)

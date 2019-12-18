@@ -47,14 +47,14 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(246, 13);
+            label1.Size = new System.Drawing.Size(223, 13);
             label1.TabIndex = 0;
-            label1.Text = "Transpose map geometry to the given coordinates.";
+            label1.Text = "Move map geometry to the given coordinates.";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(67, 40);
+            label2.Location = new System.Drawing.Point(53, 40);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(14, 13);
             label2.TabIndex = 1;
@@ -63,7 +63,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(67, 66);
+            label3.Location = new System.Drawing.Point(53, 66);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(14, 13);
             label3.TabIndex = 3;
@@ -71,7 +71,7 @@
             // 
             // XSC
             // 
-            this.XSC.Location = new System.Drawing.Point(87, 38);
+            this.XSC.Location = new System.Drawing.Point(73, 38);
             this.XSC.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -89,7 +89,7 @@
             // 
             // YSC
             // 
-            this.YSC.Location = new System.Drawing.Point(87, 64);
+            this.YSC.Location = new System.Drawing.Point(73, 64);
             this.YSC.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -107,7 +107,7 @@
             // 
             // OKBT
             // 
-            this.OKBT.Location = new System.Drawing.Point(59, 109);
+            this.OKBT.Location = new System.Drawing.Point(45, 109);
             this.OKBT.Name = "OKBT";
             this.OKBT.Size = new System.Drawing.Size(75, 23);
             this.OKBT.TabIndex = 5;
@@ -117,7 +117,7 @@
             // 
             // CancelBT
             // 
-            this.CancelBT.Location = new System.Drawing.Point(140, 109);
+            this.CancelBT.Location = new System.Drawing.Point(126, 109);
             this.CancelBT.Name = "CancelBT";
             this.CancelBT.Size = new System.Drawing.Size(75, 23);
             this.CancelBT.TabIndex = 6;
@@ -129,7 +129,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(275, 153);
+            this.ClientSize = new System.Drawing.Size(247, 153);
             this.ControlBox = false;
             this.Controls.Add(this.CancelBT);
             this.Controls.Add(this.OKBT);

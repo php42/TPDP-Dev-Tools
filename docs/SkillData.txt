@@ -19,7 +19,7 @@ the following fields are speculative and untested:
 0x21: u8   power              |
 0x22: u8   accuracy           |
 0x23: u8   sp                 |
-0x24: u8   priority           |
+0x24: i8   priority           |
 0x25: u8   type               |
 0x26: u8   ???                |--0x77
 0x27: u16  effect_id          |
