@@ -11,6 +11,7 @@ Ctrl + Z: Undo.
 Ctrl + Shift + Z: Redo.
 1-8: Select active layer.
 Ctrl + 1-8: Toggle layer visibility.
+G: Toggle grid.
 
 Some important notes about map editing:
 
