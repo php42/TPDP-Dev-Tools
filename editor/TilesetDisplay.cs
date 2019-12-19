@@ -19,8 +19,24 @@ namespace editor
     {
         private Bitmap bmp_;
         private int index_ = -1;
+        private int zoom_ = 1;
 
-        public int Zoom { get; set; }
+        public int Zoom
+        {
+            get { return zoom_; }
+
+            set
+            {
+                zoom_ = value;
+
+                if(bmp_ != null)
+                {
+                    SetClientSizeCore(bmp_.Width * zoom_, bmp_.Height * zoom_);
+                    Invalidate();
+                    Update();
+                }
+            }
+        }
 
         public TilesetDisplay()
         {
@@ -31,18 +47,9 @@ namespace editor
 
         public void SetBitmap(Bitmap bmp)
         {
-            if(Zoom == 1)
-            {
-                bmp_ = bmp;
-            }
-            else
-            {
-                var w = bmp.Width * Zoom;
-                var h = bmp.Height * Zoom;
-                bmp_ = BitmapUtil.Resize(bmp, w, h);
-            }
+            bmp_ = bmp;
 
-            SetClientSizeCore(bmp_.Width, bmp_.Height);
+            SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
             Invalidate();
             Update();
         }
@@ -69,16 +76,34 @@ namespace editor
                 e.Graphics.FillRectangle(b, e.ClipRectangle);
             }
 
-            e.Graphics.DrawImage(bmp_, e.ClipRectangle, e.ClipRectangle, GraphicsUnit.Pixel);
+            // align to tile boundary
+            var tile_sz = 16 * Zoom;
+            var dst = e.ClipRectangle;
+            var dx = dst.X % tile_sz;
+            var dy = dst.Y % tile_sz;
+            dst.X -= dx;
+            dst.Y -= dy;
+            dst.Width += dx;
+            dst.Height += dy;
+            if((dst.Width % tile_sz) != 0)
+                dst.Width += tile_sz - (dst.Width % tile_sz);
+            if((dst.Height % tile_sz) != 0)
+                dst.Height += tile_sz - (dst.Height % tile_sz);
+
+            var src = dst;
+            src.X /= Zoom;
+            src.Y /= Zoom;
+            src.Width /= Zoom;
+            src.Height /= Zoom;
+
+            e.Graphics.DrawImage(bmp_, dst, src, GraphicsUnit.Pixel);
 
             if(index_ >= 0)
             {
                 using(var p = new Pen(Color.Red))
                 {
                     p.Width = 3;
-                    var tile_w = bmp_.Width / 8;
-                    var tile_h = bmp_.Height / 32;
-                    e.Graphics.DrawRectangle(p, new Rectangle((index_ % 8) * tile_w, (index_ / 8) * tile_h, tile_w, tile_h));
+                    e.Graphics.DrawRectangle(p, new Rectangle((index_ % 8) * tile_sz, (index_ / 8) * tile_sz, tile_sz, tile_sz));
                 }
             }
         }

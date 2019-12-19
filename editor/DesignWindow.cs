@@ -24,6 +24,7 @@ namespace editor
 
         private MapDisplay map_display_;
         private TilesetDisplay tileset_display_;
+        private MapPanel map_panel_;
 
         private bool dragging_ = false;
         private Rectangle drag_rect_ = new Rectangle(0, 0, 0, 0);
@@ -31,6 +32,10 @@ namespace editor
         private int paste_x_ = -1;
         private int paste_y_ = -1;
         private int zoom_ = 1;
+
+        // shhh don't look
+        private List<byte[][]> undo_history_ = new List<byte[][]>();
+        private int undo_pos_ = 0;
 
         private void InitDesign()
         {
@@ -41,13 +46,20 @@ namespace editor
             LayerVisibiltyCB.SetItemChecked(10, true);
             LayerVisibiltyCB.SetItemChecked(11, true);
 
+            map_panel_ = new MapPanel();
+            map_panel_.Location = new Point(222, 6);
+            map_panel_.Size = new Size(540, 542);
+            map_panel_.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
+            DesignTabPage.Controls.Add(map_panel_);
+
             map_display_ = new MapDisplay();
             map_display_.Location = new Point(5, 5);
             map_display_.MouseDown += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseMove;
             map_display_.MouseUp += MapDisplay_MouseClick;
-            MapImgPanel.Controls.Add(map_display_);
+            map_display_.KeyDown += MapDisplay_KeyDown;
+            map_panel_.Controls.Add(map_display_);
 
             tileset_display_ = new TilesetDisplay();
             tileset_display_.Location = new Point(5, 5);
@@ -71,6 +83,9 @@ namespace editor
             clipboard_ = null;
             paste_x_ = -1;
             paste_y_ = -1;
+
+            undo_history_ = new List<byte[][]>();
+            undo_pos_ = 0;
 
             foreach(var map in maps_)
             {
@@ -222,9 +237,89 @@ namespace editor
                         }
                     }
                 }
+
+                if(MapGridCB.Checked)
+                {
+                    using(var pen1 = new Pen(Color.Gray))
+                    using(var pen2 = new Pen(Color.Gray))
+                    {
+                        pen1.Width = 1;
+                        pen1.DashPattern = new float[] { 5.0f, 3.0f };
+                        pen2.Width = 1;
+                        for(int i = (clipping_rect.X / 16); i < width; ++i)
+                        {
+                            var x = (16 * i) - clipping_rect.X;
+                            var y = (16 * height) - clipping_rect.Y;
+                            if((i % 2) == 0)
+                                g.DrawLine(pen1, x, -3 - clipping_rect.Y, x, y);
+                            else
+                                g.DrawLine(pen2, x, 0 - clipping_rect.Y, x, y);
+                        }
+                        for(int i = (clipping_rect.Y / 16); i < height; ++i)
+                        {
+                            var x = (16 * width) - clipping_rect.X;
+                            var y = (16 * i) - clipping_rect.Y;
+                            if((i % 2) == 0)
+                                g.DrawLine(pen1, -3 - clipping_rect.X, y, x, y);
+                            else
+                                g.DrawLine(pen2, 0 - clipping_rect.X, y, x, y);
+                        }
+                    }
+                }
             }
 
             return bmp;
+        }
+
+        private void SaveHistory()
+        {
+            if(undo_pos_ < undo_history_.Count)
+                undo_history_.RemoveRange(undo_pos_, undo_history_.Count - undo_pos_);
+
+            var buf = new byte[map_layers_.Length][];
+            for(var i = 0; i < map_layers_.Length; ++i)
+            {
+                var sz = map_layers_[i].Length;
+                buf[i] = new byte[sz];
+                Array.Copy(map_layers_[i], buf[i], sz);
+            }
+
+            if(undo_history_.Count >= 24)
+            {
+                undo_history_.RemoveAt(0);
+                undo_history_.Add(buf);
+            }
+            else
+            {
+                undo_history_.Add(buf);
+                ++undo_pos_;
+            }
+        }
+
+        private void Undo()
+        {
+            if(undo_pos_ <= 0)
+                return;
+
+            if(undo_pos_ >= undo_history_.Count)
+            {
+                SaveHistory();
+                --undo_pos_;
+            }
+            --undo_pos_;
+
+            map_layers_ = undo_history_[undo_pos_];
+            RenderMap();
+        }
+
+        private void Redo()
+        {
+            if((undo_pos_ + 1) >= undo_history_.Count)
+                return;
+
+            ++undo_pos_;
+            map_layers_ = undo_history_[undo_pos_];
+            RenderMap();
         }
 
         private void RenderMap(List<int> layers)
@@ -256,6 +351,8 @@ namespace editor
             if((fmf_data_ == null) || (obs_data_ == null) || (MapDesignCB.SelectedIndex < 0))
                 return;
 
+            SaveHistory();
+
             var buf = BitConverter.GetBytes((ushort)value);
             map_layers_[layer][index * 2] = buf[0];
             map_layers_[layer][(index * 2) + 1] = buf[1];
@@ -267,9 +364,49 @@ namespace editor
             var x = ((int)(index % fmf_data_.width) * 16) - 32;
             var y = ((int)(index / fmf_data_.width) * 16) - 16;
 
+            var rect = new Rectangle(x, y, 80, 32);
+
+            using(var bmp = RenderMap(layers, rect))
+            {
+                map_display_.UpdateRegion(bmp, x, y, true);
+            }
+        }
+
+        private void EraseMapIndex(uint index)
+        {
+            if((fmf_data_ == null) || (obs_data_ == null) || (MapDesignCB.SelectedIndex < 0))
+                return;
+
+            bool dirty = false;
+            for(var layer = 0; layer < 13; ++layer)
+            {
+                if((map_layers_[layer][index * 2] == 0) && (map_layers_[layer][(index * 2) + 1] == 0))
+                    continue;
+
+                if(!dirty)
+                    SaveHistory();
+                dirty = true;
+
+                map_layers_[layer][index * 2] = 0;
+                map_layers_[layer][(index * 2) + 1] = 0;
+            }
+
+            if(!dirty)
+                return;
+
+            List<int> layers = new List<int>();
+            foreach(var i in LayerVisibiltyCB.CheckedIndices)
+                layers.Add((int)i);
+
+            var x = ((int)(index % fmf_data_.width) * 16) - 32;
+            var y = ((int)(index / fmf_data_.width) * 16) - 16;
+
             var rect = new Rectangle(x, y, 64, 32);
 
-            map_display_.UpdateRegion(RenderMap(layers, rect), x, y, true);
+            using(var bmp = RenderMap(layers, rect))
+            {
+                map_display_.UpdateRegion(bmp, x, y, true);
+            }
         }
 
         private void RefreshFmf()
@@ -294,6 +431,9 @@ namespace editor
             paste_x_ = -1;
             paste_y_ = -1;
             dragging_ = false;
+
+            undo_history_ = new List<byte[][]>();
+            undo_pos_ = 0;
 
             Tileset1SC.ValueChanged -= TilesetSC_ValueChanged;
             Tileset2SC.ValueChanged -= TilesetSC_ValueChanged;
@@ -453,8 +593,10 @@ namespace editor
             clipping_rect.Width *= 16;
             clipping_rect.Height *= 16;
 
-            var bmp = RenderMap(clipping_rect);
-            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, false);
+            using(var bmp = RenderMap(clipping_rect))
+            {
+                map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, false);
+            }
 
             if(x < drag_rect_.X)
                 drag_rect_.X = x;
@@ -469,15 +611,13 @@ namespace editor
             clipping_rect.Width *= 16;
             clipping_rect.Height *= 16;
 
-            bmp = RenderMap(clipping_rect);
-
+            using(var bmp = RenderMap(clipping_rect))
             using(var p = new Pen(Color.Red, 3))
             using(var g = Graphics.FromImage(bmp))
             {
                 g.DrawRectangle(p, 0, 0, bmp.Width - 1, bmp.Height - 1);
+                map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, true);
             }
-
-            map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, true);
         }
 
         private void MapEndDrag()
@@ -518,6 +658,8 @@ namespace editor
             if((x == paste_x_) && (y == paste_y_))
                 return;
 
+            SaveHistory();
+
             paste_x_ = x;
             paste_y_ = y;
 
@@ -540,7 +682,10 @@ namespace editor
                 }
             }
 
-            map_display_.UpdateRegion(RenderMap(clipping_rect), clipping_rect.X, clipping_rect.Y, true);
+            using(var bmp = RenderMap(clipping_rect))
+            {
+                map_display_.UpdateRegion(bmp, clipping_rect.X, clipping_rect.Y, true);
+            }
         }
 
         private void MapDisplay_MouseClick(Object sender, MouseEventArgs e)
@@ -568,6 +713,11 @@ namespace editor
             if((tile_x >= fmf_data_.width) || (tile_y >= fmf_data_.height))
                 return;
 
+            if(!map_display_.Focused)
+            {
+                map_display_.Focus();
+            }
+
             if((e.Button == MouseButtons.Left) && (ModifierKeys == Keys.Shift))
             {
                 MapDrag(tile_x, tile_y);
@@ -588,6 +738,12 @@ namespace editor
             {
                 tileset_index = 0;
                 brush_val = 0;
+
+                if(ModifierKeys == Keys.Control)
+                {
+                    EraseMapIndex((uint)index);
+                    return;
+                }
             }
 
             if(layer < 8)
@@ -749,24 +905,98 @@ namespace editor
 
         private void DesignZoomSC_ValueChanged(object sender, EventArgs e)
         {
-            var pos = MapImgPanel.AutoScrollPosition;
+            var pos = map_panel_.AutoScrollPosition;
             pos.X = Math.Abs(pos.X) / zoom_;
             pos.Y = Math.Abs(pos.Y) / zoom_;
+
+            var old_zoom = zoom_;
             zoom_ = (int)DesignZoomSC.Value;
-            map_display_.Zoom = zoom_;
-            tileset_display_.Zoom = zoom_;
+            pos.X *= zoom_;
+            pos.Y *= zoom_;
+
+            if(old_zoom > zoom_)
+            {
+                map_panel_.AutoScrollPosition = pos;
+                map_display_.Zoom = zoom_;
+                tileset_display_.Zoom = zoom_;
+            }
+            else
+            {
+                map_display_.Zoom = zoom_;
+                tileset_display_.Zoom = zoom_;
+                PerformLayout();
+                map_panel_.AutoScrollPosition = pos;
+            }
 
             var mapindex = MapDesignCB.SelectedIndex;
             if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
                 return;
 
             var tileset_index = (uint)BrushTilesetSC.Value;
-            tileset_display_.SetBitmap(chp_bmps_[tileset_index]);
-            RenderMap();
+        }
 
-            pos.X *= zoom_;
-            pos.Y *= zoom_;
-            MapImgPanel.AutoScrollPosition = pos;
+        private void MapDisplay_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Z)
+            {
+                if(e.Modifiers == Keys.Control)
+                    Undo();
+                else if(e.Modifiers == (Keys.Control | Keys.Shift))
+                    Redo();
+                return;
+            }
+
+            if((e.KeyCode == Keys.G) && (e.Modifiers == Keys.None))
+            {
+                MapGridCB.Checked = !MapGridCB.Checked;
+                return;
+            }
+
+            int index;
+            switch(e.KeyCode)
+            {
+                case Keys.D1:
+                    index = 0;
+                    break;
+                case Keys.D2:
+                    index = 1;
+                    break;
+                case Keys.D3:
+                    index = 2;
+                    break;
+                case Keys.D4:
+                    index = 3;
+                    break;
+                case Keys.D5:
+                    index = 4;
+                    break;
+                case Keys.D6:
+                    index = 5;
+                    break;
+                case Keys.D7:
+                    index = 6;
+                    break;
+                case Keys.D8:
+                    index = 7;
+                    break;
+                default:
+                    return;
+            }
+
+            if(e.Modifiers == Keys.None)
+            {
+                BrushLayerCB.SelectedIndex = index;
+            }
+            else if(e.Modifiers == Keys.Control)
+            {
+                bool c = LayerVisibiltyCB.CheckedIndices.Contains(index);
+                LayerVisibiltyCB.SetItemChecked(index, !c);
+            }
+        }
+
+        private void MapGridCB_CheckedChanged(object sender, EventArgs e)
+        {
+            RenderMap();
         }
     }
 }

@@ -47,14 +47,14 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(12, 9);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(223, 13);
+            label1.Size = new System.Drawing.Size(222, 13);
             label1.TabIndex = 0;
-            label1.Text = "Move map geometry to the given coordinates.";
+            label1.Text = "Translate map geometry by the given amount.";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(53, 40);
+            label2.Location = new System.Drawing.Point(43, 40);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(14, 13);
             label2.TabIndex = 1;
@@ -63,7 +63,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(53, 66);
+            label3.Location = new System.Drawing.Point(43, 66);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(14, 13);
             label3.TabIndex = 3;
@@ -71,7 +71,7 @@
             // 
             // XSC
             // 
-            this.XSC.Location = new System.Drawing.Point(73, 38);
+            this.XSC.Location = new System.Drawing.Point(63, 38);
             this.XSC.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -89,7 +89,7 @@
             // 
             // YSC
             // 
-            this.YSC.Location = new System.Drawing.Point(73, 64);
+            this.YSC.Location = new System.Drawing.Point(63, 64);
             this.YSC.Maximum = new decimal(new int[] {
             32767,
             0,

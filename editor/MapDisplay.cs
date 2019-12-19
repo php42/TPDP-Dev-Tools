@@ -9,17 +9,30 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using editor.bitmap;
-using System.Runtime.Serialization.Json;
-using System.Text.RegularExpressions;
 
 namespace editor
 {
     class MapDisplay : Control
     {
         private Bitmap bmp_;
+        private int zoom_ = 1;
 
-        public int Zoom { get; set; }
+        public int Zoom
+        {
+            get { return zoom_; }
+
+            set
+            {
+                zoom_ = value;
+
+                if(bmp_ != null)
+                {
+                    SetClientSizeCore(bmp_.Width * zoom_, bmp_.Height * zoom_);
+                    Invalidate();
+                    Update();
+                }
+            }
+        }
 
         public MapDisplay()
         {
@@ -30,18 +43,15 @@ namespace editor
 
         public void SetBitmap(Bitmap bmp)
         {
-            if(Zoom == 1)
+            if(bmp_ != null)
             {
-                bmp_ = bmp;
-            }
-            else
-            {
-                var w = bmp.Width * Zoom;
-                var h = bmp.Height * Zoom;
-                bmp_ = BitmapUtil.Resize(bmp, w, h);
+                bmp_.Dispose();
+                bmp_ = null;
             }
 
-            SetClientSizeCore(bmp_.Width, bmp_.Height);
+            bmp_ = bmp;
+
+            SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
             Invalidate();
             Update();
         }
@@ -56,18 +66,25 @@ namespace editor
             // Fix alignment for autoscroll repaints
             // Cause winforms is the actual worst.
             var tile_sz = 16 * Zoom;
-            var rect = e.ClipRectangle;
-            var dx = rect.X % tile_sz;
-            var dy = rect.Y % tile_sz;
-            rect.X -= dx;
-            rect.Y -= dy;
-            rect.Width += dx;
-            rect.Height += dy;
-            if((rect.Width % tile_sz) != 0)
-                rect.Width += tile_sz - (rect.Width % tile_sz);
-            if((rect.Height % tile_sz) != 0)
-                rect.Height += tile_sz - (rect.Height % tile_sz);
-            e.Graphics.DrawImage(bmp_, rect, rect, GraphicsUnit.Pixel);
+            var dst = e.ClipRectangle;
+            var dx = dst.X % tile_sz;
+            var dy = dst.Y % tile_sz;
+            dst.X -= dx;
+            dst.Y -= dy;
+            dst.Width += dx;
+            dst.Height += dy;
+            if((dst.Width % tile_sz) != 0)
+                dst.Width += tile_sz - (dst.Width % tile_sz);
+            if((dst.Height % tile_sz) != 0)
+                dst.Height += tile_sz - (dst.Height % tile_sz);
+
+            var src = dst;
+            src.X /= Zoom;
+            src.Y /= Zoom;
+            src.Width /= Zoom;
+            src.Height /= Zoom;
+
+            e.Graphics.DrawImage(bmp_, dst, src, GraphicsUnit.Pixel);
         }
 
         public void UpdateRegion(Bitmap bmp, int x, int y, bool repaint)
@@ -79,18 +96,8 @@ namespace editor
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-                if(Zoom != 1)
-                {
-                    var src = new Rectangle(0, 0, bmp.Width, bmp.Height);
-                    var dst = new Rectangle(x * Zoom, y * Zoom, bmp.Width * Zoom, bmp.Height * Zoom);
-                    g.DrawImage(bmp, dst, src, GraphicsUnit.Pixel);
-                    Invalidate(dst);
-                }
-                else
-                {
-                    g.DrawImage(bmp, x, y);
-                    Invalidate(new Rectangle(x, y, bmp.Width, bmp.Height));
-                }
+                g.DrawImage(bmp, x, y);
+                Invalidate(new Rectangle(x * Zoom, y * Zoom, bmp.Width * Zoom, bmp.Height * Zoom));
             }
 
             if(repaint)
