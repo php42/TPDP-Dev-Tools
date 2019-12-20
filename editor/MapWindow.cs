@@ -123,6 +123,51 @@ namespace editor
             }
         }
 
+        private void SaveMAD(MadJson mad)
+        {
+            try
+            {
+                var ser = new DataContractJsonSerializer(typeof(MadJson));
+                var s = new MemoryStream();
+                ser.WriteObject(s, mad);
+                File.WriteAllBytes(mad.filepath, s.ToArray());
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error saving mad: " + mad.filepath + "\r\n" + e.Message);
+            }
+        }
+
+        private void SaveFMF(FmfJson fmf)
+        {
+            try
+            {
+                var ser = new DataContractJsonSerializer(typeof(FmfJson));
+                var s = new MemoryStream();
+                ser.WriteObject(s, fmf);
+                File.WriteAllBytes(fmf.filepath, s.ToArray());
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error saving fmf: " + fmf.filepath + "\r\n" + e.Message);
+            }
+        }
+
+        private void SaveOBS(ObsJson obs)
+        {
+            try
+            {
+                var ser = new DataContractJsonSerializer(typeof(ObsJson));
+                var s = new MemoryStream();
+                ser.WriteObject(s, obs);
+                File.WriteAllBytes(obs.filepath, s.ToArray());
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error saving obs: " + obs.filepath + "\r\n" + e.Message);
+            }
+        }
+
         private void SaveMaps()
         {
             if(selected_map_ >= 0)
@@ -134,49 +179,19 @@ namespace editor
                 obss_[selected_map_] = obs_data_;
             }
 
-            foreach(var map in maps_)
+            foreach(var mad in maps_)
             {
-                try
-                {
-                    var ser = new DataContractJsonSerializer(typeof(MadJson));
-                    var s = new MemoryStream();
-                    ser.WriteObject(s, map);
-                    File.WriteAllBytes(map.filepath, s.ToArray());
-                }
-                catch(Exception e)
-                {
-                    throw new Exception("Error saving mad: " + map.filepath + "\r\n" + e.Message);
-                }
+                SaveMAD(mad);
             }
 
             foreach(var fmf in fmfs_)
             {
-                try
-                {
-                    var ser = new DataContractJsonSerializer(typeof(FmfJson));
-                    var s = new MemoryStream();
-                    ser.WriteObject(s, fmf);
-                    File.WriteAllBytes(fmf.filepath, s.ToArray());
-                }
-                catch(Exception e)
-                {
-                    throw new Exception("Error saving fmf: " + fmf.filepath + "\r\n" + e.Message);
-                }
+                SaveFMF(fmf);
             }
 
             foreach(var obs in obss_)
             {
-                try
-                {
-                    var ser = new DataContractJsonSerializer(typeof(ObsJson));
-                    var s = new MemoryStream();
-                    ser.WriteObject(s, obs);
-                    File.WriteAllBytes(obs.filepath, s.ToArray());
-                }
-                catch(Exception e)
-                {
-                    throw new Exception("Error saving obs: " + obs.filepath + "\r\n" + e.Message);
-                }
+                SaveOBS(obs);
             }
         }
 
@@ -474,6 +489,137 @@ namespace editor
                 return;
 
             maps_[mapindex].forbid_bike = (ForbidBikeCB.Checked ? 1u : 0u);
+        }
+
+        // Avert thy gaze
+        private void NewMapBT_Click(object sender, EventArgs e)
+        {
+            if((maps_.Count == 0) || string.IsNullOrEmpty(working_dir_))
+            {
+                ErrMsg("No data loaded!");
+                return;
+            }
+
+            using(var dialog = new NewMapDialog(map_names_.Length - 1))
+            {
+                if(dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var madjson = new MadJson();
+                    var fmfjson = new FmfJson();
+                    var obsjson = new ObsJson();
+                    var id = dialog.MapID;
+                    var name = dialog.MapName;
+                    var w = dialog.MapW;
+                    var h = dialog.MapH;
+                    var layer_sz = w * h * 2;
+
+                    var idstr = id.ToString("D3");
+                    var dir = is_ynk_ ? @"\gn_dat5.arc\map\data\" : @"\gn_dat3.arc\map\data\";
+                    dir = working_dir_ + dir + idstr + @"\";
+
+                    madjson.id = id;
+                    madjson.filepath = dir + idstr + ".json";
+                    var madpath = dir + idstr + ".mad";
+                    fmfjson.id = id;
+                    fmfjson.filepath = dir + idstr + "_fmf.json";
+                    var fmfpath = dir + idstr + ".fmf";
+                    obsjson.id = id;
+                    obsjson.filepath = dir + idstr + "_obs.json";
+                    var obspath = dir + idstr + ".obs";
+
+                    if(File.Exists(madpath))
+                    {
+                        ErrMsg("File already exists: " + madpath);
+                        return;
+                    }
+                    if(File.Exists(fmfpath))
+                    {
+                        ErrMsg("File already exists: " + fmfpath);
+                        return;
+                    }
+                    if(File.Exists(obspath))
+                    {
+                        ErrMsg("File already exists: " + obspath);
+                        return;
+                    }
+                    if(!Directory.Exists(dir))
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(dir);
+                        }
+                        catch
+                        {
+                            ErrMsg("Failed to create directory: " + dir);
+                            return;
+                        }
+                    }
+
+                    // FMF
+                    fmfjson.width = (uint)w;
+                    fmfjson.height = (uint)h;
+                    fmfjson.num_layers = 13;
+                    fmfjson.payload_length = (uint)layer_sz * 13;
+                    fmfjson.unknown_1 = 0x20;
+                    fmfjson.unknown_2 = 0x20;
+                    fmfjson.unknown_3 = 0x10;
+
+                    var fmf_sz = fmfjson.payload_length + 20;
+                    var fmfdata = new byte[fmf_sz];
+                    Array.Copy(new byte[] { (byte)'F', (byte)'M', (byte)'F', (byte)'_' }, fmfdata, 4);
+                    Array.Copy(BitConverter.GetBytes(fmfjson.payload_length), 0, fmfdata, 4, 4);
+                    Array.Copy(BitConverter.GetBytes(fmfjson.width), 0, fmfdata, 8, 4);
+                    Array.Copy(BitConverter.GetBytes(fmfjson.height), 0, fmfdata, 0x0C, 4);
+                    fmfdata[0x10] = 0x20;
+                    fmfdata[0x11] = 0x20;
+                    fmfdata[0x12] = 13;
+                    fmfdata[0x13] = 0x10;
+                    for(var i = 0; i < 13; ++i)
+                    {
+                        fmfjson.layers[i] = Convert.ToBase64String(fmfdata, 20, layer_sz);
+                    }
+                    File.WriteAllBytes(fmfpath, fmfdata);
+                    SaveFMF(fmfjson);
+
+                    // OBS
+                    obsjson.entries = new ObsEntry[1024];
+                    for(var i = 0; i < 1024; ++i)
+                    {
+                        var entry = new ObsEntry();
+                        entry.index = (uint)i;
+                        entry.event_index = (uint)i;
+                        entry.movement_delay = 255;
+                        entry.flags[0] = 1;
+                        entry.flags[1] = 1;
+                        obsjson.entries[i] = entry;
+                    }
+                    File.WriteAllBytes(obspath, new byte[1024 * 20]);
+                    SaveOBS(obsjson);
+
+                    // MAD
+                    madjson.location_name = name;
+                    for(var i = 0; i < 10; ++i)
+                    {
+                        madjson.normal_encounters[i] = new MadEncounter();
+                        if(i < 5)
+                            madjson.special_encounters[i] = new MadEncounter();
+                    }
+                    File.WriteAllBytes(madpath, new byte[0x8B]);
+                    SaveMAD(madjson);
+
+                    if(id < map_names_.Length)
+                        map_names_[id] = name;
+                    maps_.Add(madjson);
+                    fmfs_.Add(fmfjson);
+                    obss_.Add(obsjson);
+
+                    MapListBox.Items.Add(name);
+                    MapDesignCB.Items.Add(name);
+                    EventMapCB.Items.Add(name);
+
+                    SelectMap(maps_.Count - 1);
+                }
+            }
         }
     }
 }

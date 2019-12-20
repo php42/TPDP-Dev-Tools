@@ -97,9 +97,7 @@ namespace editor
         {
             try
             {
-                var path = id.ToString();
-                while(path.Length < 3)
-                    path = "0" + path;
+                var path = id.ToString("D3");
                 path = working_dir_ + (is_ynk_ ? "/gn_dat5.arc/map/chip/" : "/gn_dat3.arc/map/chip/") + path + ".json";
 
                 DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ChipJson));
@@ -118,9 +116,7 @@ namespace editor
         {
             try
             {
-                var path = id.ToString();
-                while(path.Length < 3)
-                    path = "0" + path;
+                var path = id.ToString("D3");
                 path = working_dir_ + (is_ynk_ ? "/gn_dat5.arc/map/chip/" : "/gn_dat3.arc/map/chip/") + path + ".png";
 
                 var bmp = new Bitmap(path);
@@ -137,9 +133,7 @@ namespace editor
         {
             try
             {
-                var path = id.ToString();
-                while(path.Length < 3)
-                    path = "0" + path;
+                var path = id.ToString("D3");
                 path = working_dir_ + (is_ynk_ ? "/gn_dat5.arc/map/obj/" : "/gn_dat3.arc/map/obj/") + path + ".png";
                 var path2 = path.Replace(".png", "_000.png");
                 if(File.Exists(path2))

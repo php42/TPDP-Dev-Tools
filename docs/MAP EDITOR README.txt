@@ -31,6 +31,9 @@ For any other events it should be set to the events own ID.
 The "Flags" field should be copied from a similar event (i haven't figured out what these do yet).
 
 "Zone" values for the zone mask:
+1: Elevated terrain
+2: Ramp (transition up/down from elevated terrain)
+4: Cliff (drop down from elevation)
 3: Collision (solid wall)
 8: Water (allows boat riding)
 11: Doors

@@ -293,6 +293,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
+            this.NewMapBT = new System.Windows.Forms.Button();
             label6 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
@@ -2861,6 +2862,7 @@
             // 
             // MapsTabPage
             // 
+            this.MapsTabPage.Controls.Add(this.NewMapBT);
             this.MapsTabPage.Controls.Add(this.MapPercentLabel);
             this.MapsTabPage.Controls.Add(this.groupBox14);
             this.MapsTabPage.Controls.Add(label14);
@@ -3566,6 +3568,16 @@
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
             // 
+            // NewMapBT
+            // 
+            this.NewMapBT.Location = new System.Drawing.Point(132, 384);
+            this.NewMapBT.Name = "NewMapBT";
+            this.NewMapBT.Size = new System.Drawing.Size(75, 23);
+            this.NewMapBT.TabIndex = 26;
+            this.NewMapBT.Text = "New Map";
+            this.NewMapBT.UseVisualStyleBackColor = true;
+            this.NewMapBT.Click += new System.EventHandler(this.NewMapBT_Click);
+            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3833,6 +3845,7 @@
         private System.Windows.Forms.Label MapPercentLabel;
         private System.Windows.Forms.NumericUpDown DesignZoomSC;
         private System.Windows.Forms.CheckBox MapGridCB;
+        private System.Windows.Forms.Button NewMapBT;
     }
 }
 
