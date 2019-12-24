@@ -30,7 +30,7 @@ namespace editor
 
         private void RefreshEvent()
         {
-            var mapindex = MapDesignCB.SelectedIndex;
+            var mapindex = EventMapCB.SelectedIndex;
             var id = (uint)EventIDSC.Value;
             if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0))
                 return;
@@ -42,6 +42,12 @@ namespace editor
             EventSpeedSC.Value = obj.movement_delay;
             EventArgSC.Value = obj.event_arg;
             EventIndexArgSC.Value = obj.event_index;
+
+            var flagindex = (maps_[mapindex].id * 128) + (id / 8);
+            var flag = (uint)event_flags_[flagindex];
+            EventEnabledCB.CheckedChanged -= EventEnabledCB_CheckedChanged;
+            EventEnabledCB.Checked = (flag & (1u << ((int)id % 8))) != 0;
+            EventEnabledCB.CheckedChanged += EventEnabledCB_CheckedChanged;
 
             string str = obj.flags[0].ToString();
             for(var i = 1; i < obj.flags.Length; ++i)
@@ -131,6 +137,21 @@ namespace editor
             var index = EventMapCB.SelectedIndex;
             if(index > 0)
                 SelectMap(index);
+        }
+
+        private void EventEnabledCB_CheckedChanged(object sender, EventArgs e)
+        {
+            var mapindex = EventMapCB.SelectedIndex;
+            var id = (int)EventIDSC.Value;
+            if((mapindex < 0) || (event_flags_ == null))
+                return;
+
+            var index = (maps_[mapindex].id * 128) + (id / 8);
+            uint flag = (1u << (id % 8));
+            if(EventEnabledCB.Checked)
+                event_flags_[index] |= (byte)flag;
+            else
+                event_flags_[index] &= (byte)~flag;
         }
     }
 }

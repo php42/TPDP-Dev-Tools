@@ -438,6 +438,9 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>451, 17</value>
   </metadata>
+  <metadata name="label105.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="MapWeightSpinCtrl.ToolTip" xml:space="preserve">
     <value>Encounter rate relative to other puppets in the same encounter type.
 Percentage calculated by weight divided by sum of weights (within the same encounter type).

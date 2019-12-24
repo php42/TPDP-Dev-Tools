@@ -32,6 +32,10 @@ namespace editor
         private string[] map_names_ = new string[1] { "" };
         private string working_dir_;
         private SettingsJson cfg_ = new SettingsJson();
+        private byte[] event_flags_;
+        private byte[] obj_flags_;
+        private byte[] puppet_flags_;
+        private Dictionary<uint, string> bgm_data_ = new Dictionary<uint, string>();
 
         private void Reset()
         {
@@ -47,6 +51,10 @@ namespace editor
             puppet_names_ = new string[1] { "" };
             map_names_ = new string[1] { "" };
             working_dir_ = null;
+            event_flags_ = null;
+            obj_flags_ = null;
+            puppet_flags_ = null;
+            bgm_data_ = new Dictionary<uint, string>();
         }
 
         public EditorMainWindow()
@@ -323,6 +331,22 @@ namespace editor
             string app = "binedit.exe";
             var wkdir = working_dir_;
 
+            string pflags = wkdir + (is_ynk_ ? "/gn_dat6.arc/dollImage/img/DollMainGLoadFlag.bin" : "/gn_dat3.arc/doll/img/DollMainGLoadFlag.bin");
+            string oflags = wkdir + (is_ynk_ ? "/gn_dat5.arc/map/obj/ObjGLoadFlag.bin" : "/gn_dat3.arc/map/obj/ObjGLoadFlag.bin");
+            string eflags = wkdir + (is_ynk_ ? "/gn_dat5.arc/map/obj/ObjFirstActivity.bin" : "/gn_dat3.arc/map/obj/ObjFirstActivity.bin");
+
+            try
+            {
+                File.WriteAllBytes(pflags, puppet_flags_);
+                File.WriteAllBytes(eflags, event_flags_);
+                File.WriteAllBytes(oflags, obj_flags_);
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error: " + ex.Message);
+                return;
+            }
+
             /*
             // Save puppet names
             string puppetnames = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/DollName.csv" : "/gn_dat3.arc/name/DollName.csv");
@@ -516,6 +540,46 @@ namespace editor
                 ConsoleOutput.Clear();
                 return;
             }
+
+            string pflags = wkdir + (is_ynk_ ? "/gn_dat6.arc/dollImage/img/DollMainGLoadFlag.bin" : "/gn_dat3.arc/doll/img/DollMainGLoadFlag.bin");
+            string oflags = wkdir + (is_ynk_ ? "/gn_dat5.arc/map/obj/ObjGLoadFlag.bin" : "/gn_dat3.arc/map/obj/ObjGLoadFlag.bin");
+            string eflags = wkdir + (is_ynk_ ? "/gn_dat5.arc/map/obj/ObjFirstActivity.bin" : "/gn_dat3.arc/map/obj/ObjFirstActivity.bin");
+            string bgm = wkdir + (is_ynk_ ? "/gn_dat4.arc/bgm/BgmData.csv" : "/gn_dat2.arc/sound/bgm/BgmData.csv");
+            string[] bgmdata;
+            try
+            {
+                puppet_flags_ = File.ReadAllBytes(pflags);
+                obj_flags_ = File.ReadAllBytes(oflags);
+                event_flags_ = File.ReadAllBytes(eflags);
+                bgmdata = File.ReadAllLines(bgm, Encoding.GetEncoding(932));
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error: " + ex.Message);
+                Reset();
+                return;
+            }
+
+            foreach(var line in bgmdata)
+            {
+                var fields = line.Split(',');
+                uint id;
+                try
+                {
+                    id = uint.Parse(fields[0]);
+                }
+                catch
+                {
+                    continue;
+                }
+                var name = fields[1] + ".ogg";
+
+                if(!File.Exists(wkdir + (is_ynk_ ? "/gn_dat4.arc/bgm/" : "/gn_dat2.arc/sound/bgm/") + name))
+                    continue;
+
+                bgm_data_[id] = id.ToString() + ": " + name;
+            }
+            bgm_data_[0] = "None";
 
             try
             {

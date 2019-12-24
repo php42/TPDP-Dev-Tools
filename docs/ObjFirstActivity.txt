@@ -1,0 +1,7 @@
+base: gn_dat3.arc\map\obj\ObjFirstActivity.bin
+YnK: gn_dat5.arc\map\obj\ObjFirstActivity.bin
+
+This file contains an array of boolean flags that enable or disable events on each map.
+It is arranged in 512 blocks of 128 bytes.
+Each 128 byte block represents a map.
+Each bit within that block represents an individual event, for a total of 1024 events.

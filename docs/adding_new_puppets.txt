@@ -1,12 +1,12 @@
 Adding a new puppet to the game requires a few things to be done manually.
 1. Append a new puppet object to the end of DollData.json and edit it as you please (obviously make sure the ID doesn't conflict with other puppets).
 2. Edit DollMainGLoadFlag.bin with a hex editor to enable your new puppet ID (see DollMainGLoadFlag.txt in this folder).
-3. Edit DollHeight.csv in the puppet sprite folder for your new puppet, this contains pixel offsets of the top and bottom of the sprite for each costume.
-4. Edit ObjGLoadFlag.bin with a hex editor to enable overworld sprites (if needed) for your new puppet (see ObjGLoadFlag.txt in this folder).
+3. Edit ObjGLoadFlag.bin with a hex editor to enable overworld sprites (if needed) for your new puppet (see ObjGLoadFlag.txt in this folder).
+4. Edit DollHeight.csv in the puppet sprite folder for your new puppet, this contains pixel offsets of the top and bottom of the sprite for each costume.
 5. Edit DollName*.csv and DollCaption.csv to name your puppet.
 6. Provide sprites for your new puppet.
 
-The editor GUI will do #1 for you.
+The editor GUI will do #1, 2, and 3 for you.
 Sprites are named after the puppet ID and the costume index separated by an underscore. 001_000.png is reimu's default sprite, 001_002.png is her alt-costume.
 Overworld sprites are only used for trainers and other map objects except in YnK where there are sprites for the puppet following the player.
 These are offset by 400 so the reimu sprites above are instead 401_000.png and 401_002.png.

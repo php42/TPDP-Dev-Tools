@@ -532,7 +532,20 @@ namespace editor
             if(dodindex < 0)
                 return;
 
-            dods_[dodindex].portrait_id = (uint)PortraitIDSC.Value;
+            var id = (uint)PortraitIDSC.Value;
+            dods_[dodindex].portrait_id = id;
+
+            try
+            {
+                string path = working_dir_ + "/gn_dat1.arc/talkImage/stand/" + id.ToString("D3") + (is_ynk_ ? "_00.png" : ".png");
+                var bmp = new Bitmap(path);
+                TrainerPreviewPB.Image = bmp;
+            }
+            catch
+            {
+                TrainerPreviewPB.Image = null;
+                //TrainerPreviewPB.Invalidate();
+            }
         }
     }
 }

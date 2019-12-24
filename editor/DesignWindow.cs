@@ -166,7 +166,21 @@ namespace editor
                 g.CompositingMode = CompositingMode.SourceOver;
                 //g.CompositingQuality = CompositingQuality.HighQuality;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.Clear(Color.Transparent);
+
+                using(var tex = new Bitmap(16, 16))
+                using(var b1 = new SolidBrush(Color.DarkGray))
+                using(var b2 = new SolidBrush(Color.LightGray))
+                using(var g2 = Graphics.FromImage(tex))
+                {
+                    g2.FillRectangle(b1, 0, 0, 8, 8);
+                    g2.FillRectangle(b1, 8, 8, 8, 8);
+                    g2.FillRectangle(b2, 8, 0, 8, 8);
+                    g2.FillRectangle(b2, 0, 8, 8, 8);
+                    using(var b3 = new TextureBrush(tex))
+                    {
+                        g.FillRectangle(b3, 0, 0, bmp.Width, bmp.Height);
+                    }
+                }
 
                 for(var i = 0; i < 13; ++i)
                 {

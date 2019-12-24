@@ -26,11 +26,11 @@ DollHeight.csv (sprite metrics)
 DollMainGLoadFlag.bin (used to specify which sprites are valid and should be loaded)
 ItemData.csv
 ObjGLoadFlag.bin (used to specify which overworld sprites are valid and should be loaded)
-ObjFirstActivity.bin (???)
+ObjFirstActivity.bin (event flags)
 *.dod (trainer battle)
 *.mad (wild puppets and other map attributes)
-*.fmf (map stuff)
-*.obs (map stuff)
+*.fmf (map geometry)
+*.obs (map event table)
 MapName.csv
 StandName.csv
 

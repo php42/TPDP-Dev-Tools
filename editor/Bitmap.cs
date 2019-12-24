@@ -12,7 +12,7 @@ namespace editor.bitmap
             {
                 var src = new Rectangle(0, 0, bmp.Width, bmp.Height);
                 var dst = new Rectangle(0, 0, w, h);
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.CompositingMode = CompositingMode.SourceCopy;
                 g.CompositingQuality = CompositingQuality.HighQuality;
                 g.PixelOffsetMode = PixelOffsetMode.HighQuality;

@@ -26,6 +26,65 @@ namespace editor
         private byte[][] map_layers_ = new byte[13][];
         private int selected_map_;
 
+        // Don't look
+        private Dictionary<int, string> battle_bgs_ = new Dictionary<int, string> {
+            {0,"out11.png" },
+            {1,"out21.png" },
+            {2,"in1.png" },
+            {3,"mori1.png" },
+            {4,"dokutsu1.png" },
+            {5,"sangaku1.png" },
+            {6,"hakurei1.png" },
+            {7,"muenzuka1.png" },
+            {8,"mizuumi1.png" },
+            {9,"korinodokutsu1.png" },
+            {10,"komakan1.png" },
+            {11,"tosyokan1.png" },
+            {12,"myorenji1.png" },
+            {13,"daisibyo1.png" },
+            {14,"sinreibyo1.png" },
+            {15,"chikurin1.png" },
+            {16,"in1.png" },
+            {18,"genbunosawa1.png" },
+            {19,"sanzunokawa1.png" },
+            {20,"tengunosato1.png" },
+            {21,"moriyajinja1.png" },
+            {23,"haison1.png" },
+            {24,"haikyo1.png" },
+            {25,"haiyokan1.png" },
+            {27,"chiireiden1.png" },
+            {28,"syakunetsu1.png" },
+            {29,"kanketsusen1.png" },
+            {30,"suzuran1.png" },
+            {31,"taiyo1.png" },
+            {32,"makai1.png" },
+            {33,"pandemonium1.png" },
+            {36,"tenkai1.png" },
+            {38,"saisi1.png" },
+            {39,"hitozato1.png" },
+            {40,"myorenjiIn1.png" },
+            {41,"boti1.png" },
+            {42,"pandemonium20.png" },
+            {43,"yousitu1.png" },
+            {44,"hyosetu1.png" },
+            {45,"genmukai1.png" },
+            {46,"yumenosekai0.png" },
+            {47,"nitori1.png" },
+            {48,"kisinjo1.png" },
+            {49,"kisinjogyaku1.png" },
+            {50,"sinnreibyonaibu1.png" },
+            {51,"saigyoayakasi1.png" },
+            {52,"hakugyokuro1.png" },
+            {53,"hakugyokurokaidan0.png" },
+            {54,"jigoku1.png" },
+            {55,"butokai1.png" },
+            {56,"butokaichitei1.png" },
+            {57,"mugenkan1.png" },
+            {58,"tsukinomiyako1.png" },
+            {59,"mugensekai1.png" },
+            {60,"mugensekai20.png" }
+        };
+
         private void LoadMad(string filepath, int id)
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MadJson));
@@ -120,6 +179,15 @@ namespace editor
             foreach(var map in maps_)
             {
                 MapListBox.Items.Add(map.location_name);
+            }
+
+            MapMusicCB.SelectedIndex = -1;
+            MapMusicCB.Items.Clear();
+            MapMusicCB.DisplayMember = "Item1";
+            MapMusicCB.ValueMember = "Item2";
+            foreach(var bgm in bgm_data_)
+            {
+                MapMusicCB.Items.Add(new Tuple<string, uint>(bgm.Value, bgm.Key));
             }
         }
 
@@ -301,7 +369,13 @@ namespace editor
                 else
                     MapDispNameBox.Text = "";
                 MapBackgroundSC.Value = map.battle_background;
-                MapMusicSC.Value = map.overworld_theme;
+                if(bgm_data_.ContainsKey(map.overworld_theme))
+                    MapMusicCB.SelectedIndex = MapMusicCB.FindStringExact(bgm_data_[map.overworld_theme]);
+                else
+                {
+                    MapMusicCB.SelectedIndex = -1;
+                    ErrMsg("Unknown music value: " + map.overworld_theme.ToString());
+                }
                 MapWeatherCB.SelectedIndex = (int)map.weather;
                 MapEncounterTypeCB.SelectedIndex = (int)map.encounter_type;
                 ForbidBikeCB.Checked = map.forbid_bike > 0;
@@ -450,16 +524,37 @@ namespace editor
             if(mapindex < 0)
                 return;
 
-            maps_[mapindex].battle_background = (uint)MapBackgroundSC.Value;
+            var id = (uint)MapBackgroundSC.Value;
+            maps_[mapindex].battle_background = id;
+
+            if(battle_bgs_.ContainsKey((int)id))
+            {
+                try
+                {
+                    var path = working_dir_ + "/gn_dat1.arc/battle/locationBG/" + battle_bgs_[(int)id];
+                    BattleBGPB.Image = new Bitmap(path);
+                }
+                catch
+                {
+                    BattleBGPB.Image = null;
+                }
+            }
+            else
+            {
+                BattleBGPB.Image = null;
+            }
         }
 
-        private void MapMusicSC_ValueChanged(object sender, EventArgs e)
+        private void MapMusicCB_SelectedIndexChanged(object sender, EventArgs e)
         {
             var mapindex = MapListBox.SelectedIndex;
-            if(mapindex < 0)
+            var index = MapMusicCB.SelectedIndex;
+            if(index < 0 || mapindex < 0)
                 return;
 
-            maps_[mapindex].overworld_theme = (uint)MapMusicSC.Value;
+            var val = (Tuple<string, uint>)MapMusicCB.SelectedItem;
+            var id = val.Item2;
+            maps_[mapindex].overworld_theme = id;
         }
 
         private void MapWeatherCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -616,6 +711,9 @@ namespace editor
                     MapListBox.Items.Add(name);
                     MapDesignCB.Items.Add(name);
                     EventMapCB.Items.Add(name);
+
+                    for(var i = 0; i < 128; ++i)
+                        event_flags_[(id * 128) + i] = 0xFF;
 
                     SelectMap(maps_.Count - 1);
                 }

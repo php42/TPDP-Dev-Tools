@@ -456,9 +456,10 @@ namespace editor
                 return;
             }
 
-            if(id >= puppet_names_.Length)
+            if((id >= puppet_names_.Length) || (id >= 1024))
             {
-                ErrMsg("Puppet ID too large! Use a lower ID value.");
+                var min = Math.Min(puppet_names_.Length, 1024);
+                ErrMsg("Puppet ID too large! ID must be less than " + min.ToString() + ".");
                 return;
             }
 
@@ -466,6 +467,9 @@ namespace editor
             puppets_[id] = puppet;
             PuppetLB.Items.Add(new Tuple<string, uint>(puppet_names_[id], puppet.id));
             PuppetLB.SelectedIndex = PuppetLB.FindStringExact(puppet_names_[id]);
+            obj_flags_[id] = 1;
+            for(var i = 0; i < (is_ynk_ ? 4 : 3); ++i)
+                puppet_flags_[(id * 4) + i] = 1;
         }
 
         private void DumpPuppets()
