@@ -587,9 +587,11 @@ namespace editor
                 var buf = File.ReadAllBytes(versiondata);
                 MemoryStream s = new MemoryStream(buf);
                 var ver = (VersionJson)ser.ReadObject(s);
-                if((ver.major != 1) || (ver.minor != 0))
+                if(!ver.VersionMatches())
                 {
-                    bool newer = (ver.major > 1) || (ver.major == 1 && (ver.minor > 0));
+                    var major = VersionJson.VersionMajor;
+                    var minor = VersionJson.VersionMinor;
+                    bool newer = (ver.major > major) || (ver.major == major && (ver.minor > minor));
                     ErrMsg("Current JSON dump is for " + (newer ? "a newer" : "an older") + " version of TPDP-Dev-Tools. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
                     ConsoleOutput.Clear();
                     return;

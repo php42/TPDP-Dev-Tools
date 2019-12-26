@@ -112,11 +112,6 @@ namespace editor
                 var name = it.Value;
                 SkillCardLB.Items.Add(new Tuple<string, uint>(name, id));
             }
-
-            // New Puppet
-            NewPuppetSC.Minimum = 1;
-            NewPuppetSC.Maximum = puppet_names_.Length > 1 ? puppet_names_.Length - 1 : 512;
-            NewPuppetSC.Value = 1;
         }
 
         private void PuppetLB_SelectedIndexChanged(object sender, EventArgs e)
@@ -449,7 +444,14 @@ namespace editor
                 return;
             }
 
-            uint id = (uint)NewPuppetSC.Value;
+            uint id = 0;
+            using(var dialog = new NewIDDialog("New Puppet", 511))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
             if(puppets_.ContainsKey(id))
             {
                 ErrMsg("Puppet ID in use! Select a different ID.");

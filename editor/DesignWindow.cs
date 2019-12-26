@@ -84,8 +84,7 @@ namespace editor
             paste_x_ = -1;
             paste_y_ = -1;
 
-            undo_history_ = new List<byte[][]>();
-            undo_pos_ = 0;
+            ClearUndo();
 
             foreach(var map in maps_)
             {
@@ -330,6 +329,12 @@ namespace editor
             RenderMap();
         }
 
+        private void ClearUndo()
+        {
+            undo_history_ = new List<byte[][]>();
+            undo_pos_ = 0;
+        }
+
         private void RenderMap(List<int> layers)
         {
             if((fmf_data_ == null) || (obs_data_ == null) || (MapDesignCB.SelectedIndex < 0))
@@ -440,8 +445,7 @@ namespace editor
             paste_y_ = -1;
             dragging_ = false;
 
-            undo_history_ = new List<byte[][]>();
-            undo_pos_ = 0;
+            ClearUndo();
 
             Tileset1SC.ValueChanged -= TilesetSC_ValueChanged;
             Tileset2SC.ValueChanged -= TilesetSC_ValueChanged;
@@ -825,6 +829,7 @@ namespace editor
                     fmf_data_.width = (uint)w;
                     fmf_data_.height = (uint)h;
                     fmf_data_.payload_length = (uint)new_sz * fmf_data_.num_layers;
+                    ClearUndo();
                     RenderMap();
                 }
             }
@@ -843,6 +848,7 @@ namespace editor
             {
                 if(dialog.ShowDialog() == DialogResult.OK)
                 {
+                    SaveHistory();
                     var x = dialog.X;
                     var y = dialog.Y;
 
@@ -894,6 +900,7 @@ namespace editor
 
             if(MessageBox.Show("Are you sure you want to clear the entire map?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
+                SaveHistory();
                 var layer_sz = fmf_data_.width * fmf_data_.height * 2;
                 for(var i = 0; i < map_layers_.Length; ++i)
                 {

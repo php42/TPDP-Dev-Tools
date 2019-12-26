@@ -17,6 +17,21 @@ namespace editor.json
 
         [DataMember]
         public string dev_tools = "Unknown";
+
+        public static int VersionMajor
+        {
+            get { return 1; }
+        }
+
+        public static int VersionMinor
+        {
+            get { return 1; }
+        }
+
+        public bool VersionMatches()
+        {
+            return (major == VersionMajor) && (minor == VersionMinor);
+        }
     }
 
     [DataContract]
@@ -54,6 +69,9 @@ namespace editor.json
         public uint held_item;
 
         [DataMember]
+        public bool heart_mark = false;
+
+        [DataMember]
         public uint[] skills = new uint[4];
 
         [DataMember]
@@ -74,6 +92,15 @@ namespace editor.json
 
         [DataMember]
         public uint portrait_id;
+
+        [DataMember]
+        public uint start_bgm;
+
+        [DataMember]
+        public uint battle_bgm;
+
+        [DataMember]
+        public uint victory_bgm;
 
         [DataMember]
         public uint intro_text_id;

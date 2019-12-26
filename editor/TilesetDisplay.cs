@@ -47,7 +47,31 @@ namespace editor
 
         public void SetBitmap(Bitmap bmp)
         {
-            bmp_ = bmp;
+            bmp_ = new Bitmap(bmp.Width, bmp.Height);
+            using(var g = Graphics.FromImage(bmp_))
+            {
+                g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                g.CompositingMode = CompositingMode.SourceOver;
+                g.CompositingQuality = CompositingQuality.HighQuality;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using(var tex = new Bitmap(16, 16))
+                using(var b1 = new SolidBrush(Color.DarkGray))
+                using(var b2 = new SolidBrush(Color.LightGray))
+                using(var g2 = Graphics.FromImage(tex))
+                {
+                    g2.FillRectangle(b1, 0, 0, 8, 8);
+                    g2.FillRectangle(b1, 8, 8, 8, 8);
+                    g2.FillRectangle(b2, 8, 0, 8, 8);
+                    g2.FillRectangle(b2, 0, 8, 8, 8);
+                    using(var b3 = new TextureBrush(tex))
+                    {
+                        g.FillRectangle(b3, 0, 0, bmp_.Width, bmp_.Height);
+                    }
+                }
+
+                g.DrawImage(bmp, 0, 0);
+            }
 
             SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
             Invalidate();
@@ -68,13 +92,9 @@ namespace editor
         protected override void OnPaint(PaintEventArgs e)
         {
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            e.Graphics.CompositingMode = CompositingMode.SourceOver;
+            e.Graphics.CompositingMode = CompositingMode.SourceCopy;
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            using(var b = new SolidBrush(this.BackColor))
-            {
-                e.Graphics.FillRectangle(b, e.ClipRectangle);
-            }
 
             // align to tile boundary
             var tile_sz = 16 * Zoom;

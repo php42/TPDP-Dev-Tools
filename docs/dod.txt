@@ -14,15 +14,20 @@ if you're clever, you can defeat the encryption without the use of efile.bin, bu
 "intro_text_id": id of the text file that's displayed at the beginning of battle. located in gn_dat5/scripts/talk
 "end_text_id": same as above but for the text displayed at the end of the battle.
 "portrait_id": id of the trainer portrait image to display.
+"start_bgm": ID of music played during initial dialogue before the battle begins.
+"battle_bgm": ID of music played during battle.
+"victory_bgm": ID of music played on the result screen.
 
 
 ---BINARY FORMAT---
                          _
 0x0000: char name[32]     |
-0x0020: u16  portrait_id  |
-0x0022-0x0024: ???        |
-0x0025: u16  intro_text_id|
-0x0027: u16  end_text_id  |--0x42A
+0x0020: u16 portrait_id   |
+0x0022: u8  start_bgm     |
+0x0023: u8  battle_bgm    |
+0x0024: u8  victory_bgm   |
+0x0025: u16 intro_text_id |
+0x0027: u16 end_text_id   |--0x42A
 0x0029-0x002B: ???        |
 0x002C: puppet[6]         | (0x95 per puppet)
 0x03AA: char title[128]  _|

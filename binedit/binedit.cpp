@@ -43,13 +43,14 @@
 #include <functional>
 #include <stdexcept>
 #include <utility>
+#include <intrin.h>
 
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
 namespace b64 = boost::beast::detail::base64;
 
 constexpr unsigned int JSON_MAJOR = 1;
-constexpr unsigned int JSON_MINOR = 0;
+constexpr unsigned int JSON_MINOR = 1;
 
 class WorkerError : public std::runtime_error
 {
@@ -556,6 +557,9 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
     tree.put("trainer_name", sjis_to_utf8(trainer_name));
     tree.put("trainer_title", sjis_to_utf8(trainer_title));
     tree.put("portrait_id", read_le16(&file[0x20]));
+    tree.put("start_bgm", (uint8_t)file[0x22]);
+    tree.put("battle_bgm", (uint8_t)file[0x23]);
+    tree.put("victory_bgm", (uint8_t)file[0x24]);
 
     tree.put("intro_text_id", read_le16(&file[0x25]));
     tree.put("end_text_id", read_le16(&file[0x27]));
@@ -575,6 +579,7 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
         node.put("experience", puppet.exp);
         node.put("mark", utf_narrow(libtpdp::puppet_mark_string(puppet.mark)));
         node.put("held_item", puppet.held_item_id);
+        node.put("heart_mark", puppet.has_heart_mark());
 
         for(auto j : puppet.skills)
             node.add("skills.", j);
@@ -604,7 +609,13 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
     auto trainer_name = utf8_to_sjis(tree.get<std::string>("trainer_name"));
     auto trainer_title = utf8_to_sjis(tree.get<std::string>("trainer_title"));
     auto portrait_id = tree.get<uint16_t>("portrait_id");
+    auto start_bgm = tree.get<uint8_t>("start_bgm");
+    auto battle_bgm = tree.get<uint8_t>("battle_bgm");
+    auto victory_bgm = tree.get<uint8_t>("victory_bgm");
     write_le16(&file[0x20], portrait_id);
+    file[0x22] = start_bgm;
+    file[0x23] = battle_bgm;
+    file[0x24] = victory_bgm;
 
     auto intro_text_id = tree.get<uint16_t>("intro_text_id");
     auto end_text_id = tree.get<uint16_t>("end_text_id");
@@ -631,7 +642,30 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         if(pos >= 6)
             throw BineditException("Too many puppets!");
 
-        libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+        // Hack to detect blank puppets
+        __m128i zero = _mm_setzero_si128();
+        for(auto i = 0; i < libtpdp::PUPPET_SIZE_BOX;)
+        {
+            if((libtpdp::PUPPET_SIZE_BOX - i) >= 16)
+            {
+                auto temp = _mm_loadu_si128((__m128i*)&buf[(pos * libtpdp::PUPPET_SIZE_BOX) + i]);
+                if((uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(zero, temp)) != 0xffff)
+                {
+                    libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+                    break;
+                }
+                i += 16;
+            }
+            else
+            {
+                if(buf[(pos * libtpdp::PUPPET_SIZE_BOX) + i] != 0)
+                {
+                    libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+                    break;
+                }
+                ++i;
+            }
+        }
         libtpdp::Puppet puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
 
         puppet.set_puppet_nickname(utf_widen(node.get<std::string>("nickname")));
@@ -642,6 +676,7 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         puppet.exp = node.get<uint32_t>("experience");
         puppet.mark = (uint8_t)mark_to_uint(node.get<std::string>("mark"));
         puppet.held_item_id = node.get<uint16_t>("held_item");
+        puppet.set_heart_mark(node.get<bool>("heart_mark"));
 
         if(puppet.mark == -1)
             throw BineditException("Invalid puppet mark: " + node.get<std::string>("mark"));

@@ -156,23 +156,48 @@ namespace editor
                     continue;
                 TrainerPuppetCB.Items.Add(new Tuple<string, uint>(puppet_names_[puppet.id], puppet.id));
             }
+
+            // BGM
+            StartBGMCB.SelectedIndex = -1;
+            StartBGMCB.Items.Clear();
+            StartBGMCB.DisplayMember = "Item1";
+            StartBGMCB.ValueMember = "Item2";
+            BattleBGMCB.SelectedIndex = -1;
+            BattleBGMCB.Items.Clear();
+            BattleBGMCB.DisplayMember = "Item1";
+            BattleBGMCB.ValueMember = "Item2";
+            VictoryBGMCB.SelectedIndex = -1;
+            VictoryBGMCB.Items.Clear();
+            VictoryBGMCB.DisplayMember = "Item1";
+            VictoryBGMCB.ValueMember = "Item2";
+            foreach(var bgm in bgm_data_)
+            {
+                StartBGMCB.Items.Add(new Tuple<string, uint>(bgm.Value, bgm.Key));
+                BattleBGMCB.Items.Add(new Tuple<string, uint>(bgm.Value, bgm.Key));
+                VictoryBGMCB.Items.Add(new Tuple<string, uint>(bgm.Value, bgm.Key));
+            }
+        }
+
+        private void WriteDod(DodJson dod)
+        {
+            try
+            {
+                var ser = new DataContractJsonSerializer(typeof(DodJson));
+                var s = new MemoryStream();
+                ser.WriteObject(s, dod);
+                File.WriteAllBytes(dod.filepath, s.ToArray());
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Error saving trainer: " + dod.filepath + "\r\n" + e.Message);
+            }
         }
 
         private void SaveTrainers()
         {
             foreach(var dod in dods_)
             {
-                try
-                {
-                    var ser = new DataContractJsonSerializer(typeof(DodJson));
-                    var s = new MemoryStream();
-                    ser.WriteObject(s, dod);
-                    File.WriteAllBytes(dod.filepath, s.ToArray());
-                }
-                catch(Exception e)
-                {
-                    throw new Exception("Error saving trainer: " + dod.filepath + "\r\n" + e.Message);
-                }
+                WriteDod(dod);
             }
         }
 
@@ -255,6 +280,17 @@ namespace editor
             TrainerCostumeCB.SelectedIndex = -1;
             TrainerItemCB.SelectedIndex = -1;
             TrainerExpSC.Value = 0;
+            HeartMarkCB.Checked = false;
+
+            StartBGMCB.SelectedIndex = -1;
+            BattleBGMCB.SelectedIndex = -1;
+            VictoryBGMCB.SelectedIndex = -1;
+            if(bgm_data_.ContainsKey(dod.start_bgm))
+                StartBGMCB.SelectedIndex = StartBGMCB.FindStringExact(bgm_data_[dod.start_bgm]);
+            if(bgm_data_.ContainsKey(dod.start_bgm))
+                BattleBGMCB.SelectedIndex = BattleBGMCB.FindStringExact(bgm_data_[dod.battle_bgm]);
+            if(bgm_data_.ContainsKey(dod.start_bgm))
+                VictoryBGMCB.SelectedIndex = VictoryBGMCB.FindStringExact(bgm_data_[dod.victory_bgm]);
 
             IntroTextSC.Value = dod.intro_text_id;
             EndTextSC.Value = dod.end_text_id;
@@ -305,6 +341,8 @@ namespace editor
             TrainerMarkCB.SelectedIndex = TrainerMarkCB.FindStringExact(puppet.mark);
             TrainerCostumeCB.SelectedIndex = (puppet.costume < 4) ? (int)puppet.costume : 0;
 
+            HeartMarkCB.Checked = puppet.heart_mark;
+
             TrainerSkill1CB.SelectedIndex = TrainerSkill1CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[0]) ? skill_names_[puppet.skills[0]] : "None");
             TrainerSkill2CB.SelectedIndex = TrainerSkill2CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[1]) ? skill_names_[puppet.skills[1]] : "None");
             TrainerSkill3CB.SelectedIndex = TrainerSkill3CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[2]) ? skill_names_[puppet.skills[2]] : "None");
@@ -343,6 +381,15 @@ namespace editor
 
             TrainerAbilityCB.SelectedIndex = -1;
             TrainerAbilityCB.Items.Clear();
+
+            var puppet = dods_[dodindex].puppets[slotindex];
+
+            TrainerLevelSC.ValueChanged -= TrainerLevelSC_ValueChanged;
+            TrainerLevelSC.Value = LevelFromExp(data.cost, puppet.experience);
+            TrainerLevelSC.ValueChanged += TrainerLevelSC_ValueChanged;
+
+            if(string.IsNullOrEmpty(puppet.nickname) || (puppet.nickname == puppet_names_[puppet.id]))
+                TrainerPuppetNickTB.Text = (id > 0) ? puppet_names_[id] : "";
 
             dods_[dodindex].puppets[slotindex].id = id;
         }
@@ -546,6 +593,116 @@ namespace editor
                 TrainerPreviewPB.Image = null;
                 //TrainerPreviewPB.Invalidate();
             }
+        }
+
+        private void HeartMarkCB_CheckedChanged(object sender, EventArgs e)
+        {
+            var puppetindex = TrainerPuppetCB.SelectedIndex;
+            var slotindex = TrainerSlotCB.SelectedIndex;
+            var dodindex = TrainerLB.SelectedIndex;
+            if(puppetindex < 0 || slotindex < 0 || dodindex < 0)
+                return;
+
+            dods_[dodindex].puppets[slotindex].heart_mark = HeartMarkCB.Checked;
+        }
+
+        private void BGMCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            var index = ((ComboBox)sender).SelectedIndex;
+            if(dodindex < 0 || index < 0)
+                return;
+
+            var id = ((Tuple<string, uint>)((ComboBox)sender).SelectedItem).Item2;
+
+            if(sender == (object)StartBGMCB)
+                dods_[dodindex].start_bgm = id;
+            else if(sender == (object)BattleBGMCB)
+                dods_[dodindex].battle_bgm = id;
+            else if(sender == (object)VictoryBGMCB)
+                dods_[dodindex].victory_bgm = id;
+        }
+
+        private void AllSBT_Click(object sender, EventArgs e)
+        {
+            IV1SC.Value = 15;
+            IV2SC.Value = 15;
+            IV3SC.Value = 15;
+            IV4SC.Value = 15;
+            IV5SC.Value = 15;
+            IV6SC.Value = 15;
+        }
+
+        private void AllEBT_Click(object sender, EventArgs e)
+        {
+            IV1SC.Value = 0;
+            IV2SC.Value = 0;
+            IV3SC.Value = 0;
+            IV4SC.Value = 0;
+            IV5SC.Value = 0;
+            IV6SC.Value = 0;
+        }
+
+        private void All64BT_Click(object sender, EventArgs e)
+        {
+            EV1SC.Value = 64;
+            EV2SC.Value = 64;
+            EV3SC.Value = 64;
+            EV4SC.Value = 64;
+            EV5SC.Value = 64;
+            EV6SC.Value = 64;
+        }
+
+        private void All0BT_Click(object sender, EventArgs e)
+        {
+            EV1SC.Value = 0;
+            EV2SC.Value = 0;
+            EV3SC.Value = 0;
+            EV4SC.Value = 0;
+            EV5SC.Value = 0;
+            EV6SC.Value = 0;
+        }
+
+        private void NewTrainerBT_Click(object sender, EventArgs e)
+        {
+            if(string.IsNullOrEmpty(working_dir_) || dods_.Count == 0)
+                return;
+
+            int id = 0;
+            using(var dialog = new NewIDDialog("New Trainer", 2047))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = dialog.ID;
+            }
+
+            var path = working_dir_ + (is_ynk_ ? "/gn_dat5.arc/script/dollOperator/" : "/gn_dat3.arc/script/dollOperator/") + id.ToString("D4") + ".dod";
+            if(File.Exists(path))
+            {
+                ErrMsg("Trainer ID already exists!");
+                return;
+            }
+
+            try
+            {
+                byte[] buf = new byte[0x42A];
+                File.WriteAllBytes(path, buf);
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Failed to write to file: " + path + "\r\n" + ex.Message);
+                return;
+            }
+
+            var dod = new DodJson();
+            dod.filepath = path.Replace(".dod", ".json");
+            dod.id = id;
+            dod.trainer_name = "New Trainer";
+            dod.trainer_title = "New Trainer";
+            dods_.Add(dod);
+            TrainerLB.Items.Add(dod.trainer_name);
+            TrainerLB.SelectedIndex = TrainerLB.Items.Count - 1;
+            WriteDod(dod);
         }
     }
 }
