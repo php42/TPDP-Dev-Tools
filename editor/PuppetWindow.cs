@@ -470,8 +470,12 @@ namespace editor
             PuppetLB.Items.Add(new Tuple<string, uint>(puppet_names_[id], puppet.id));
             PuppetLB.SelectedIndex = PuppetLB.FindStringExact(puppet_names_[id]);
             obj_flags_[id] = 1;
+            if(is_ynk_)
+                obj_flags_[id + 400] = 1;
             for(var i = 0; i < (is_ynk_ ? 4 : 3); ++i)
+            {
                 puppet_flags_[(id * 4) + i] = 1;
+            }
         }
 
         private void DumpPuppets()
