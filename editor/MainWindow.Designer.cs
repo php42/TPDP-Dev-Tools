@@ -3788,7 +3788,7 @@
             this.Controls.Add(this.TabControl);
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.0.0 BETA";
+            this.Text = "TPDP Editor v1.1.0 BETA";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);
