@@ -15,7 +15,7 @@ G: Toggle grid.
 
 Some important notes about map editing:
 
-1. Event IDs can be used only once per map. you will need to make copies if you want more of them.
+1. Event IDs can be used only once per map. you will need to make copies if you want more of them on the same map.
 2. Mapping multiple events onto the same trainer/script file will not work properly for events that save state (e.g. trainers and items).
 3. The type of event (e.g. trainer, item, etc) is determined by the value of its ID.
 

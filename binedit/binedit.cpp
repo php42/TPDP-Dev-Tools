@@ -568,7 +568,31 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
     for(auto i = 0; i < 6; ++i)
     {
         boost::property_tree::ptree node;
-        libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
+
+        // Hack to detect blank puppets
+        __m128i zero = _mm_setzero_si128();
+        for(unsigned int j = 0; j < libtpdp::PUPPET_SIZE_BOX;)
+        {
+            if((libtpdp::PUPPET_SIZE_BOX - j) >= 16)
+            {
+                auto temp = _mm_loadu_si128((__m128i*)&buf[(i * libtpdp::PUPPET_SIZE_BOX) + j]);
+                if((uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(zero, temp)) != 0xffff)
+                {
+                    libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
+                    break;
+                }
+                j += 16;
+            }
+            else
+            {
+                if(buf[(i * libtpdp::PUPPET_SIZE_BOX) + j] != 0)
+                {
+                    libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
+                    break;
+                }
+                ++j;
+            }
+        }
         libtpdp::Puppet puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], false);
 
         node.put("nickname", utf_narrow(puppet.puppet_nickname()));
@@ -644,7 +668,7 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
 
         // Hack to detect blank puppets
         __m128i zero = _mm_setzero_si128();
-        for(auto i = 0; i < libtpdp::PUPPET_SIZE_BOX;)
+        for(unsigned int i = 0; i < libtpdp::PUPPET_SIZE_BOX;)
         {
             if((libtpdp::PUPPET_SIZE_BOX - i) >= 16)
             {

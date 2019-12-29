@@ -270,17 +270,8 @@
             this.MapNameTextBox = new System.Windows.Forms.TextBox();
             this.MapListBox = new System.Windows.Forms.ListBox();
             this.DesignTabPage = new System.Windows.Forms.TabPage();
+            this.DesignSplit = new System.Windows.Forms.SplitContainer();
             this.MapGridCB = new System.Windows.Forms.CheckBox();
-            this.DesignZoomSC = new System.Windows.Forms.NumericUpDown();
-            this.DesignCoordLabel = new System.Windows.Forms.Label();
-            this.DesignClearBT = new System.Windows.Forms.Button();
-            this.DesignShiftBT = new System.Windows.Forms.Button();
-            this.DesignResizeBT = new System.Windows.Forms.Button();
-            this.DesignLabelCB = new System.Windows.Forms.CheckBox();
-            this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
-            this.Tileset3SC = new System.Windows.Forms.NumericUpDown();
-            this.Tileset2SC = new System.Windows.Forms.NumericUpDown();
-            this.Tileset1SC = new System.Windows.Forms.NumericUpDown();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.BrushValueSC = new System.Windows.Forms.NumericUpDown();
             this.TilesetImgPanel = new System.Windows.Forms.Panel();
@@ -288,7 +279,17 @@
             this.BrushLayerCB = new System.Windows.Forms.ComboBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.LayerVisibiltyCB = new System.Windows.Forms.CheckedListBox();
+            this.DesignZoomSC = new System.Windows.Forms.NumericUpDown();
+            this.DesignCoordLabel = new System.Windows.Forms.Label();
             this.MapDesignCB = new System.Windows.Forms.ComboBox();
+            this.DesignClearBT = new System.Windows.Forms.Button();
+            this.Tileset1SC = new System.Windows.Forms.NumericUpDown();
+            this.DesignShiftBT = new System.Windows.Forms.Button();
+            this.DesignResizeBT = new System.Windows.Forms.Button();
+            this.Tileset2SC = new System.Windows.Forms.NumericUpDown();
+            this.DesignLabelCB = new System.Windows.Forms.CheckBox();
+            this.Tileset3SC = new System.Windows.Forms.NumericUpDown();
+            this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
             this.EventTabPage = new System.Windows.Forms.TabPage();
             this.EventMapCB = new System.Windows.Forms.ComboBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
@@ -476,15 +477,18 @@
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).BeginInit();
             this.DesignTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DesignSplit)).BeginInit();
+            this.DesignSplit.Panel1.SuspendLayout();
+            this.DesignSplit.SuspendLayout();
             this.groupBox13.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrushValueSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BrushTilesetSC)).BeginInit();
             this.groupBox12.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).BeginInit();
             this.EventTabPage.SuspendLayout();
             this.groupBox17.SuspendLayout();
             this.groupBox16.SuspendLayout();
@@ -1251,7 +1255,7 @@
             // label84
             // 
             label84.AutoSize = true;
-            label84.Location = new System.Drawing.Point(6, 35);
+            label84.Location = new System.Drawing.Point(3, 33);
             label84.Name = "label84";
             label84.Size = new System.Drawing.Size(43, 13);
             label84.TabIndex = 7;
@@ -1287,7 +1291,7 @@
             // label81
             // 
             label81.AutoSize = true;
-            label81.Location = new System.Drawing.Point(6, 9);
+            label81.Location = new System.Drawing.Point(3, 7);
             label81.Name = "label81";
             label81.Size = new System.Drawing.Size(28, 13);
             label81.TabIndex = 1;
@@ -1441,7 +1445,7 @@
             // label104
             // 
             label104.AutoSize = true;
-            label104.Location = new System.Drawing.Point(151, 193);
+            label104.Location = new System.Drawing.Point(148, 191);
             label104.Name = "label104";
             label104.Size = new System.Drawing.Size(34, 13);
             label104.TabIndex = 0;
@@ -1541,6 +1545,7 @@
             this.TabControl.Size = new System.Drawing.Size(776, 581);
             this.TabControl.TabIndex = 1;
             this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
+            this.TabControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TabControl_KeyDown);
             // 
             // FilesTabPage
             // 
@@ -3262,23 +3267,7 @@
             // 
             // DesignTabPage
             // 
-            this.DesignTabPage.Controls.Add(this.MapGridCB);
-            this.DesignTabPage.Controls.Add(label104);
-            this.DesignTabPage.Controls.Add(this.DesignZoomSC);
-            this.DesignTabPage.Controls.Add(this.DesignCoordLabel);
-            this.DesignTabPage.Controls.Add(this.DesignClearBT);
-            this.DesignTabPage.Controls.Add(this.DesignShiftBT);
-            this.DesignTabPage.Controls.Add(this.DesignResizeBT);
-            this.DesignTabPage.Controls.Add(this.DesignLabelCB);
-            this.DesignTabPage.Controls.Add(this.Tileset4SC);
-            this.DesignTabPage.Controls.Add(this.Tileset3SC);
-            this.DesignTabPage.Controls.Add(this.Tileset2SC);
-            this.DesignTabPage.Controls.Add(label84);
-            this.DesignTabPage.Controls.Add(this.Tileset1SC);
-            this.DesignTabPage.Controls.Add(this.groupBox13);
-            this.DesignTabPage.Controls.Add(this.groupBox12);
-            this.DesignTabPage.Controls.Add(this.MapDesignCB);
-            this.DesignTabPage.Controls.Add(label81);
+            this.DesignTabPage.Controls.Add(this.DesignSplit);
             this.DesignTabPage.Location = new System.Drawing.Point(4, 22);
             this.DesignTabPage.Name = "DesignTabPage";
             this.DesignTabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -3287,10 +3276,43 @@
             this.DesignTabPage.Text = "Maps (Design)";
             this.DesignTabPage.UseVisualStyleBackColor = true;
             // 
+            // DesignSplit
+            // 
+            this.DesignSplit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.DesignSplit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DesignSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.DesignSplit.Location = new System.Drawing.Point(3, 3);
+            this.DesignSplit.Name = "DesignSplit";
+            // 
+            // DesignSplit.Panel1
+            // 
+            this.DesignSplit.Panel1.Controls.Add(this.MapGridCB);
+            this.DesignSplit.Panel1.Controls.Add(this.groupBox13);
+            this.DesignSplit.Panel1.Controls.Add(label104);
+            this.DesignSplit.Panel1.Controls.Add(this.groupBox12);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignZoomSC);
+            this.DesignSplit.Panel1.Controls.Add(label81);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignCoordLabel);
+            this.DesignSplit.Panel1.Controls.Add(this.MapDesignCB);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignClearBT);
+            this.DesignSplit.Panel1.Controls.Add(this.Tileset1SC);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignShiftBT);
+            this.DesignSplit.Panel1.Controls.Add(label84);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignResizeBT);
+            this.DesignSplit.Panel1.Controls.Add(this.Tileset2SC);
+            this.DesignSplit.Panel1.Controls.Add(this.DesignLabelCB);
+            this.DesignSplit.Panel1.Controls.Add(this.Tileset3SC);
+            this.DesignSplit.Panel1.Controls.Add(this.Tileset4SC);
+            this.DesignSplit.Panel1MinSize = 220;
+            this.DesignSplit.Size = new System.Drawing.Size(762, 549);
+            this.DesignSplit.SplitterDistance = 220;
+            this.DesignSplit.SplitterWidth = 5;
+            this.DesignSplit.TabIndex = 16;
+            // 
             // MapGridCB
             // 
             this.MapGridCB.AutoSize = true;
-            this.MapGridCB.Location = new System.Drawing.Point(151, 217);
+            this.MapGridCB.Location = new System.Drawing.Point(148, 215);
             this.MapGridCB.Name = "MapGridCB";
             this.MapGridCB.Size = new System.Drawing.Size(45, 17);
             this.MapGridCB.TabIndex = 15;
@@ -3298,137 +3320,11 @@
             this.MapGridCB.UseVisualStyleBackColor = true;
             this.MapGridCB.CheckedChanged += new System.EventHandler(this.MapGridCB_CheckedChanged);
             // 
-            // DesignZoomSC
-            // 
-            this.DesignZoomSC.Location = new System.Drawing.Point(188, 191);
-            this.DesignZoomSC.Maximum = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
-            this.DesignZoomSC.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.DesignZoomSC.Name = "DesignZoomSC";
-            this.DesignZoomSC.Size = new System.Drawing.Size(28, 20);
-            this.DesignZoomSC.TabIndex = 14;
-            this.DesignZoomSC.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.DesignZoomSC.ValueChanged += new System.EventHandler(this.DesignZoomSC_ValueChanged);
-            // 
-            // DesignCoordLabel
-            // 
-            this.DesignCoordLabel.AutoSize = true;
-            this.DesignCoordLabel.Location = new System.Drawing.Point(151, 56);
-            this.DesignCoordLabel.Name = "DesignCoordLabel";
-            this.DesignCoordLabel.Size = new System.Drawing.Size(23, 13);
-            this.DesignCoordLabel.TabIndex = 13;
-            this.DesignCoordLabel.Text = "x, y";
-            // 
-            // DesignClearBT
-            // 
-            this.DesignClearBT.Location = new System.Drawing.Point(151, 162);
-            this.DesignClearBT.Name = "DesignClearBT";
-            this.DesignClearBT.Size = new System.Drawing.Size(65, 23);
-            this.DesignClearBT.TabIndex = 12;
-            this.DesignClearBT.Text = "Clear";
-            this.DesignClearBT.UseVisualStyleBackColor = true;
-            this.DesignClearBT.Click += new System.EventHandler(this.DesignClearBT_Click);
-            // 
-            // DesignShiftBT
-            // 
-            this.DesignShiftBT.Location = new System.Drawing.Point(151, 133);
-            this.DesignShiftBT.Name = "DesignShiftBT";
-            this.DesignShiftBT.Size = new System.Drawing.Size(65, 23);
-            this.DesignShiftBT.TabIndex = 11;
-            this.DesignShiftBT.Text = "Shift";
-            this.DesignShiftBT.UseVisualStyleBackColor = true;
-            this.DesignShiftBT.Click += new System.EventHandler(this.DesignShiftBT_Click);
-            // 
-            // DesignResizeBT
-            // 
-            this.DesignResizeBT.Location = new System.Drawing.Point(151, 104);
-            this.DesignResizeBT.Name = "DesignResizeBT";
-            this.DesignResizeBT.Size = new System.Drawing.Size(65, 23);
-            this.DesignResizeBT.TabIndex = 10;
-            this.DesignResizeBT.Text = "Resize";
-            this.DesignResizeBT.UseVisualStyleBackColor = true;
-            this.DesignResizeBT.Click += new System.EventHandler(this.DesignResizeBT_Click);
-            // 
-            // DesignLabelCB
-            // 
-            this.DesignLabelCB.AutoSize = true;
-            this.DesignLabelCB.Checked = true;
-            this.DesignLabelCB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DesignLabelCB.Location = new System.Drawing.Point(151, 81);
-            this.DesignLabelCB.Name = "DesignLabelCB";
-            this.DesignLabelCB.Size = new System.Drawing.Size(57, 17);
-            this.DesignLabelCB.TabIndex = 9;
-            this.DesignLabelCB.Text = "Labels";
-            this.DesignLabelCB.UseVisualStyleBackColor = true;
-            this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
-            // 
-            // Tileset4SC
-            // 
-            this.Tileset4SC.Location = new System.Drawing.Point(178, 33);
-            this.Tileset4SC.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.Tileset4SC.Name = "Tileset4SC";
-            this.Tileset4SC.Size = new System.Drawing.Size(35, 20);
-            this.Tileset4SC.TabIndex = 7;
-            this.Tileset4SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
-            // 
-            // Tileset3SC
-            // 
-            this.Tileset3SC.Location = new System.Drawing.Point(137, 33);
-            this.Tileset3SC.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.Tileset3SC.Name = "Tileset3SC";
-            this.Tileset3SC.Size = new System.Drawing.Size(35, 20);
-            this.Tileset3SC.TabIndex = 6;
-            this.Tileset3SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
-            // 
-            // Tileset2SC
-            // 
-            this.Tileset2SC.Location = new System.Drawing.Point(96, 33);
-            this.Tileset2SC.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.Tileset2SC.Name = "Tileset2SC";
-            this.Tileset2SC.Size = new System.Drawing.Size(35, 20);
-            this.Tileset2SC.TabIndex = 5;
-            this.Tileset2SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
-            // 
-            // Tileset1SC
-            // 
-            this.Tileset1SC.Location = new System.Drawing.Point(55, 33);
-            this.Tileset1SC.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.Tileset1SC.Name = "Tileset1SC";
-            this.Tileset1SC.Size = new System.Drawing.Size(35, 20);
-            this.Tileset1SC.TabIndex = 4;
-            this.Tileset1SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
-            // 
             // groupBox13
             // 
-            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox13.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox13.Controls.Add(this.BrushValueSC);
             this.groupBox13.Controls.Add(label85);
             this.groupBox13.Controls.Add(this.TilesetImgPanel);
@@ -3436,9 +3332,9 @@
             this.groupBox13.Controls.Add(this.BrushTilesetSC);
             this.groupBox13.Controls.Add(label82);
             this.groupBox13.Controls.Add(this.BrushLayerCB);
-            this.groupBox13.Location = new System.Drawing.Point(9, 297);
+            this.groupBox13.Location = new System.Drawing.Point(6, 295);
             this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(207, 251);
+            this.groupBox13.Size = new System.Drawing.Size(205, 247);
             this.groupBox13.TabIndex = 5;
             this.groupBox13.TabStop = false;
             this.groupBox13.Text = "Brush";
@@ -3458,12 +3354,13 @@
             // 
             // TilesetImgPanel
             // 
-            this.TilesetImgPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.TilesetImgPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TilesetImgPanel.AutoScroll = true;
             this.TilesetImgPanel.Location = new System.Drawing.Point(6, 72);
             this.TilesetImgPanel.Name = "TilesetImgPanel";
-            this.TilesetImgPanel.Size = new System.Drawing.Size(195, 173);
+            this.TilesetImgPanel.Size = new System.Drawing.Size(193, 169);
             this.TilesetImgPanel.TabIndex = 7;
             // 
             // BrushTilesetSC
@@ -3505,7 +3402,7 @@
             // groupBox12
             // 
             this.groupBox12.Controls.Add(this.LayerVisibiltyCB);
-            this.groupBox12.Location = new System.Drawing.Point(9, 62);
+            this.groupBox12.Location = new System.Drawing.Point(6, 60);
             this.groupBox12.Name = "groupBox12";
             this.groupBox12.Size = new System.Drawing.Size(136, 229);
             this.groupBox12.TabIndex = 4;
@@ -3536,14 +3433,141 @@
             this.LayerVisibiltyCB.TabIndex = 8;
             this.LayerVisibiltyCB.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.LayerVisibiltyCB_ItemCheck);
             // 
+            // DesignZoomSC
+            // 
+            this.DesignZoomSC.Location = new System.Drawing.Point(185, 189);
+            this.DesignZoomSC.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.Name = "DesignZoomSC";
+            this.DesignZoomSC.Size = new System.Drawing.Size(28, 20);
+            this.DesignZoomSC.TabIndex = 14;
+            this.DesignZoomSC.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.DesignZoomSC.ValueChanged += new System.EventHandler(this.DesignZoomSC_ValueChanged);
+            // 
+            // DesignCoordLabel
+            // 
+            this.DesignCoordLabel.AutoSize = true;
+            this.DesignCoordLabel.Location = new System.Drawing.Point(148, 54);
+            this.DesignCoordLabel.Name = "DesignCoordLabel";
+            this.DesignCoordLabel.Size = new System.Drawing.Size(23, 13);
+            this.DesignCoordLabel.TabIndex = 13;
+            this.DesignCoordLabel.Text = "x, y";
+            // 
             // MapDesignCB
             // 
             this.MapDesignCB.FormattingEnabled = true;
-            this.MapDesignCB.Location = new System.Drawing.Point(40, 6);
+            this.MapDesignCB.Location = new System.Drawing.Point(37, 4);
             this.MapDesignCB.Name = "MapDesignCB";
             this.MapDesignCB.Size = new System.Drawing.Size(176, 21);
             this.MapDesignCB.TabIndex = 2;
             this.MapDesignCB.SelectedIndexChanged += new System.EventHandler(this.MapDesignCB_SelectedIndexChanged);
+            // 
+            // DesignClearBT
+            // 
+            this.DesignClearBT.Location = new System.Drawing.Point(148, 160);
+            this.DesignClearBT.Name = "DesignClearBT";
+            this.DesignClearBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignClearBT.TabIndex = 12;
+            this.DesignClearBT.Text = "Clear";
+            this.DesignClearBT.UseVisualStyleBackColor = true;
+            this.DesignClearBT.Click += new System.EventHandler(this.DesignClearBT_Click);
+            // 
+            // Tileset1SC
+            // 
+            this.Tileset1SC.Location = new System.Drawing.Point(52, 31);
+            this.Tileset1SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset1SC.Name = "Tileset1SC";
+            this.Tileset1SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset1SC.TabIndex = 4;
+            this.Tileset1SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // DesignShiftBT
+            // 
+            this.DesignShiftBT.Location = new System.Drawing.Point(148, 131);
+            this.DesignShiftBT.Name = "DesignShiftBT";
+            this.DesignShiftBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignShiftBT.TabIndex = 11;
+            this.DesignShiftBT.Text = "Shift";
+            this.DesignShiftBT.UseVisualStyleBackColor = true;
+            this.DesignShiftBT.Click += new System.EventHandler(this.DesignShiftBT_Click);
+            // 
+            // DesignResizeBT
+            // 
+            this.DesignResizeBT.Location = new System.Drawing.Point(148, 102);
+            this.DesignResizeBT.Name = "DesignResizeBT";
+            this.DesignResizeBT.Size = new System.Drawing.Size(65, 23);
+            this.DesignResizeBT.TabIndex = 10;
+            this.DesignResizeBT.Text = "Resize";
+            this.DesignResizeBT.UseVisualStyleBackColor = true;
+            this.DesignResizeBT.Click += new System.EventHandler(this.DesignResizeBT_Click);
+            // 
+            // Tileset2SC
+            // 
+            this.Tileset2SC.Location = new System.Drawing.Point(93, 31);
+            this.Tileset2SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset2SC.Name = "Tileset2SC";
+            this.Tileset2SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset2SC.TabIndex = 5;
+            this.Tileset2SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // DesignLabelCB
+            // 
+            this.DesignLabelCB.AutoSize = true;
+            this.DesignLabelCB.Checked = true;
+            this.DesignLabelCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DesignLabelCB.Location = new System.Drawing.Point(148, 79);
+            this.DesignLabelCB.Name = "DesignLabelCB";
+            this.DesignLabelCB.Size = new System.Drawing.Size(57, 17);
+            this.DesignLabelCB.TabIndex = 9;
+            this.DesignLabelCB.Text = "Labels";
+            this.DesignLabelCB.UseVisualStyleBackColor = true;
+            this.DesignLabelCB.CheckedChanged += new System.EventHandler(this.DesignLabelCB_CheckedChanged);
+            // 
+            // Tileset3SC
+            // 
+            this.Tileset3SC.Location = new System.Drawing.Point(134, 31);
+            this.Tileset3SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset3SC.Name = "Tileset3SC";
+            this.Tileset3SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset3SC.TabIndex = 6;
+            this.Tileset3SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
+            // 
+            // Tileset4SC
+            // 
+            this.Tileset4SC.Location = new System.Drawing.Point(175, 31);
+            this.Tileset4SC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.Tileset4SC.Name = "Tileset4SC";
+            this.Tileset4SC.Size = new System.Drawing.Size(35, 20);
+            this.Tileset4SC.TabIndex = 7;
+            this.Tileset4SC.ValueChanged += new System.EventHandler(this.TilesetSC_ValueChanged);
             // 
             // EventTabPage
             // 
@@ -3837,17 +3861,20 @@
             ((System.ComponentModel.ISupportInitialize)(this.MapWeightSpinCtrl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MapLvlSpinCtrl)).EndInit();
             this.DesignTabPage.ResumeLayout(false);
-            this.DesignTabPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).EndInit();
+            this.DesignSplit.Panel1.ResumeLayout(false);
+            this.DesignSplit.Panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DesignSplit)).EndInit();
+            this.DesignSplit.ResumeLayout(false);
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BrushValueSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BrushTilesetSC)).EndInit();
             this.groupBox12.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DesignZoomSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset1SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Tileset4SC)).EndInit();
             this.EventTabPage.ResumeLayout(false);
             this.EventTabPage.PerformLayout();
             this.groupBox17.ResumeLayout(false);
@@ -4037,6 +4064,7 @@
         private System.Windows.Forms.Button All64BT;
         private System.Windows.Forms.Button AllEBT;
         private System.Windows.Forms.Button AllSBT;
+        private System.Windows.Forms.SplitContainer DesignSplit;
     }
 }
 

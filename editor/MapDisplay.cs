@@ -51,13 +51,22 @@ namespace editor
 
             bmp_ = bmp;
 
-            SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
+            if(bmp_ != null)
+                SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
+            else
+                SetClientSizeCore(0, 0);
             Invalidate();
             Update();
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            if(bmp_ == null)
+            {
+                base.OnPaint(e);
+                return;
+            }
+
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
             e.Graphics.CompositingMode = CompositingMode.SourceCopy;
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -89,6 +98,9 @@ namespace editor
 
         public void UpdateRegion(Bitmap bmp, int x, int y, bool repaint)
         {
+            if(bmp_ == null)
+                return;
+
             using(var g = Graphics.FromImage(bmp_))
             {
                 g.InterpolationMode = InterpolationMode.NearestNeighbor;

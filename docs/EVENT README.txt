@@ -18,7 +18,8 @@ Event type by ID value:
 512+: Trainers.
 896+: Warps.
 
-"Event Arg" by ID value:
+The purpose of "Event Arg" varies depending on the value of "Event Index".
+"Event Arg" function by "Event Index" value:
 1-255: Points to script files in gn_dat5/script/event.
 256+: Points to text files in gn_dat5/script/talk.
 512+: Points to trainer dod files in gn_dat5/script/dollOperator.

@@ -23,5 +23,18 @@ namespace editor
         {
             return AutoScrollPosition;
         }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            Focus();
+            base.OnMouseDown(e);
+        }
+
+        protected override void OnScroll(ScrollEventArgs se)
+        {
+            if(GetScrollState(ScrollStateUserHasScrolled))
+                Focus();
+            base.OnScroll(se);
+        }
     }
 }

@@ -4,11 +4,11 @@ This file contains definitions for all the skills in the game.
 The json should be mostly self-explanatory.
 
 "ynk_classification": skill classification (YnK/SoD only) 0 = None, 1 = BU, 2 = EN
-
-the following fields are speculative and untested:
 "effect_chance": chance for an effect (e.g. burn) to be applied upon successful hit
 "effect_id": id of the effect to be applied
-"effect_target": whether the effect is applied to you or your opponent (0 = self, 1 = opponent)
+
+the following fields are speculative and untested:
+"effect_target": whether the effect is applied to you or your opponent (0 = self, 1 = opponent, 4 = terrain)
 "ynk_id": redundant id field present only in YnK/SoD
 
 

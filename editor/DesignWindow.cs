@@ -47,22 +47,20 @@ namespace editor
             LayerVisibiltyCB.SetItemChecked(11, true);
 
             map_panel_ = new MapPanel();
-            map_panel_.Location = new Point(222, 6);
-            map_panel_.Size = new Size(540, 542);
-            map_panel_.Anchor = AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top;
-            DesignTabPage.Controls.Add(map_panel_);
+            map_panel_.Location = new Point(0, 0);
+            map_panel_.Dock = DockStyle.Fill;
+            DesignSplit.Panel2.Controls.Add(map_panel_);
 
             map_display_ = new MapDisplay();
-            map_display_.Location = new Point(5, 5);
+            map_display_.Location = new Point(0, 0);
             map_display_.MouseDown += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseMove;
             map_display_.MouseUp += MapDisplay_MouseClick;
-            map_display_.KeyDown += MapDisplay_KeyDown;
             map_panel_.Controls.Add(map_display_);
 
             tileset_display_ = new TilesetDisplay();
-            tileset_display_.Location = new Point(5, 5);
+            tileset_display_.Location = new Point(0, 0);
             tileset_display_.MouseClick += TilesetDisplay_MouseClick;
             TilesetImgPanel.Controls.Add(tileset_display_);
 
@@ -83,6 +81,8 @@ namespace editor
             clipboard_ = null;
             paste_x_ = -1;
             paste_y_ = -1;
+
+            map_display_.SetBitmap(null);
 
             ClearUndo();
 
@@ -948,65 +948,6 @@ namespace editor
                 return;
 
             var tileset_index = (uint)BrushTilesetSC.Value;
-        }
-
-        private void MapDisplay_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Z)
-            {
-                if(e.Modifiers == Keys.Control)
-                    Undo();
-                else if(e.Modifiers == (Keys.Control | Keys.Shift))
-                    Redo();
-                return;
-            }
-
-            if((e.KeyCode == Keys.G) && (e.Modifiers == Keys.None))
-            {
-                MapGridCB.Checked = !MapGridCB.Checked;
-                return;
-            }
-
-            int index;
-            switch(e.KeyCode)
-            {
-                case Keys.D1:
-                    index = 0;
-                    break;
-                case Keys.D2:
-                    index = 1;
-                    break;
-                case Keys.D3:
-                    index = 2;
-                    break;
-                case Keys.D4:
-                    index = 3;
-                    break;
-                case Keys.D5:
-                    index = 4;
-                    break;
-                case Keys.D6:
-                    index = 5;
-                    break;
-                case Keys.D7:
-                    index = 6;
-                    break;
-                case Keys.D8:
-                    index = 7;
-                    break;
-                default:
-                    return;
-            }
-
-            if(e.Modifiers == Keys.None)
-            {
-                BrushLayerCB.SelectedIndex = index;
-            }
-            else if(e.Modifiers == Keys.Control)
-            {
-                bool c = LayerVisibiltyCB.CheckedIndices.Contains(index);
-                LayerVisibiltyCB.SetItemChecked(index, !c);
-            }
         }
 
         private void MapGridCB_CheckedChanged(object sender, EventArgs e)

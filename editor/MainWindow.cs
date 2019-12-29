@@ -536,10 +536,34 @@ namespace editor
             string versiondata = wkdir + "/version.json";
             if(!File.Exists(versiondata))
             {
-                ErrMsg("Seems like you're using an old JSON dump from an alpha build. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
+                ErrMsg("Seems like you're using an old JSON dump from an alpha build.\r\nPlease run convert to update the JSON.");
                 ConsoleOutput.Clear();
                 return;
             }
+
+            try
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(VersionJson));
+                var buf = File.ReadAllBytes(versiondata);
+                MemoryStream s = new MemoryStream(buf);
+                var ver = (VersionJson)ser.ReadObject(s);
+                if(!ver.VersionMatches())
+                {
+                    var major = VersionJson.VersionMajor;
+                    var minor = VersionJson.VersionMinor;
+                    bool newer = (ver.major > major) || (ver.major == major && (ver.minor > minor));
+                    ErrMsg("Current JSON dump is for " + (newer ? "a newer" : "an older") + " version of TPDP-Dev-Tools.\r\nPlease run convert to update the JSON.");
+                    ConsoleOutput.Clear();
+                    return;
+                }
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error reading file: " + versiondata + "\r\n" + ex.Message);
+                return;
+            }
+
+            working_dir_ = wkdir;
 
             string pflags = wkdir + (is_ynk_ ? "/gn_dat6.arc/dollImage/img/DollMainGLoadFlag.bin" : "/gn_dat3.arc/doll/img/DollMainGLoadFlag.bin");
             string oflags = wkdir + (is_ynk_ ? "/gn_dat5.arc/map/obj/ObjGLoadFlag.bin" : "/gn_dat3.arc/map/obj/ObjGLoadFlag.bin");
@@ -581,30 +605,6 @@ namespace editor
             }
             bgm_data_[0] = "None";
 
-            try
-            {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(VersionJson));
-                var buf = File.ReadAllBytes(versiondata);
-                MemoryStream s = new MemoryStream(buf);
-                var ver = (VersionJson)ser.ReadObject(s);
-                if(!ver.VersionMatches())
-                {
-                    var major = VersionJson.VersionMajor;
-                    var minor = VersionJson.VersionMinor;
-                    bool newer = (ver.major > major) || (ver.major == major && (ver.minor > minor));
-                    ErrMsg("Current JSON dump is for " + (newer ? "a newer" : "an older") + " version of TPDP-Dev-Tools. Please run convert to update the JSON.\r\nIf you have any pending edits, apply them in the old version first.");
-                    ConsoleOutput.Clear();
-                    return;
-                }
-            }
-            catch(Exception ex)
-            {
-                ErrMsg("Error reading file: " + versiondata + "\r\n" + ex.Message);
-                return;
-            }
-
-            working_dir_ = wkdir;
-
             // Parse puppets
             puppets_.Clear();
             try
@@ -623,6 +623,9 @@ namespace editor
                 ErrMsg("Error parsing file: " + dolldata + "\r\n" + ex.Message);
                 return;
             }
+
+            // keep UI alive
+            Update();
 
             // Parse puppet names
             string puppetnames = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/DollName.csv" : "/gn_dat3.arc/name/DollName.csv");
@@ -660,6 +663,8 @@ namespace editor
                 Reset();
                 return;
             }
+
+            Update();
 
             // Parse ability names
             ability_names_.Clear();
@@ -760,10 +765,10 @@ namespace editor
                     // Skillcards
                     if(id >= 385 && id <= 512)
                     {
-                        var index = (is_ynk_ ? 11 : 10);
+                        /*var index = (is_ynk_ ? 11 : 10);
                         if(fields.Length <= index)
                             throw new Exception("ItemData.csv has too few fields!");
-                        var scname = fields[index];
+                        var scname = fields[index];*/
                         var skillid = uint.Parse(fields[9]);
 
                         if((skillid > 0) && (skillid < 1023))
@@ -804,6 +809,8 @@ namespace editor
                 return;
             }
 
+            Update();
+
             // Populate Trainers tab
             try
             {
@@ -816,6 +823,8 @@ namespace editor
                 Reset();
                 return;
             }
+
+            Update();
 
             // Populate Skills tab
             try
@@ -830,6 +839,8 @@ namespace editor
                 return;
             }
 
+            Update();
+
             // Populate Design tab
             try
             {
@@ -841,6 +852,8 @@ namespace editor
                 Reset();
                 return;
             }
+
+            Update();
 
             // Populate Event tab
             try
@@ -872,6 +885,68 @@ namespace editor
                 TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;
                 cfg_.map_popup = false;
                 WriteCfg();
+            }
+        }
+
+        private void TabControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(!map_display_.Focused && !map_panel_.Focused)
+                return;
+
+            if(e.KeyCode == Keys.Z)
+            {
+                if(e.Modifiers == Keys.Control)
+                    Undo();
+                else if(e.Modifiers == (Keys.Control | Keys.Shift))
+                    Redo();
+                return;
+            }
+
+            if((e.KeyCode == Keys.G) && (e.Modifiers == Keys.None))
+            {
+                MapGridCB.Checked = !MapGridCB.Checked;
+                return;
+            }
+
+            int index;
+            switch(e.KeyCode)
+            {
+                case Keys.D1:
+                    index = 0;
+                    break;
+                case Keys.D2:
+                    index = 1;
+                    break;
+                case Keys.D3:
+                    index = 2;
+                    break;
+                case Keys.D4:
+                    index = 3;
+                    break;
+                case Keys.D5:
+                    index = 4;
+                    break;
+                case Keys.D6:
+                    index = 5;
+                    break;
+                case Keys.D7:
+                    index = 6;
+                    break;
+                case Keys.D8:
+                    index = 7;
+                    break;
+                default:
+                    return;
+            }
+
+            if(e.Modifiers == Keys.None)
+            {
+                BrushLayerCB.SelectedIndex = index;
+            }
+            else if(e.Modifiers == Keys.Control)
+            {
+                bool c = LayerVisibiltyCB.CheckedIndices.Contains(index);
+                LayerVisibiltyCB.SetItemChecked(index, !c);
             }
         }
     }
