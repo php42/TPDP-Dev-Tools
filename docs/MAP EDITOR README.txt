@@ -39,4 +39,4 @@ You'll just have to identify them by finding where they're used in the game.
 
 Expect weirdness as the event system is not fully understood yet.
 
-See mad.txt, fmf.txt, and obs.txt for a discription of the actual map files.
+See mad.txt, fmf.txt, and obs.txt in the file_format folder for a discription of the actual map files.
