@@ -1,9 +1,11 @@
 Adding a new puppet to the game requires a few things to be done manually.
 1. Create a new puppet using the "New Puppet" button in the editor.
-4. Edit DollHeight.csv in the puppet sprite folder for your new puppet, this contains pixel offsets of the top and bottom of the sprite for each costume.
-5. Edit DollName*.csv and DollCaption.csv to name your puppet.
-6. Provide battle and overworld sprites for your new puppet.
+2. Edit DollHeight.csv in the puppet sprite folder for your new puppet, this contains pixel offsets of the top and bottom of the sprite for each costume.
+3. Edit DollName*.csv and DollCaption.csv in gn_dat5/name and gn_dat6/doll to name your puppet.
+4. Provide battle and overworld sprites for your new puppet.
+5. Edit dollcon.png in gn_dat6/dollimg/img to add a box/menu sprite for your puppet.
 
 Sprites are named after the puppet ID and the costume index separated by an underscore. 001_000.png is reimu's default sprite, 001_002.png is her alt-costume.
 Overworld sprites are only used for trainers and other map objects except in YnK where there are sprites for the puppet following the player.
 These are offset by 400 so the reimu sprites above are instead 401_000.png and 401_002.png.
+Overworld sprites are located in gn_dat5/map/obj.

@@ -29,8 +29,8 @@ valid values are 385 - 512 (inclusive)
 ---BINARY FORMAT---
                                _
 0x00: char name[32] (unused)    |
-0x21: u8   cost                 |
-0x22: u16  base_skills[5]       |
+0x20: u8   cost                 |
+0x21: u16  base_skills[5]       |
 0x2B: u16  item_drop_table[4]   |--0x1F1
 0x33: u16  id(???)(IGNORE)      |
 0x35-0x5C: ???                  |
