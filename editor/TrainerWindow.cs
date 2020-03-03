@@ -269,6 +269,7 @@ namespace editor
             TrainerTitleTB.Text = dod.trainer_title;
             PortraitIDSC.Value = dod.portrait_id;
             DodFilepathTB.Text = dod.filepath;
+            TrainerIDSC.Value = dod.id;
             TrainerSlotCB.SelectedIndex = -1;
             TrainerPuppetCB.SelectedIndex = -1;
             TrainerPuppetNickTB.Clear();
@@ -313,6 +314,8 @@ namespace editor
             EV4SC.Value = 0;
             EV5SC.Value = 0;
             EV6SC.Value = 0;
+
+            TrainerLevelSC.Value = 0;
         }
 
         private void TrainerSlotCB_SelectedIndexChanged(object sender, EventArgs e)

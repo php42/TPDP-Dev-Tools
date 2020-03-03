@@ -139,6 +139,8 @@
             System.Windows.Forms.Label label108;
             System.Windows.Forms.Label label107;
             System.Windows.Forms.Label label106;
+            System.Windows.Forms.Label label58;
+            System.Windows.Forms.Label label109;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
@@ -190,6 +192,7 @@
             this.PuppetStyleCB = new System.Windows.Forms.ComboBox();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.TrainerIDSC = new System.Windows.Forms.NumericUpDown();
             this.NewTrainerBT = new System.Windows.Forms.Button();
             this.HeartMarkCB = new System.Windows.Forms.CheckBox();
             this.TrainerPreviewPB = new System.Windows.Forms.PictureBox();
@@ -251,6 +254,7 @@
             this.SkillDataTB = new System.Windows.Forms.TextBox();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
             this.MapsTabPage = new System.Windows.Forms.TabPage();
+            this.MapIDSC = new System.Windows.Forms.NumericUpDown();
             this.BattleBGPB = new System.Windows.Forms.PictureBox();
             this.NewMapBT = new System.Windows.Forms.Button();
             this.MapPercentLabel = new System.Windows.Forms.Label();
@@ -420,6 +424,8 @@
             label108 = new System.Windows.Forms.Label();
             label107 = new System.Windows.Forms.Label();
             label106 = new System.Windows.Forms.Label();
+            label58 = new System.Windows.Forms.Label();
+            label109 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -438,6 +444,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).BeginInit();
             this.TrainersTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerIDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerPreviewPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).BeginInit();
             this.groupBox11.SuspendLayout();
@@ -471,6 +478,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataAccSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).BeginInit();
             this.MapsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MapIDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.BattleBGPB)).BeginInit();
             this.groupBox14.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MapBackgroundSC)).BeginInit();
@@ -1529,6 +1537,24 @@
             label106.TabIndex = 0;
             label106.Text = "Start";
             // 
+            // label58
+            // 
+            label58.AutoSize = true;
+            label58.Location = new System.Drawing.Point(342, 87);
+            label58.Name = "label58";
+            label58.Size = new System.Drawing.Size(42, 13);
+            label58.TabIndex = 28;
+            label58.Text = "Map ID";
+            // 
+            // label109
+            // 
+            label109.AutoSize = true;
+            label109.Location = new System.Drawing.Point(512, 87);
+            label109.Name = "label109";
+            label109.Size = new System.Drawing.Size(54, 13);
+            label109.TabIndex = 38;
+            label109.Text = "Trainer ID";
+            // 
             // TabControl
             // 
             this.TabControl.Controls.Add(this.FilesTabPage);
@@ -1859,18 +1885,17 @@
             this.groupBox4.Controls.Add(this.SkillCardLB);
             this.groupBox4.Location = new System.Drawing.Point(326, 199);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(200, 133);
+            this.groupBox4.Size = new System.Drawing.Size(200, 270);
             this.groupBox4.TabIndex = 20;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Skill Cards";
             // 
             // SkillCardLB
             // 
-            this.SkillCardLB.CheckOnClick = true;
             this.SkillCardLB.FormattingEnabled = true;
             this.SkillCardLB.Location = new System.Drawing.Point(6, 19);
             this.SkillCardLB.Name = "SkillCardLB";
-            this.SkillCardLB.Size = new System.Drawing.Size(188, 109);
+            this.SkillCardLB.Size = new System.Drawing.Size(188, 244);
             this.SkillCardLB.TabIndex = 17;
             this.SkillCardLB.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.SkillCardLB_ItemCheck);
             // 
@@ -2193,6 +2218,8 @@
             // 
             // TrainersTabPage
             // 
+            this.TrainersTabPage.Controls.Add(this.TrainerIDSC);
+            this.TrainersTabPage.Controls.Add(label109);
             this.TrainersTabPage.Controls.Add(this.NewTrainerBT);
             this.TrainersTabPage.Controls.Add(groupBox10);
             this.TrainersTabPage.Controls.Add(this.HeartMarkCB);
@@ -2237,6 +2264,20 @@
             this.TrainersTabPage.TabIndex = 3;
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
+            // 
+            // TrainerIDSC
+            // 
+            this.TrainerIDSC.Enabled = false;
+            this.TrainerIDSC.Location = new System.Drawing.Point(572, 85);
+            this.TrainerIDSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.TrainerIDSC.Name = "TrainerIDSC";
+            this.TrainerIDSC.ReadOnly = true;
+            this.TrainerIDSC.Size = new System.Drawing.Size(71, 20);
+            this.TrainerIDSC.TabIndex = 39;
             // 
             // NewTrainerBT
             // 
@@ -3019,6 +3060,8 @@
             // 
             // MapsTabPage
             // 
+            this.MapsTabPage.Controls.Add(this.MapIDSC);
+            this.MapsTabPage.Controls.Add(label58);
             this.MapsTabPage.Controls.Add(this.BattleBGPB);
             this.MapsTabPage.Controls.Add(this.NewMapBT);
             this.MapsTabPage.Controls.Add(this.MapPercentLabel);
@@ -3047,6 +3090,20 @@
             this.MapsTabPage.TabIndex = 5;
             this.MapsTabPage.Text = "Maps (Encounters/OW)";
             this.MapsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // MapIDSC
+            // 
+            this.MapIDSC.Enabled = false;
+            this.MapIDSC.Location = new System.Drawing.Point(390, 85);
+            this.MapIDSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.MapIDSC.Name = "MapIDSC";
+            this.MapIDSC.ReadOnly = true;
+            this.MapIDSC.Size = new System.Drawing.Size(54, 20);
+            this.MapIDSC.TabIndex = 29;
             // 
             // BattleBGPB
             // 
@@ -3815,6 +3872,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).EndInit();
             this.TrainersTabPage.ResumeLayout(false);
             this.TrainersTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrainerIDSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerPreviewPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).EndInit();
             this.groupBox11.ResumeLayout(false);
@@ -3854,6 +3912,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.SkillDataSPSC)).EndInit();
             this.MapsTabPage.ResumeLayout(false);
             this.MapsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MapIDSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.BattleBGPB)).EndInit();
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
@@ -4065,6 +4124,8 @@
         private System.Windows.Forms.Button AllEBT;
         private System.Windows.Forms.Button AllSBT;
         private System.Windows.Forms.SplitContainer DesignSplit;
+        private System.Windows.Forms.NumericUpDown MapIDSC;
+        private System.Windows.Forms.NumericUpDown TrainerIDSC;
     }
 }
 

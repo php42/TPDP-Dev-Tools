@@ -379,6 +379,7 @@ namespace editor
                 MapWeatherCB.SelectedIndex = (int)map.weather;
                 MapEncounterTypeCB.SelectedIndex = (int)map.encounter_type;
                 ForbidBikeCB.Checked = map.forbid_bike > 0;
+                MapIDSC.Value = map.id;
                 RefreshEncounter();
             }
         }

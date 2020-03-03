@@ -72,6 +72,8 @@ namespace editor
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
+            /* I give up, just repaint the whole window
+            
             // Fix alignment for autoscroll repaints
             // Cause winforms is the actual worst.
             var tile_sz = 16 * Zoom;
@@ -87,6 +89,16 @@ namespace editor
             if((dst.Height % tile_sz) != 0)
                 dst.Height += tile_sz - (dst.Height % tile_sz);
 
+            var src = dst;
+            src.X /= Zoom;
+            src.Y /= Zoom;
+            src.Width /= Zoom;
+            src.Height /= Zoom;
+
+            e.Graphics.DrawImage(bmp_, dst, src, GraphicsUnit.Pixel);
+            */
+
+            var dst = ClientRectangle;
             var src = dst;
             src.X /= Zoom;
             src.Y /= Zoom;
