@@ -69,9 +69,23 @@ if(BUILD_DIFFGEN)
     add_subdirectory(deps/open-vcdiff)
 
     # Don't install zlib stuff
-    set(SKIP_INSTALL_ALL ON)
+    set(SKIP_INSTALL_HEADERS ON)
+    set(SKIP_INSTALL_FILES ON)
     add_subdirectory(deps/zlib)
-    set_property(DIRECTORY deps/zlib APPEND PROPERTY COMPILE_DEFINITIONS _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
+
+    # Libzip config
+    # Coerce find_package into using our cmake build of zlib
+    set(ZLIB_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib" CACHE PATH "Path to zlib root directory")
+    set(ZLIB_LIBRARY zlib)
+    find_package(ZLIB REQUIRED)
+    OPTION(BUILD_TOOLS "Build tools in the src directory (zipcmp, zipmerge, ziptool)" OFF)
+    OPTION(BUILD_REGRESS "Build regression tests" OFF)
+    OPTION(BUILD_EXAMPLES "Build examples" OFF)
+    OPTION(BUILD_DOC "Build documentation" OFF)
+    OPTION(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+    add_subdirectory(deps/libzip)
+    #set_property(DIRECTORY deps/libzip APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/deps/zlib)
+    target_include_directories(zip PRIVATE ${CMAKE_BINARY_DIR}/deps/zlib)
     
     add_subdirectory(diffgen)
 endif()

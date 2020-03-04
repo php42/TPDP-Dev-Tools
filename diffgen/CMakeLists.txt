@@ -39,8 +39,14 @@ add_executable(diffgen
     "../common/version.h"
 )
 
-target_link_libraries(diffgen PRIVATE libtpdp zlibstatic vcdcom vcddec vcdenc Boost::boost Boost::program_options)
-target_include_directories(diffgen PRIVATE "../common" "../deps/open-vcdiff/src" "../deps/zlib" "${CMAKE_BINARY_DIR}/deps/zlib")
+target_link_libraries(diffgen PRIVATE libtpdp zlib zip vcdcom vcddec vcdenc Boost::boost Boost::program_options)
+target_include_directories(diffgen PRIVATE
+    "../common"
+    "../deps/open-vcdiff/src"
+    "../deps/zlib"
+    "../deps/libzip/lib"
+    "${CMAKE_BINARY_DIR}/deps/zlib"
+    ${CMAKE_BINARY_DIR}/deps/libzip)
 
 # Specify Windows 7 compatibility and unicode support
 target_compile_definitions(diffgen PRIVATE _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
