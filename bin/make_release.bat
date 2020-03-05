@@ -14,6 +14,7 @@ copy ".\lib\libtpdp.lib" ".\release\lib\libtpdp.lib"
 copy ".\include\libTPDP\*.h" ".\release\include\libTPDP\*.h"
 copy ".\include\common\*.h" ".\release\include\common\*.h"
 copy ".\bin\*.exe" ".\release\*.exe"
+copy ".\bin\zlib.dll" ".\release\zlib.dll"
 copy "..\docs\*.txt" ".\release\docs\*.txt"
 copy "..\docs\file_formats\*.txt" ".\release\docs\file_formats\*.txt"
 ) else (
