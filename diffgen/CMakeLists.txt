@@ -26,8 +26,12 @@ else()
 endif()
 
 add_executable(diffgen
+    "legacy.h"
+    "legacy.cpp"
     "diffgen.h"
     "diffgen.cpp"
+    "ziparchive.h"
+    "ziparchive.cpp"
     "main.cpp"
     "../common/console.h"
     "../common/endian.h"
