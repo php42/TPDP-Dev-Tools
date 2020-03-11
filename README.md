@@ -22,8 +22,6 @@ The reason for this is that the entire file format is not always known, so this 
 Be prepared to bust out some python scripts or something because some of these produce large quantities of json.  
 Invoke with --help for syntax.
 
-Note that this tool *recursively scans the entire target directory tree* so be careful where you point it.
-
 ## LibTPDP
 This is a c++ static library that provides facilities for manipulating the games various binary formats, including the archives themselves.  
 It was made for the other tools in this project, but you can use it to make your own tools if you'd like.  

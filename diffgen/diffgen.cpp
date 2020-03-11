@@ -125,6 +125,10 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
             if(!entry.is_regular_file())
                 continue;
 
+            auto rel = entry.path().lexically_relative(out_dir);
+            if(rel.empty())
+                continue;
+
             if(algo::iequals(entry.path().extension().string(), ".json"))
             {
                 if(!suppress_json_warning)
@@ -136,14 +140,7 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
                 continue;
             }
 
-            /* kind of a hack to get the path relative to
-             * the root of the archive */
-            auto temp = entry.path().wstring();
-            temp = temp.substr(out_dir.wstring().size());
-            while(temp.find_first_of(L"\\/") == 0)
-                temp.erase(0, 1);
-
-            rel_paths.emplace_back(temp);
+            rel_paths.push_back(std::move(rel));
         }
 
         std::vector<std::future<std::vector<std::pair<Path,Path>>>> futures;
