@@ -209,8 +209,9 @@ void PuppetData::read(const void *data)
 	for(int i = 0; i < 4; ++i)
 		item_drop_table[i] = read_le16(&buf[43 + (i * 2)]);
 
-    /* there's an ID here, but it's wrong (?) */
-	id = read_le16(&buf[51]);
+    id = 0; // set by caller
+
+    puppetdex_index = read_le16(&buf[51]);
 
 	for(int i = 0; i < 4; ++i)
 		styles[i].read(&buf[93 + (i * STYLE_DATA_SIZE)]);
@@ -228,7 +229,7 @@ void PuppetData::write(void *data) const
     for(int i = 0; i < 4; ++i)
         write_le16(&buf[43 + (i * 2)], item_drop_table[i]);
 
-    //write_le16(&buf[51], id);
+    write_le16(&buf[51], puppetdex_index);
 
     for(int i = 0; i < 4; ++i)
         styles[i].write(&buf[93 + (i * STYLE_DATA_SIZE)]);

@@ -86,6 +86,7 @@ if(BUILD_DIFFGEN)
     add_subdirectory(deps/libzip)
     #set_property(DIRECTORY deps/libzip APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/deps/zlib)
     target_include_directories(zip PRIVATE ${CMAKE_BINARY_DIR}/deps/zlib)
+    set_target_properties(dist distcheck PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
     
     add_subdirectory(diffgen)
 endif()

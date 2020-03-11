@@ -89,7 +89,7 @@ public:
     uint8_t zero;
     uint16_t effect_id;
     uint8_t effect_chance, effect_target;               /* best guess. chance seems to be ignored on status effect skills. target = 0 for self, 1 for opponent */
-    uint8_t ynk_classification;                                /* YnK only */
+    uint8_t ynk_classification;                         /* YnK only */
     uint16_t ynk_id;                                    /* YnK only */
 	//uint8_t unknown_0x2e[73];							/* for reference, 73 bytes of padding or who knows what */
 
@@ -132,6 +132,7 @@ public:
 	uint16_t base_skills[5];        /* lvl 7, 10, 14, 19, 24 */
 	uint16_t item_drop_table[4];	/* items dropped when defeated in the wild */
 	uint16_t id;                    /* id isn't actually parsed, but is indicated by its position in the file */
+    uint16_t puppetdex_index;       /* position in the puppetdex where this puppet should appear */
 	StyleData styles[4];
 
 	PuppetData();

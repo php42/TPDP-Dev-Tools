@@ -472,13 +472,6 @@ namespace editor
         {
             string app = "diffgen.exe";
 
-            GameDirTextBox.Text = GameDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
-            if(!Directory.Exists(GameDirTextBox.Text))
-            {
-                ErrMsg("Invalid game folder path");
-                return;
-            }
-
             WorkingDirTextBox.Text = WorkingDirTextBox.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(WorkingDirTextBox.Text))
             {
@@ -486,24 +479,26 @@ namespace editor
                 return;
             }
 
-            if(DiffFileDialog.ShowDialog() != DialogResult.OK)
-                return;
+            string path, dir;
+            using(var dialog = new PatchDialog(GameDirTextBox.Text))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                path = dialog.PatchPath.TrimEnd("/\\".ToCharArray());
+                dir = dialog.DirPath.TrimEnd("/\\".ToCharArray());
+            }
 
-            var path = DiffFileDialog.FileName;
             if(String.IsNullOrEmpty(path))
             {
                 ErrMsg("Invalid diff file path");
                 return;
             }
 
-            String args = "-i \"" + GameDirTextBox.Text + "\" -o \"" + WorkingDirTextBox.Text + "\" --diff=\"" + path + "\"";
-            if(DiffModeCB.CheckState == CheckState.Checked)
-                args += " -m 2";
+            String args = "-i \"" + dir + "\" -o \"" + WorkingDirTextBox.Text + "\" --diff=\"" + path + "\"";
 
             if(RunConsoleCmd(app, args))
                 EnableConsoleButtons(false);
 
-            cfg_.game_dir = GameDirTextBox.Text;
             cfg_.working_dir = WorkingDirTextBox.Text;
             WriteCfg();
         }

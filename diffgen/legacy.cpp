@@ -760,6 +760,11 @@ bool legacy_patch(const Path& input, const Path& output)
         file_header.compression = COMPRESSION_NONE;
         std::cerr << "Note: using compatibilty mode for old v1 diff files." << std::endl;
     }
+    else
+    {
+        ScopedConsoleColorChanger color(COLOR_WARN);
+        std::cerr << "Note: using compatibilty mode for old v2 diff files." << std::endl;
+    }
 
     int mode = file_header.mode;
     if(mode < 1 || mode > 2)

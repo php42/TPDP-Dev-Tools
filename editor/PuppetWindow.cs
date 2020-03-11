@@ -125,6 +125,7 @@ namespace editor
 
             PuppetIDSC.Value = id;
             PuppetCostSC.Value = puppet.cost;
+            PuppetdexIndexSC.Value = puppet.puppetdex_index;
 
             PuppetStyleCB.SelectedIndex = -1;
             PuppetStyleTypeCB.SelectedIndex = -1;
@@ -220,6 +221,16 @@ namespace editor
 
             var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
             puppets_[id].cost = (uint)PuppetCostSC.Value;
+        }
+
+        private void PuppetdexIndexSC_ValueChanged(object sender, EventArgs e)
+        {
+            var index = PuppetLB.SelectedIndex;
+            if(index < 0)
+                return;
+
+            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
+            puppets_[id].puppetdex_index = (uint)PuppetdexIndexSC.Value;
         }
 
         private void BaseSkillLvlCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -458,14 +469,22 @@ namespace editor
                 return;
             }
 
-            if((id >= puppet_names_.Length) || (id >= 1024))
+            if((id >= puppet_names_.Length) || (id >= 512))
             {
-                var min = Math.Min(puppet_names_.Length, 1024);
+                var min = Math.Min(puppet_names_.Length, 512);
                 ErrMsg("Puppet ID too large! ID must be less than " + min.ToString() + ".");
                 return;
             }
 
-            var puppet = new DollData() { id = id };
+            uint puppetdex_pos = 0;
+            foreach(var i in puppets_)
+                if(i.Value.puppetdex_index > puppetdex_pos)
+                    puppetdex_pos = i.Value.puppetdex_index;
+
+            if(++puppetdex_pos > 511)
+                puppetdex_pos = 0;
+
+            var puppet = new DollData() { id = id, puppetdex_index = puppetdex_pos };
             puppets_[id] = puppet;
             PuppetLB.Items.Add(new Tuple<string, uint>(puppet_names_[id], puppet.id));
             PuppetLB.SelectedIndex = PuppetLB.FindStringExact(puppet_names_[id]);

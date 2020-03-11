@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label6;
-            System.Windows.Forms.Label label5;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label2;
@@ -141,13 +140,13 @@
             System.Windows.Forms.Label label106;
             System.Windows.Forms.Label label58;
             System.Windows.Forms.Label label109;
+            System.Windows.Forms.Label label5;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
             this.VictoryBGMCB = new System.Windows.Forms.ComboBox();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
-            this.DiffModeCB = new System.Windows.Forms.CheckBox();
             this.ConsoleOutput = new System.Windows.Forms.RichTextBox();
             this.DiffButton = new System.Windows.Forms.Button();
             this.RepackButton = new System.Windows.Forms.Button();
@@ -160,6 +159,7 @@
             this.GameDirButton = new System.Windows.Forms.Button();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.PuppetdexIndexSC = new System.Windows.Forms.NumericUpDown();
             this.ExportPuppetButton = new System.Windows.Forms.Button();
             this.NewPuppetButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -312,10 +312,8 @@
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.DiffFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
             label6 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
@@ -426,10 +424,12 @@
             label106 = new System.Windows.Forms.Label();
             label58 = new System.Windows.Forms.Label();
             label109 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
             this.PuppetsTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PuppetdexIndexSC)).BeginInit();
             this.groupBox5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StatSPDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatSDSC)).BeginInit();
@@ -515,20 +515,10 @@
             label6.AutoSize = true;
             label6.Location = new System.Drawing.Point(9, 104);
             label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(503, 13);
+            label6.Size = new System.Drawing.Size(502, 13);
             label6.TabIndex = 16;
             label6.Text = "Apply Edits saves the current working directory. This must be done before using R" +
-    "epack or Generate Diff.";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(199, 281);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(393, 13);
-            label5.TabIndex = 14;
-            label5.Text = "Note: make sure you are using an unmodified game folder before generating a diff." +
-    "";
+    "epack or Create Patch.";
             // 
             // label4
             // 
@@ -1049,9 +1039,9 @@
             label71.AutoSize = true;
             label71.Location = new System.Drawing.Point(207, 38);
             label71.Name = "label71";
-            label71.Size = new System.Drawing.Size(163, 13);
+            label71.Size = new System.Drawing.Size(301, 13);
             label71.TabIndex = 20;
-            label71.Text = "0 = self, 1 = opponent, 4 = terrain";
+            label71.Text = "0 = self, 1 = opponent, 3 = hazard/indirect, 4 = weather/terrain";
             // 
             // label70
             // 
@@ -1464,9 +1454,9 @@
             label105.AutoSize = true;
             label105.Location = new System.Drawing.Point(6, 16);
             label105.Name = "label105";
-            label105.Size = new System.Drawing.Size(256, 13);
+            label105.Size = new System.Drawing.Size(293, 13);
             label105.TabIndex = 19;
-            label105.Text = "Seems to do nothing, but i\'ll leave it here just in case.";
+            label105.Text = "Seems to affect interactions with certain abilities and the like.";
             // 
             // groupBox10
             // 
@@ -1555,6 +1545,15 @@
             label109.TabIndex = 38;
             label109.Text = "Trainer ID";
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(497, 9);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(98, 13);
+            label5.TabIndex = 28;
+            label5.Text = "Puppetdex Position";
+            // 
             // TabControl
             // 
             this.TabControl.Controls.Add(this.FilesTabPage);
@@ -1575,10 +1574,8 @@
             // 
             // FilesTabPage
             // 
-            this.FilesTabPage.Controls.Add(this.DiffModeCB);
             this.FilesTabPage.Controls.Add(label6);
             this.FilesTabPage.Controls.Add(this.ConsoleOutput);
-            this.FilesTabPage.Controls.Add(label5);
             this.FilesTabPage.Controls.Add(this.DiffButton);
             this.FilesTabPage.Controls.Add(this.RepackButton);
             this.FilesTabPage.Controls.Add(this.ApplyButton);
@@ -1601,17 +1598,6 @@
             this.FilesTabPage.Text = "Files";
             this.FilesTabPage.UseVisualStyleBackColor = true;
             // 
-            // DiffModeCB
-            // 
-            this.DiffModeCB.AutoSize = true;
-            this.DiffModeCB.Location = new System.Drawing.Point(112, 280);
-            this.DiffModeCB.Name = "DiffModeCB";
-            this.DiffModeCB.Size = new System.Drawing.Size(81, 17);
-            this.DiffModeCB.TabIndex = 17;
-            this.DiffModeCB.Text = "Mode 2 Diff";
-            this.toolTip1.SetToolTip(this.DiffModeCB, "Enable this if you need to add new files to the game");
-            this.DiffModeCB.UseVisualStyleBackColor = true;
-            // 
             // ConsoleOutput
             // 
             this.ConsoleOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1630,7 +1616,7 @@
             this.DiffButton.Name = "DiffButton";
             this.DiffButton.Size = new System.Drawing.Size(94, 23);
             this.DiffButton.TabIndex = 13;
-            this.DiffButton.Text = "Generate Diff";
+            this.DiffButton.Text = "Create Patch";
             this.toolTip1.SetToolTip(this.DiffButton, "Generate a patch or \"romhack\" based on the difference between the files in the wo" +
         "rking directory and the files in the game folder.");
             this.DiffButton.UseVisualStyleBackColor = true;
@@ -1728,6 +1714,8 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.PuppetdexIndexSC);
+            this.PuppetsTabPage.Controls.Add(label5);
             this.PuppetsTabPage.Controls.Add(this.ExportPuppetButton);
             this.PuppetsTabPage.Controls.Add(this.NewPuppetButton);
             this.PuppetsTabPage.Controls.Add(this.groupBox5);
@@ -1759,6 +1747,19 @@
             this.PuppetsTabPage.TabIndex = 1;
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // PuppetdexIndexSC
+            // 
+            this.PuppetdexIndexSC.Location = new System.Drawing.Point(601, 7);
+            this.PuppetdexIndexSC.Maximum = new decimal(new int[] {
+            511,
+            0,
+            0,
+            0});
+            this.PuppetdexIndexSC.Name = "PuppetdexIndexSC";
+            this.PuppetdexIndexSC.Size = new System.Drawing.Size(55, 20);
+            this.PuppetdexIndexSC.TabIndex = 29;
+            this.PuppetdexIndexSC.ValueChanged += new System.EventHandler(this.PuppetdexIndexSC_ValueChanged);
             // 
             // ExportPuppetButton
             // 
@@ -2779,6 +2780,8 @@
             // 
             // DodFilepathTB
             // 
+            this.DodFilepathTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.DodFilepathTB.Location = new System.Drawing.Point(197, 58);
             this.DodFilepathTB.Name = "DodFilepathTB";
             this.DodFilepathTB.ReadOnly = true;
@@ -2787,6 +2790,8 @@
             // 
             // TrainerTitleTB
             // 
+            this.TrainerTitleTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TrainerTitleTB.Location = new System.Drawing.Point(197, 32);
             this.TrainerTitleTB.MaxLength = 127;
             this.TrainerTitleTB.Name = "TrainerTitleTB";
@@ -2796,6 +2801,8 @@
             // 
             // TrainerNameTB
             // 
+            this.TrainerNameTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TrainerNameTB.Location = new System.Drawing.Point(197, 6);
             this.TrainerNameTB.MaxLength = 31;
             this.TrainerNameTB.Name = "TrainerNameTB";
@@ -2919,10 +2926,10 @@
             this.groupBox9.Controls.Add(label71);
             this.groupBox9.Location = new System.Drawing.Point(11, 296);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(383, 69);
+            this.groupBox9.Size = new System.Drawing.Size(517, 69);
             this.groupBox9.TabIndex = 15;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Useless Fields";
+            this.groupBox9.Text = "Experimental Fields";
             // 
             // SkillDataEffectTargetSC
             // 
@@ -3107,9 +3114,6 @@
             // 
             // BattleBGPB
             // 
-            this.BattleBGPB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.BattleBGPB.Location = new System.Drawing.Point(393, 218);
             this.BattleBGPB.Name = "BattleBGPB";
             this.BattleBGPB.Size = new System.Drawing.Size(367, 325);
@@ -3216,6 +3220,8 @@
             // 
             // MapDispNameBox
             // 
+            this.MapDispNameBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapDispNameBox.Location = new System.Drawing.Point(215, 32);
             this.MapDispNameBox.Name = "MapDispNameBox";
             this.MapDispNameBox.Size = new System.Drawing.Size(467, 20);
@@ -3268,6 +3274,8 @@
             // 
             // MapFilenameTextBox
             // 
+            this.MapFilenameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapFilenameTextBox.Location = new System.Drawing.Point(215, 58);
             this.MapFilenameTextBox.Name = "MapFilenameTextBox";
             this.MapFilenameTextBox.ReadOnly = true;
@@ -3302,6 +3310,8 @@
             // 
             // MapNameTextBox
             // 
+            this.MapNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapNameTextBox.Location = new System.Drawing.Point(215, 6);
             this.MapNameTextBox.MaxLength = 31;
             this.MapNameTextBox.Name = "MapNameTextBox";
@@ -3826,12 +3836,6 @@
             // 
             this.WorkingDirBrowser.Description = "Select Working Directory";
             // 
-            // DiffFileDialog
-            // 
-            this.DiffFileDialog.DefaultExt = "bin";
-            this.DiffFileDialog.FileName = "diff.bin";
-            this.DiffFileDialog.Title = "Diff file location";
-            // 
             // ExportPuppetDialog
             // 
             this.ExportPuppetDialog.DefaultExt = "txt";
@@ -3853,6 +3857,7 @@
             this.FilesTabPage.PerformLayout();
             this.PuppetsTabPage.ResumeLayout(false);
             this.PuppetsTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PuppetdexIndexSC)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.StatSPDSC)).EndInit();
@@ -3973,7 +3978,6 @@
         private System.Windows.Forms.Button ExtractButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.RichTextBox ConsoleOutput;
-        private System.Windows.Forms.SaveFileDialog DiffFileDialog;
         private System.Windows.Forms.ListBox MapListBox;
         private System.Windows.Forms.ComboBox MapPuppetComboBox;
         private System.Windows.Forms.TextBox MapFilenameTextBox;
@@ -4045,7 +4049,6 @@
         private System.Windows.Forms.NumericUpDown IV2SC;
         private System.Windows.Forms.NumericUpDown IV1SC;
         private System.Windows.Forms.NumericUpDown TrainerExpSC;
-        private System.Windows.Forms.CheckBox DiffModeCB;
         private System.Windows.Forms.NumericUpDown TrainerLevelSC;
         private System.Windows.Forms.Button ExportPuppetButton;
         private System.Windows.Forms.SaveFileDialog ExportPuppetDialog;
@@ -4126,6 +4129,7 @@
         private System.Windows.Forms.SplitContainer DesignSplit;
         private System.Windows.Forms.NumericUpDown MapIDSC;
         private System.Windows.Forms.NumericUpDown TrainerIDSC;
+        private System.Windows.Forms.NumericUpDown PuppetdexIndexSC;
     }
 }
 

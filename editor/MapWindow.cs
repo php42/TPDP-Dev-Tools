@@ -95,6 +95,21 @@ namespace editor
             map.id = id;
             map.filepath = filepath;
 
+            if(map.normal_encounters.Length < 10)
+            {
+                var tmp = new MadEncounter[10];
+                for(var i = 0; i < map.normal_encounters.Length; ++i)
+                    tmp[i] = map.normal_encounters[i];
+                map.normal_encounters = tmp;
+            }
+            if(map.special_encounters.Length < 5)
+            {
+                var tmp = new MadEncounter[5];
+                for(var i = 0; i < map.special_encounters.Length; ++i)
+                    tmp[i] = map.special_encounters[i];
+                map.special_encounters = tmp;
+            }
+
             maps_.Add(map);
         }
 
@@ -318,17 +333,13 @@ namespace editor
             var map = maps_[mapindex];
             MadEncounter encounter;
 
-            if(index < 10 && index < map.normal_encounters.Length)
+            if(index < 10)
             {
                 encounter = map.normal_encounters[index];
             }
-            else if((index - 10) < map.special_encounters.Length)
-            {
-                encounter = map.special_encounters[index - 10];
-            }
             else
             {
-                return;
+                encounter = map.special_encounters[index - 10];
             }
 
             MapPuppetComboBox.SelectedIndex = -1;
@@ -420,10 +431,31 @@ namespace editor
             var encounterindex = EncounterComboBox.SelectedIndex;
             if(mapindex >= 0 && encounterindex >= 0)
             {
-                if(encounterindex < 10 && encounterindex < maps_[mapindex].normal_encounters.Length)
+                bool special = encounterindex >= 10;
+                if(special)
+                    encounterindex -= 10;
+
+                uint oldid;
+                if(special)
+                {
+                    oldid = maps_[mapindex].special_encounters[encounterindex].id;
+                    if(oldid != id || id == 0)
+                        maps_[mapindex].special_encounters[encounterindex].style = 0;
+                    maps_[mapindex].special_encounters[encounterindex].id = id;
+                }
+                else
+                {
+                    oldid = maps_[mapindex].normal_encounters[encounterindex].id;
+                    if(oldid != id || id == 0)
+                        maps_[mapindex].normal_encounters[encounterindex].style = 0;
                     maps_[mapindex].normal_encounters[encounterindex].id = id;
-                else if((encounterindex - 10) < maps_[mapindex].special_encounters.Length)
-                    maps_[mapindex].special_encounters[encounterindex - 10].id = id;
+                }
+
+                if(id == 0)
+                {
+                    MapLvlSpinCtrl.Value = 0;
+                    MapWeightSpinCtrl.Value = 0;
+                }
             }
         }
 
@@ -436,9 +468,9 @@ namespace editor
             if(index < 0 || mapindex < 0 || encounterindex < 0 || puppetindex < 0)
                 return;
 
-            if(encounterindex < 10 && encounterindex < maps_[mapindex].normal_encounters.Length)
+            if(encounterindex < 10)
                 maps_[mapindex].normal_encounters[encounterindex].style = (uint)index;
-            else if((encounterindex - 10) < maps_[mapindex].special_encounters.Length)
+            else
                 maps_[mapindex].special_encounters[encounterindex - 10].style = (uint)index;
         }
 
@@ -450,9 +482,9 @@ namespace editor
             if(val < 0 || mapindex < 0 || encounterindex < 0)
                 return;
 
-            if(encounterindex < 10 && encounterindex < maps_[mapindex].normal_encounters.Length)
+            if(encounterindex < 10)
                 maps_[mapindex].normal_encounters[encounterindex].level = (uint)val;
-            else if((encounterindex - 10) < maps_[mapindex].special_encounters.Length)
+            else
                 maps_[mapindex].special_encounters[encounterindex - 10].level = (uint)val;
         }
 
@@ -465,7 +497,7 @@ namespace editor
                 return;
 
             uint total = 0;
-            if(encounterindex < 10 && encounterindex < maps_[mapindex].normal_encounters.Length)
+            if(encounterindex < 10)
             {
                 maps_[mapindex].normal_encounters[encounterindex].weight = (uint)val;
 
@@ -475,7 +507,7 @@ namespace editor
                         total += maps_[mapindex].normal_encounters[i].weight;
                 }
             }
-            else if((encounterindex - 10) < maps_[mapindex].special_encounters.Length)
+            else
             {
                 maps_[mapindex].special_encounters[encounterindex - 10].weight = (uint)val;
 

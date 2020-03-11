@@ -50,7 +50,7 @@ namespace fs = std::filesystem;
 namespace b64 = boost::beast::detail::base64;
 
 constexpr unsigned int JSON_MAJOR = 1;
-constexpr unsigned int JSON_MINOR = 1;
+constexpr unsigned int JSON_MINOR = 2;
 
 class WorkerError : public std::runtime_error
 {
@@ -206,6 +206,7 @@ static void convert_nerds(const Path& in, const Path& out)
         boost::property_tree::ptree puppet;
         puppet.put("id", data.id);
         puppet.put("cost", data.cost);
+        puppet.put("puppetdex_index", data.puppetdex_index);
         for(auto i : data.base_skills)
             puppet.add("base_skills.", i);
         for(auto i : data.item_drop_table)
@@ -281,6 +282,9 @@ static void patch_nerds(const Path& data, const Path& json)
             throw BineditException("Invalid cost value: " + std::to_string(cost) + "\r\nAcceptable values are 0-4.");
 
         puppet.cost = cost;
+
+        // puppetdex index
+        puppet.puppetdex_index = node.get<uint16_t>("puppetdex_index");
 
         auto index = 0;
 

@@ -25,7 +25,7 @@ namespace editor.json
 
         public static int VersionMinor
         {
-            get { return 1; }
+            get { return 2; }
         }
 
         public bool VersionMatches()
@@ -273,6 +273,9 @@ namespace editor.json
 
         [DataMember]
         public uint cost = 0;
+
+        [DataMember]
+        public uint puppetdex_index = 0;
 
         [DataMember]
         public uint[] base_skills = new uint[5];
