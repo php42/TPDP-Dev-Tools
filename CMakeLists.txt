@@ -28,6 +28,23 @@ option(BUILD_LIBTPDP "Build libtpdp static library" ON)
 option(BUILD_BINEDIT "Build binedit" ON)
 option(BUILD_DIFFGEN "Build diffgen" ON)
 
+# Allow static linking C runtime under MSVC
+if(MSVC)
+    option(STATIC_RUNTIME "Static link the C runtime" OFF)
+    if(STATIC_RUNTIME)
+        foreach(flag
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO
+            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+            if(${flag} MATCHES "/MD")
+                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+            endif()
+        endforeach()
+        set(Boost_USE_STATIC_RUNTIME ON)
+    endif()
+endif()
+
 if((BUILD_BINEDIT OR BUILD_DIFFGEN) AND NOT BUILD_LIBTPDP)
     message(FATAL_ERROR "Libtpdp is required for diffgen and binedit")
 endif()
@@ -82,7 +99,7 @@ if(BUILD_DIFFGEN)
     OPTION(BUILD_REGRESS "Build regression tests" OFF)
     OPTION(BUILD_EXAMPLES "Build examples" OFF)
     OPTION(BUILD_DOC "Build documentation" OFF)
-    OPTION(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+    set(BUILD_SHARED_LIBS OFF)
     add_subdirectory(deps/libzip)
     #set_property(DIRECTORY deps/libzip APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/deps/zlib)
     target_include_directories(zip PRIVATE ${CMAKE_BINARY_DIR}/deps/zlib)

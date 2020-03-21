@@ -34,6 +34,12 @@ namespace fs = std::filesystem;
 
 std::recursive_mutex ScopedConsoleLock::mtx_;
 
+static std::wostream& operator<<(std::wostream& os, const fs::path& p)
+{
+    os << p.wstring();
+    return os;
+}
+
 /* worker thread for diff generation */
 static std::vector<std::pair<Path,Path>> worker(Path input, const std::vector<Path> *rel_paths, const libtpdp::Archive *arc, std::size_t begin, std::size_t end)
 {
@@ -49,7 +55,7 @@ static std::vector<std::pair<Path,Path>> worker(Path input, const std::vector<Pa
         {
             {
                 ScopedConsoleColorMT color(COLOR_OK);
-                std::cout << "Adding new file: " << relative_path.string() << std::endl;
+                std::wcout << L"Adding new file: " << relative_path << std::endl;
             }
             diffs.push_back({ relative_path, path });
             continue;
@@ -57,12 +63,12 @@ static std::vector<std::pair<Path,Path>> worker(Path input, const std::vector<Pa
 
         auto src_file = arc->get_file(it);
         if(!src_file)
-            throw DiffgenException("Error extracting file: " + relative_path.string());
+            throw DiffgenException("Error extracting file: " + utf_narrow(relative_path.wstring()));
 
         std::size_t sz;
         auto dst_file = read_file(path.wstring(), sz);
         if(!dst_file)
-            throw DiffgenException("Failed to read file: " + path.string());
+            throw DiffgenException("Failed to read file: " + utf_narrow(path.wstring()));
 
         if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
             continue;
@@ -83,7 +89,7 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
         threads = 1;
 
     if(threads > 1)
-        std::cout << "Using up to " << threads << " concurrent threads" << std::endl;
+        std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
 
     Path in_dir(input / L"dat");
     for(int i = 1; i < 7; ++i)
@@ -95,26 +101,26 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
 
         if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
         {
-            std::cerr << "File not found: " << arc_path.string() << std::endl;
+            std::wcerr << L"File not found: " << arc_path << std::endl;
             continue;
         }
 
         if(!fs::exists(out_dir) || !fs::is_directory(out_dir))
         {
-            std::cerr << "Missing directory: " << out_dir.string() << std::endl;
+            std::wcerr << L"Missing directory: " << out_dir << std::endl;
             continue;
         }
 
         try
         {
-            std::cout << ">> " << arc_path.string() << std::endl;
+            std::wcout << L">> " << arc_path << std::endl;
             arc.open(arc_path.wstring());
         }
         catch(const libtpdp::ArcError& ex)
         {
             ScopedConsoleColorChanger color(COLOR_CRITICAL);
-            std::cerr << "Failed to open file: " << arc_path.string() << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << L"Failed to open file: " << arc_path << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
             return false;
         }
 
@@ -129,12 +135,12 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
             if(rel.empty())
                 continue;
 
-            if(algo::iequals(entry.path().extension().string(), ".json"))
+            if(algo::iequals(entry.path().extension().wstring(), L".json"))
             {
                 if(!suppress_json_warning)
                 {
                     ScopedConsoleColorChanger color(COLOR_WARN);
-                    std::cerr << "Skipping json files..." << std::endl;
+                    std::wcerr << L"Skipping json files..." << std::endl;
                     suppress_json_warning = true;
                 }
                 continue;
@@ -173,8 +179,8 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
         catch(const std::exception& ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::cerr << arc_path.string() << ": Exception" << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << arc_path << L": Exception" << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
 
             return false;
         }
@@ -183,7 +189,7 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
     if(diffs.empty())
     {
         ScopedConsoleColorChanger color(COLOR_WARN);
-        std::cerr << "Source and target are identical, no diffs to output!" << std::endl;
+        std::wcerr << L"Source and target are identical, no diffs to output!" << std::endl;
         return false;
     }
 
@@ -206,8 +212,8 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
     catch(const std::exception& ex)
     {
         ScopedConsoleColorMT color(COLOR_CRITICAL);
-        std::cerr << "Error writing to file: " << diff_path.string() << std::endl;
-        std::cerr << ex.what() << std::endl;
+        std::wcerr << L"Error writing to file: " << diff_path << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
         return false;
     }
 
@@ -225,20 +231,20 @@ bool extract(const Path& input, const Path& output)
 
         if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
         {
-            std::cerr << "File not found: " << arc_path.string() << std::endl;
+            std::wcerr << L"File not found: " << arc_path << std::endl;
             continue;
         }
 
         try
         {
-            std::cout << "Extracting: " << arc_path.string() << std::endl;
+            std::wcout << L"Extracting: " << arc_path << std::endl;
             arc.open(arc_path.wstring());
         }
         catch(const libtpdp::ArcError& ex)
         {
             ScopedConsoleColorChanger color(COLOR_CRITICAL);
-            std::cerr << "Failed to open file: " << arc_path.string() << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << L"Failed to open file: " << arc_path << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
             return false;
         }
 
@@ -253,7 +259,7 @@ bool extract(const Path& input, const Path& output)
             if(fp.empty())
             {
                 ScopedConsoleColorChanger color(COLOR_WARN);
-                std::cerr << "Skipping unknown object at index: " << it.index() << std::endl;
+                std::wcerr << L"Skipping unknown object at index: " << it.index() << std::endl;
                 continue;
             }
 
@@ -262,8 +268,8 @@ bool extract(const Path& input, const Path& output)
             if(!file)
             {
                 ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::cerr << "Error extracting file: " << utf_to_sjis(fp) << std::endl;
-                std::cerr << "From archive: " << arc_path.string() << std::endl;
+                std::wcerr << L"Error extracting file: " << fp << std::endl;
+                std::wcerr << L"From archive: " << arc_path << std::endl;
                 return false;
             }
 
@@ -274,15 +280,15 @@ bool extract(const Path& input, const Path& output)
             catch(const fs::filesystem_error& ex)
             {
                 ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::cerr << "Failed to create directory: " << out_path.parent_path() << std::endl;
-                std::cerr << ex.what() << std::endl;
+                std::wcerr << L"Failed to create directory: " << out_path.parent_path() << std::endl;
+                std::wcerr << utf_widen(ex.what()) << std::endl;
                 return false;
             }
 
             if(!write_file(out_path.wstring(), file.data(), file.size()))
             {
                 ScopedConsoleColorChanger color(COLOR_WARN);
-                std::cerr << "Failed to write to file: " << out_path.string() << std::endl;
+                std::wcerr << L"Failed to write to file: " << out_path << std::endl;
             }
         }
     }
@@ -318,7 +324,7 @@ bool patch(const Path& input, const Path& output)
                 auto num = std::stol(matches.str(1));
                 auto relpath = matches.str(2);
                 if(num >= 1 && num <= 6)
-                    patches[num].push_back({ entry, relpath });
+                    patches[num].emplace_back(entry, std::move(relpath));
             }
         }
 
@@ -330,6 +336,12 @@ bool patch(const Path& input, const Path& output)
         {
             auto arcname = L"gn_dat" + std::to_wstring(it.first) + L".arc";
             auto arcpath = in_dir / arcname;
+            if(!fs::exists(arcpath) || !fs::is_regular_file(arcpath))
+            {
+                ScopedConsoleColorChanger color(COLOR_CRITICAL);
+                std::wcerr << L"Missing file: " << arcpath << std::endl;
+                continue;
+            }
 
             try
             {
@@ -361,19 +373,25 @@ bool patch(const Path& input, const Path& output)
             catch(const libtpdp::ArcError& ex)
             {
                 ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::cerr << "Error writing to file: " << arcpath.string() << std::endl;
-                std::cerr << ex.what() << std::endl;
+                std::wcerr << L"Error writing to file: " << arcpath << std::endl;
+                std::wcerr << utf_widen(ex.what()) << std::endl;
                 return false;
             }
         }
 
-        std::cout << "Patched " << count << " files." << std::endl;
+        std::wcout << L"Patched " << count << L" files." << std::endl;
+        if(count == 0)
+        {
+            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            std::wcerr << L"Could not apply any patches." << std::endl;
+            return false;
+        }
     }
     catch(const ZipError& ex)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cerr << "Error reading from file: " << output.string() << std::endl;
-        std::cerr << ex.what() << std::endl;
+        std::wcerr << L"Error reading from file: " << output << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
         return false;
     }
 
@@ -396,26 +414,26 @@ bool repack(const Path& input, const Path& output)
 
         if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
         {
-            std::cerr << "File not found: " << arc_path.string() << std::endl;
+            std::wcerr << L"File not found: " << arc_path << std::endl;
             continue;
         }
 
         if(!fs::exists(out_dir) || !fs::is_directory(out_dir))
         {
-            std::cerr << "Missing directory: " << out_dir.string() << std::endl;
+            std::wcerr << L"Missing directory: " << out_dir << std::endl;
             continue;
         }
 
         try
         {
-            std::cout << ">> " << arc_path.string() << std::endl;
+            std::wcout << L">> " << arc_path << std::endl;
             arc.open(arc_path.wstring());
         }
         catch(const libtpdp::ArcError& ex)
         {
             ScopedConsoleColorChanger color(COLOR_CRITICAL);
-            std::cerr << "Failed to open file: " << arc_path.string() << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << L"Failed to open file: " << arc_path << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
             return false;
         }
 
@@ -425,12 +443,12 @@ bool repack(const Path& input, const Path& output)
             if(!entry.is_regular_file())
                 continue;
 
-            if(algo::iequals(entry.path().extension().string(), ".json"))
+            if(algo::iequals(entry.path().extension().wstring(), L".json"))
             {
                 if(!suppress_json_warning)
                 {
                     ScopedConsoleColorChanger color(COLOR_WARN);
-                    std::cerr << "Skipping json files..." << std::endl;
+                    std::wcerr << L"Skipping json files..." << std::endl;
                     suppress_json_warning = true;
                 }
                 continue;
@@ -446,17 +464,17 @@ bool repack(const Path& input, const Path& output)
             {
                 {
                     ScopedConsoleColorChanger color(COLOR_OK);
-                    std::cout << "Inserting new file: " << relative_path.string() << std::endl;
+                    std::wcout << L"Inserting new file: " << relative_path << std::endl;
                 }
 
                 std::size_t sz;
                 auto dst_file = read_file(entry.path().wstring(), sz);
                 if(!dst_file)
-                    throw DiffgenException("Failed to read file: " + entry.path().string());
+                    throw DiffgenException("Failed to read file: " + utf_narrow(entry.path().wstring()));
 
                 auto new_it = arc.insert(dst_file.get(), sz, utf_to_sjis(relative_path.wstring()));
                 if(new_it >= arc.end())
-                    throw DiffgenException("Failed to insert file: " + relative_path.string());
+                    throw DiffgenException("Failed to insert file: " + utf_narrow(relative_path.wstring()));
 
                 dirty = true;
                 continue;
@@ -466,21 +484,21 @@ bool repack(const Path& input, const Path& output)
             if(!src_file)
             {
                 ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::cerr << "Error extracting file: " << relative_path.string() << std::endl;
-                std::cerr << "From archive: " << arc_path.string() << std::endl;
+                std::wcerr << L"Error extracting file: " << relative_path << std::endl;
+                std::wcerr << L"From archive: " << arc_path << std::endl;
                 return false;
             }
 
             std::size_t sz;
             auto dst_file = read_file(entry.path().wstring(), sz);
             if(!dst_file)
-                throw DiffgenException("Failed to read file: " + entry.path().string());
+                throw DiffgenException("Failed to read file: " + utf_narrow(entry.path().wstring()));
 
             if((src_file.size() != sz) || (std::memcmp(src_file.data(), dst_file.get(), sz) != 0))
             {
                 auto new_it = arc.repack_file(it, dst_file.get(), sz);
                 if(new_it >= arc.end())
-                    throw DiffgenException("Failed to repack file: " + relative_path.string());
+                    throw DiffgenException("Failed to repack file: " + utf_narrow(relative_path.wstring()));
                 dirty = true;
             }
         }
@@ -490,7 +508,7 @@ bool repack(const Path& input, const Path& output)
             if(!arc.save(arc_path.wstring()))
             {
                 ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::cerr << "Error writing to archive: " << arc_path.string() << std::endl;
+                std::wcerr << L"Error writing to archive: " << arc_path << std::endl;
                 return false;
             }
         }

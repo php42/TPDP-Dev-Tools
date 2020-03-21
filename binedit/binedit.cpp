@@ -80,6 +80,12 @@ class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public Sco
 
 typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
 
+static std::wostream& operator<<(std::wostream& os, const fs::path& p)
+{
+    os << p.wstring();
+    return os;
+}
+
 static std::string base64_encode(const void *src, const std::size_t len)
 {
     std::string ret;
@@ -110,14 +116,14 @@ static void save_as_utf8(const Path& out, boost::property_tree::ptree& tree, boo
     catch(const boost::property_tree::json_parser_error& ex)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
-        std::cerr << "Error writing to file: " << out.string() << std::endl;
-        std::cerr << ex.what() << std::endl;
+        std::wcerr << L"Error writing to file: " << out << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
     }
     catch(const std::exception& ex)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
-        std::cerr << "Error writing to file: " << out.string() << std::endl;
-        std::cerr << ex.what() << std::endl;
+        std::wcerr << L"Error writing to file: " << out << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
     }
 }
 
@@ -190,7 +196,7 @@ static void convert_nerds(const Path& in, const Path& out)
 
     {
         ScopedConsoleLock lock;
-        std::cout << in.string() << " >> " << out.string() << std::endl;
+        std::wcout << in << L" >> " << out << std::endl;
     }
 
     boost::property_tree::ptree tree;
@@ -260,7 +266,7 @@ static void patch_nerds(const Path& data, const Path& json)
 
     {
         ScopedConsoleLock lock;
-        std::cout << json.string() << " >> " << data.string() << std::endl;
+        std::wcout << json << L" >> " << data << std::endl;
     }
 
     for(auto& it : tree.get_child("puppets")) // iterate puppets
@@ -279,7 +285,7 @@ static void patch_nerds(const Path& data, const Path& json)
         // puppet cost
         auto cost = node.get<uint8_t>("cost");
         if(cost > 4)
-            throw BineditException("Invalid cost value: " + std::to_string(cost) + "\r\nAcceptable values are 0-4.");
+            throw BineditException("Invalid cost value: " + std::to_string(cost) + "\nAcceptable values are 0-4.");
 
         puppet.cost = cost;
 
@@ -370,7 +376,7 @@ static void patch_nerds(const Path& data, const Path& json)
             for(auto i : skillcards)
             {
                 if(i > 512 || i < 385)
-                    throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": invalid compatibility value: " + std::to_string(i) + "\r\nAcceptable values are 385-512");
+                    throw BineditException("Puppet " + std::to_string(id) + " style " + std::to_string(style_index) + ": invalid compatibility value: " + std::to_string(i) + "\nAcceptable values are 385-512");
 
                 auto j = i - 385;
                 auto k = j % 8;
@@ -415,17 +421,17 @@ static void convert_mad(const Path& in, const Path& out)
     if(data.weather > 9)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
-        std::cerr << "Warning: " << in.string() << "\r\nUnknown weather value: " << (unsigned int)data.weather << std::endl;
+        std::wcerr << L"Warning: " << in << L"\nUnknown weather value: " << (unsigned int)data.weather << std::endl;
     }
     if(data.encounter_type > 1)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
-        std::cerr << "Warning: " << in.string() << "\r\nUnknown encounter_type value: " << (unsigned int)data.encounter_type << std::endl;
+        std::wcerr << L"Warning: " << in << L"\nUnknown encounter_type value: " << (unsigned int)data.encounter_type << std::endl;
     }
     if(data.forbid_bike > 1)
     {
         ScopedConsoleColorMT color(COLOR_WARN);
-        std::cerr << "Warning: " << in.string() << "\r\nUnknown forbid_bike value: " << (unsigned int)data.forbid_bike << std::endl;
+        std::wcerr << L"Warning: " << in << L"\nUnknown forbid_bike value: " << (unsigned int)data.forbid_bike << std::endl;
     }
 
     for(auto i = 0; i < 10; ++i)
@@ -499,7 +505,7 @@ static void patch_mad(const Path& data, const Path& json)
         if(encounter.level > 100)
         {
             ScopedConsoleColorMT color(COLOR_WARN);
-            std::cerr << "Warning: " << json.string() << "\r\nPuppet level greater than 100!" << std::endl;
+            std::wcerr << L"Warning: " << json << L"\nPuppet level greater than 100!" << std::endl;
         }
         if(encounter.style > 3)
             throw BineditException("Puppet style greater than 3!");
@@ -520,7 +526,7 @@ static void patch_mad(const Path& data, const Path& json)
         if(encounter.level > 100)
         {
             ScopedConsoleColorMT color(COLOR_WARN);
-            std::cerr << "Warning: " << json.string() << "\r\nPuppet level greater than 100!" << std::endl;
+            std::wcerr << L"Warning: " << json << L"\nPuppet level greater than 100!" << std::endl;
         }
         if(encounter.style > 3)
             throw BineditException("Puppet style greater than 3!");
@@ -744,7 +750,7 @@ static void convert_skills(const Path& in, const Path& out)
 
     {
         ScopedConsoleLock lock;
-        std::cout << in.string() << " >> " << out.string() << std::endl;
+        std::wcout << in << L" >> " << out << std::endl;
     }
 
     boost::property_tree::ptree tree;
@@ -775,8 +781,8 @@ static void convert_skills(const Path& in, const Path& out)
         if(skill.ynk_classification > 2)
         {
             ScopedConsoleColorMT color(COLOR_WARN);
-            std::cerr << "Warning: unknown skill classification: " << (unsigned int)skill.ynk_classification << std::endl;
-            std::cerr << "For skill id: " << (i / libtpdp::SKILL_DATA_SIZE) << std::endl;
+            std::wcerr << L"Warning: unknown skill classification: " << (unsigned int)skill.ynk_classification << std::endl;
+            std::wcerr << L"For skill id: " << (i / libtpdp::SKILL_DATA_SIZE) << std::endl;
         }
 
         tree.add_child("skills.", node);
@@ -794,7 +800,7 @@ static void patch_skills(const Path& data, const Path& json)
 
     {
         ScopedConsoleLock lock;
-        std::cout << json.string() << " >> " << data.string() << std::endl;
+        std::wcout << json << L" >> " << data << std::endl;
     }
 
     boost::property_tree::ptree tree;
@@ -1010,7 +1016,7 @@ static std::tuple<unsigned int, unsigned int, std::string> read_version_json(con
 }
 
 template<typename Func, typename... ArgTypes>
-std::function<void()> make_worker(const std::string& file, Func func, ArgTypes... args)
+std::function<void()> make_worker(const std::wstring& file, Func func, ArgTypes... args)
 {
     return [=]() {
         try
@@ -1019,7 +1025,7 @@ std::function<void()> make_worker(const std::string& file, Func func, ArgTypes..
         }
         catch(const std::exception& ex)
         {
-            throw WorkerError("Error converting file: " + file + "\r\n" + ex.what());
+            throw WorkerError("Error converting file: " + utf_narrow(file) + "\n" + ex.what());
         }
     };
 }
@@ -1033,7 +1039,7 @@ bool convert(const Path& input)
     std::size_t rand_sz;
     auto rand_data = read_file(rand_path.wstring(), rand_sz);
     if(!rand_data || rand_sz != 65536)
-        throw BineditException("Error opening file: " + rand_path.string() + "\r\nThis file is REQUIRED for converting .dod files.");
+        throw BineditException("Error opening file: " + rand_path.string() + "\nThis file is REQUIRED for converting .dod files.");
 
     write_version_json(input);
 
@@ -1042,7 +1048,7 @@ bool convert(const Path& input)
     if(max_threads < 1)
         max_threads = 1;
 
-    std::cout << "Using up to " << max_threads << " concurrent threads" << std::endl;
+    std::wcout << L"Using up to " << max_threads << L" concurrent threads" << std::endl;
 
     auto count_mad = 0;
     auto count_dod = 0;
@@ -1063,7 +1069,7 @@ bool convert(const Path& input)
                 json.replace_extension(L".json");
                 //convert_mad(in, json);
                 ++count_mad;
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_mad, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_mad, in, json)));
             }
             else if(algo::iequals(in.extension().wstring(), L".dod"))
             {
@@ -1071,7 +1077,7 @@ bool convert(const Path& input)
                 json.replace_extension(L".json");
                 //convert_dod(in, json, rand_data.get());
                 ++count_dod;
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_dod, in, json, rand_data.get())));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_dod, in, json, rand_data.get())));
             }
             else if(algo::iequals(in.extension().wstring(), L".chp"))
             {
@@ -1079,7 +1085,7 @@ bool convert(const Path& input)
                 json.replace_extension(L".json");
                 //convert_chip(in, json);
                 ++count_chp;
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_chip, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_chip, in, json)));
             }
             else if(algo::iequals(in.extension().wstring(), L".fmf"))
             {
@@ -1087,7 +1093,7 @@ bool convert(const Path& input)
                 json.replace_filename(json.stem().wstring() + L"_fmf.json");
                 //convert_fmf(in, json);
                 ++count_fmf;
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_fmf, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_fmf, in, json)));
             }
             else if(algo::iequals(in.extension().wstring(), L".obs"))
             {
@@ -1095,28 +1101,28 @@ bool convert(const Path& input)
                 json.replace_filename(json.stem().wstring() + L"_obs.json");
                 //convert_obs(in, json);
                 ++count_obs;
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_obs, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_obs, in, json)));
             }
             else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
             {
                 auto json = in;
                 json.replace_extension(L".json");
                 //convert_nerds(in, json);
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_nerds, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_nerds, in, json)));
             }
             else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
             {
                 auto json = in;
                 json.replace_extension(L".json");
                 //convert_skills(in, json);
-                futures.push_back(std::async(std::launch::async, make_worker(in.string(), convert_skills, in, json)));
+                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_skills, in, json)));
             }
         }
         catch(const std::exception& ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::cerr << "Error converting file: " << entry.path().string() << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << L"Error converting file: " << entry.path() << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
         }
 
         for(;;)
@@ -1138,7 +1144,7 @@ bool convert(const Path& input)
                 catch(const WorkerError& ex)
                 {
                     ScopedConsoleColorMT color(COLOR_CRITICAL);
-                    std::cerr << ex.what() << std::endl;
+                    std::wcerr << utf_widen(ex.what()) << std::endl;
                     it = futures.erase(it);
                 }
             }
@@ -1159,16 +1165,16 @@ bool convert(const Path& input)
         catch(const WorkerError& ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
         }
         futures.pop_back();
     }
 
-    std::cout << "converted " << count_dod << " .dod files." << std::endl;
-    std::cout << "converted " << count_mad << " .mad files." << std::endl;
-    std::cout << "converted " << count_chp << " .chp files." << std::endl;
-    std::cout << "converted " << count_fmf << " .fmf files." << std::endl;
-    std::cout << "converted " << count_obs << " .obs files." << std::endl;
+    std::wcout << L"converted " << count_dod << L" .dod files." << std::endl;
+    std::wcout << L"converted " << count_mad << L" .mad files." << std::endl;
+    std::wcout << L"converted " << count_chp << L" .chp files." << std::endl;
+    std::wcout << L"converted " << count_fmf << L" .fmf files." << std::endl;
+    std::wcout << L"converted " << count_obs << L" .obs files." << std::endl;
 
     return true;
 }
@@ -1190,8 +1196,8 @@ bool patch(const Path& input)
 
         bool newer = (ver_major > JSON_MAJOR) || (ver_major == JSON_MAJOR && (ver_minor > JSON_MINOR));
 
-        std::cerr << "Error: Working directory contains " << (newer ? "a newer" : "an older") << " JSON dump format." << std::endl;
-        std::cerr << "Please run convert to update the JSON, or use " << (newer ? "a newer" : "an older") << " version of TPDP-Dev-Tools." << std::endl;
+        std::wcerr << L"Error: Working directory contains " << (newer ? "a newer" : "an older") << L" JSON dump format." << std::endl;
+        std::wcerr << L"Please run convert to update the JSON, or use " << (newer ? "a newer" : "an older") << L" version of TPDP-Dev-Tools." << std::endl;
         return false;
     }
 
@@ -1199,14 +1205,14 @@ bool patch(const Path& input)
     std::size_t rand_sz;
     auto rand_data = read_file(rand_path.wstring(), rand_sz);
     if(!rand_data || rand_sz != 65536)
-        throw BineditException("Error opening file: " + rand_path.string() + "\r\nThis file is REQUIRED for converting .dod files.");
+        throw BineditException("Error opening file: " + rand_path.string() + "\nThis file is REQUIRED for converting .dod files.");
 
     std::vector<std::future<void>> futures;
     auto max_threads = std::thread::hardware_concurrency();
     if(max_threads < 1)
         max_threads = 1;
 
-    std::cout << "Using up to " << max_threads << " concurrent threads" << std::endl;
+    std::wcout << L"Using up to " << max_threads << L" concurrent threads" << std::endl;
 
     auto count_mad = 0;
     auto count_dod = 0;
@@ -1229,7 +1235,7 @@ bool patch(const Path& input)
                 {
                     //patch_mad(in, json);
                     ++count_mad;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_mad, in, json)));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_mad, in, json)));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".fmf"))
@@ -1240,7 +1246,7 @@ bool patch(const Path& input)
                 {
                     //patch_fmf(in, json);
                     ++count_fmf;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_fmf, in, json)));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_fmf, in, json)));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".obs"))
@@ -1251,7 +1257,7 @@ bool patch(const Path& input)
                 {
                     //patch_obs(in, json);
                     ++count_obs;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_obs, in, json)));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_obs, in, json)));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".dod"))
@@ -1262,7 +1268,7 @@ bool patch(const Path& input)
                 {
                     //patch_dod(in, json, rand_data.get());
                     ++count_dod;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_dod, in, json, rand_data.get())));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_dod, in, json, rand_data.get())));
                 }
             }
             else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
@@ -1272,7 +1278,7 @@ bool patch(const Path& input)
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
                     //patch_nerds(in, json);
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_nerds, in, json)));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_nerds, in, json)));
                 }
             }
             else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
@@ -1282,15 +1288,15 @@ bool patch(const Path& input)
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
                     //patch_skills(in, json);
-                    futures.push_back(std::async(std::launch::async, make_worker(json.string(), patch_skills, in, json)));
+                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_skills, in, json)));
                 }
             }
         }
         catch(const std::exception& ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::cerr << "Error: " << json.string() << std::endl;
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << L"Error: " << json << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
         }
 
         for(;;)
@@ -1312,7 +1318,7 @@ bool patch(const Path& input)
                 catch(const WorkerError & ex)
                 {
                     ScopedConsoleColorMT color(COLOR_CRITICAL);
-                    std::cerr << ex.what() << std::endl;
+                    std::wcerr << utf_widen(ex.what()) << std::endl;
                     it = futures.erase(it);
                 }
             }
@@ -1333,15 +1339,15 @@ bool patch(const Path& input)
         catch(const WorkerError & ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::cerr << ex.what() << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
         }
         futures.pop_back();
     }
 
-    std::cout << "patched " << count_dod << " .dod files." << std::endl;
-    std::cout << "patched " << count_mad << " .mad files." << std::endl;
-    std::cout << "patched " << count_fmf << " .fmf files." << std::endl;
-    std::cout << "patched " << count_obs << " .obs files." << std::endl;
+    std::wcout << L"patched " << count_dod << L" .dod files." << std::endl;
+    std::wcout << L"patched " << count_mad << L" .mad files." << std::endl;
+    std::wcout << L"patched " << count_fmf << L" .fmf files." << std::endl;
+    std::wcout << L"patched " << count_obs << L" .obs files." << std::endl;
 
     return true;
 }

@@ -19,19 +19,33 @@
 #include <iostream>
 #include "../common/console.h"
 #include "../common/version.h"
+#include "../common/textconvert.h"
 #include <chrono>
+#include <sstream>
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
 #endif // !VERSION_STRING
 
+static void print_desc(const boost::program_options::options_description& desc)
+{
+    std::stringstream s;
+    desc.print(s);
+    std::wcout << utf_widen(s.str()) << std::endl;
+}
 
 int wmain(int argc, wchar_t *argv[])
 {
     std::wstring input_path;
     bool success = false;
 
-    std::cout << "TPDP Dev-Tools " VERSION_STRING  " BinEdit" << std::endl;
+    _setmode(_fileno(stdout), _O_U8TEXT);
+    _setmode(_fileno(stderr), _O_U8TEXT);
+
+    std::wcout << L"TPDP Dev-Tools " VERSION_STRING  " BinEdit" << std::endl;
 
     try
     {
@@ -49,7 +63,7 @@ int wmain(int argc, wchar_t *argv[])
 
         if(opts.empty() || opts.count("help"))
         {
-            desc.print(std::cout);
+            print_desc(desc);
             return EXIT_SUCCESS;
         }
 
@@ -60,22 +74,22 @@ int wmain(int argc, wchar_t *argv[])
 
         if(num_options > 1)
         {
-            std::cout << "Invalid argument: please specify only one operation." << std::endl;
-            std::cout << "--convert and --patch are mutually exclusive.\n" << std::endl;
-            desc.print(std::cout);
+            std::wcout << L"Invalid argument: please specify only one operation." << std::endl;
+            std::wcout << L"--convert and --patch are mutually exclusive.\n" << std::endl;
+            print_desc(desc);
             return EXIT_FAILURE;
         }
         else if(num_options == 0)
         {
-            std::cout << "Invalid argument: please specify an operation.\n" << std::endl;
-            desc.print(std::cout);
+            std::wcout << L"Invalid argument: please specify an operation.\n" << std::endl;
+            print_desc(desc);
             return EXIT_FAILURE;
         }
 
         if(input_path.empty())
         {
-            std::cout << "Invalid argument: please specify input path." << std::endl;
-            desc.print(std::cout);
+            std::wcout << L"Invalid argument: please specify input path." << std::endl;
+            print_desc(desc);
             return EXIT_FAILURE;
         }
 
@@ -89,25 +103,25 @@ int wmain(int argc, wchar_t *argv[])
         {
             auto end = std::chrono::high_resolution_clock::now();
             auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(end - begin);
-            std::cout << "Done." << std::endl;
-            std::cout << "Finished in " << seconds.count() << " seconds." << std::endl;
+            std::wcout << L"Done." << std::endl;
+            std::wcout << L"Finished in " << seconds.count() << L" seconds." << std::endl;
         }
         else
         {
             ScopedConsoleColorChanger color(COLOR_CRITICAL);
-            std::cerr << "Operation aborted." << std::endl;
+            std::wcerr << L"Operation aborted." << std::endl;
         }
     }
     catch(const std::exception& ex)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cerr << "Error: " << ex.what() << std::endl;
+        std::wcerr << L"Error: " << utf_widen(ex.what()) << std::endl;
         return EXIT_FAILURE;
     }
     catch(...)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
-        std::cerr << "An unknown error occurred" << std::endl;
+        std::wcerr << L"An unknown error occurred" << std::endl;
         return EXIT_FAILURE;
     }
 
