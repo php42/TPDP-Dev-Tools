@@ -162,6 +162,8 @@ namespace patcher
             proc_.StartInfo.RedirectStandardOutput = true;
             proc_.StartInfo.RedirectStandardError = true;
             proc_.StartInfo.CreateNoWindow = true;
+            proc_.StartInfo.StandardErrorEncoding = Encoding.UTF8;
+            proc_.StartInfo.StandardOutputEncoding = Encoding.UTF8;
             proc_.EnableRaisingEvents = true;
             proc_.OutputDataReceived += new DataReceivedEventHandler(stdout_handler);
             proc_.ErrorDataReceived += new DataReceivedEventHandler(stderr_handler);

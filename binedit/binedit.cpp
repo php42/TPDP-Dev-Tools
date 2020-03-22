@@ -879,7 +879,7 @@ static void convert_fmf(const Path& in, const Path& out)
     tree.put("unknown_3", fmf.unk3);
 
     const auto layer_sz = fmf.map_width * fmf.map_height * 2;
-    for(auto i = 0; i < fmf.num_layers; ++i)
+    for(std::size_t i = 0; i < fmf.num_layers; ++i)
         tree.add("layers.", base64_encode(fmf.get_layer(i), layer_sz));
 
     save_as_utf8(out, tree);
