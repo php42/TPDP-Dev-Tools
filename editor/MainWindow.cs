@@ -184,6 +184,13 @@ namespace editor
 
         private void OnConsoleAppExit(Object source, EventArgs e)
         {
+            if(proc_.HasExited)
+            {
+                var ecode = proc_.ExitCode;
+                if((ecode != 0) && (ecode != 1))
+                    AppendConsoleErr("Failed with exit code: " + ecode.ToString());
+            }
+
             proc_.Close();
             proc_ = null;
             EnableConsoleButtons(true);

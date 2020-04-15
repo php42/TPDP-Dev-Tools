@@ -31,6 +31,9 @@
 #define VERSION_STRING "Unknown Version"
 #endif // !VERSION_STRING
 
+#define EXIT_OK     0
+#define EXIT_ERROR  1
+
 static void print_desc(const boost::program_options::options_description& desc)
 {
     std::stringstream s;
@@ -70,11 +73,11 @@ int wmain(int argc, wchar_t *argv[])
         if(opts.empty() || opts.count("help"))
         {
             print_desc(desc);
-            return EXIT_SUCCESS;
+            return EXIT_OK;
         }
 
         if(opts.count("version"))
-            return EXIT_SUCCESS;
+            return EXIT_OK;
 
         auto num_options = opts.count("extract") + opts.count("diff") + opts.count("patch") + opts.count("repack");
 
@@ -83,34 +86,34 @@ int wmain(int argc, wchar_t *argv[])
             std::wcout << L"Invalid argument: please specify only one operation." << std::endl;
             std::wcout << L"--extract, --diff, --repack, and --patch are mutually exclusive.\n" << std::endl;
             print_desc(desc);
-            return EXIT_FAILURE;
+            return EXIT_ERROR;
         }
         else if(num_options == 0)
         {
             std::wcout << L"Invalid argument: please specify an operation.\n" << std::endl;
             print_desc(desc);
-            return EXIT_FAILURE;
+            return EXIT_ERROR;
         }
 
         if(input_path.empty())
         {
             std::wcout << L"Invalid argument: please specify input path." << std::endl;
             print_desc(desc);
-            return EXIT_FAILURE;
+            return EXIT_ERROR;
         }
 
         if(output_path.empty())
         {
             std::wcout << L"Invalid argument: please specify output path." << std::endl;
             print_desc(desc);
-            return EXIT_FAILURE;
+            return EXIT_ERROR;
         }
 
         if(opts.count("diff") && diff_path.empty())
         {
             std::wcout << L"Invalid argument: please specify diff path." << std::endl;
             print_desc(desc);
-            return EXIT_FAILURE;
+            return EXIT_ERROR;
         }
 
         auto begin = std::chrono::high_resolution_clock::now();
@@ -140,14 +143,14 @@ int wmain(int argc, wchar_t *argv[])
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
         std::wcerr << L"Error: " << utf_widen(ex.what()) << std::endl;
-        return EXIT_FAILURE;
+        return EXIT_ERROR;
     }
     catch(...)
     {
         ScopedConsoleColorChanger color(COLOR_CRITICAL);
         std::wcerr << L"An unknown error occurred" << std::endl;
-        return EXIT_FAILURE;
+        return EXIT_ERROR;
     }
 
-    return success ? EXIT_SUCCESS : EXIT_FAILURE;
+    return success ? EXIT_OK : EXIT_ERROR;
 }
