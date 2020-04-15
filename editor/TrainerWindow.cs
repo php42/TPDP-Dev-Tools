@@ -11,6 +11,7 @@ using System.IO;
 using editor.json;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 // Trainer tab of MainWindow
@@ -42,6 +43,30 @@ namespace editor
             return ret;
         }
 
+        private Mutex dod_mtx = new Mutex();
+
+        private void LoadDod(string filepath, int id)
+        {
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DodJson));
+            var buf = File.ReadAllBytes(filepath);
+            var s = new MemoryStream(buf);
+
+            var dod = (DodJson)ser.ReadObject(s);
+            dod.filepath = filepath;
+            dod.id = id;
+
+            dod_mtx.WaitOne();
+
+            try
+            {
+                dods_.Add(dod);
+            }
+            finally
+            {
+                dod_mtx.ReleaseMutex();
+            }
+        }
+
         private void LoadTrainers(string dir)
         {
             DirectoryInfo di = new DirectoryInfo(dir);
@@ -55,42 +80,21 @@ namespace editor
             try
             {
                 var files = di.GetFiles("*.json");
+                Regex rx = new Regex(@"(?<id>\d{4})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-                foreach(var file in files)
-                {
-                    DataContractJsonSerializer s = new DataContractJsonSerializer(typeof(DodJson));
-                    var fs = file.OpenRead();
+                Parallel.ForEach(files, file => {
+                    var match = rx.Match(file.FullName);
 
-                    try
-                    {
-                        var dod = (DodJson)s.ReadObject(fs);
-                        dod.filepath = file.FullName;
-
-                        Regex rx = new Regex(@"(?<id>\d{4})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                        var match = rx.Match(dod.filepath);
-
-                        if(match.Success)
-                            dod.id = int.Parse(match.Groups["id"].Value);
-                        else
-                            continue;
-
-                        dods_.Add(dod);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new Exception("Error parsing file: " + file.FullName + "\r\n" + e.Message);
-                    }
-                    finally
-                    {
-                        if(fs != null)
-                            fs.Close();
-                    }
-                }
+                    if(match.Success)
+                        LoadDod(file.FullName, int.Parse(match.Groups["id"].Value));
+                });
             }
             catch(Exception e)
             {
                 throw new Exception("Error iterating dod folder: " + e.Message);
             }
+
+            dods_.Sort((DodJson x, DodJson y) => { return x.id.CompareTo(y.id); });
 
             // Trainers
             TrainerLB.SelectedIndex = -1;

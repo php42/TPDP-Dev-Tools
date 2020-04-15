@@ -11,6 +11,7 @@ using System.IO;
 using editor.json;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 // Map tab of MainWindow
@@ -86,6 +87,10 @@ namespace editor
             {60,"mugensekai20.png" }
         };
 
+        private Mutex mad_mtx = new Mutex();
+        private Mutex fmf_mtx = new Mutex();
+        private Mutex obs_mtx = new Mutex();
+
         private void LoadMad(string filepath, int id)
         {
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MadJson));
@@ -111,7 +116,16 @@ namespace editor
                 map.special_encounters = tmp;
             }
 
-            maps_.Add(map);
+            mad_mtx.WaitOne();
+
+            try
+            {
+                maps_.Add(map);
+            }
+            finally
+            {
+                mad_mtx.ReleaseMutex();
+            }
         }
 
         private void LoadFmf(string filepath, int id)
@@ -124,7 +138,16 @@ namespace editor
             fmf.id = id;
             fmf.filepath = filepath;
 
-            fmfs_.Add(fmf);
+            fmf_mtx.WaitOne();
+
+            try
+            {
+                fmfs_.Add(fmf);
+            }
+            finally
+            {
+                fmf_mtx.ReleaseMutex();
+            }
         }
 
         private void LoadObs(string filepath, int id)
@@ -137,7 +160,16 @@ namespace editor
             obs.id = id;
             obs.filepath = filepath;
 
-            obss_.Add(obs);
+            obs_mtx.WaitOne();
+
+            try
+            {
+                obss_.Add(obs);
+            }
+            finally
+            {
+                obs_mtx.ReleaseMutex();
+            }
         }
 
         private void LoadMaps(string dir)
@@ -155,10 +187,9 @@ namespace editor
             try
             {
                 var files = di.GetFiles("*.json", SearchOption.AllDirectories);
+                Regex rx = new Regex(@"(?<id>\d{3})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-                foreach(var file in files)
-                {
-                    Regex rx = new Regex(@"(?<id>\d{3})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                Parallel.ForEach(files, file => {
                     var match = rx.Match(file.Name);
 
                     if(match.Success)
@@ -166,19 +197,23 @@ namespace editor
                         var fmf = file.FullName.Replace(".json", "_fmf.json");
                         var obs = file.FullName.Replace(".json", "_obs.json");
                         if(!File.Exists(fmf) || !File.Exists(obs))
-                            continue;
+                            return;
 
                         var id = int.Parse(match.Groups["id"].Value);
-                        LoadMad(file.FullName, id);
-                        LoadFmf(fmf, id);
-                        LoadObs(obs, id);
+                        Parallel.Invoke(() => { LoadMad(file.FullName, id); },
+                                        () => { LoadFmf(fmf, id); },
+                                        () => { LoadObs(obs, id); });
                     }
-                }
+                });
             }
             catch(Exception e)
             {
                 throw new Exception("Error iterating map folder: " + e.Message);
             }
+
+            maps_.Sort((MadJson x, MadJson y) => { return x.id.CompareTo(y.id); });
+            fmfs_.Sort((FmfJson x, FmfJson y) => { return x.id.CompareTo(y.id); });
+            obss_.Sort((ObsJson x, ObsJson y) => { return x.id.CompareTo(y.id); });
 
             MapListBox.ClearSelected();
             MapListBox.Items.Clear();
@@ -266,23 +301,6 @@ namespace editor
             Parallel.ForEach(maps_, mad => SaveMAD(mad));
             Parallel.ForEach(fmfs_, fmf => SaveFMF(fmf));
             Parallel.ForEach(obss_, obs => SaveOBS(obs));
-
-            /*
-            foreach(var mad in maps_)
-            {
-                SaveMAD(mad);
-            }
-
-            foreach(var fmf in fmfs_)
-            {
-                SaveFMF(fmf);
-            }
-
-            foreach(var obs in obss_)
-            {
-                SaveOBS(obs);
-            }
-            */
         }
 
         private void SelectMap(int index)
