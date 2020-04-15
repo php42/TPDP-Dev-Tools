@@ -454,10 +454,7 @@ bool repack(const Path& input, const Path& output)
                 continue;
             }
 
-            auto temp = entry.path().wstring();
-            temp = temp.substr(dir.wstring().size());
-
-            Path relative_path(temp);
+            auto relative_path = entry.path().lexically_relative(dir);
 
             auto it = arc.find(utf_to_sjis(relative_path.wstring()));
             if(it >= arc.end())
