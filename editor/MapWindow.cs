@@ -11,6 +11,7 @@ using System.IO;
 using editor.json;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 // Map tab of MainWindow
 // TODO: Clean up this disaster
@@ -206,7 +207,7 @@ namespace editor
             }
         }
 
-        private void SaveMAD(MadJson mad)
+        private static void SaveMAD(MadJson mad)
         {
             try
             {
@@ -221,7 +222,7 @@ namespace editor
             }
         }
 
-        private void SaveFMF(FmfJson fmf)
+        private static void SaveFMF(FmfJson fmf)
         {
             try
             {
@@ -236,7 +237,7 @@ namespace editor
             }
         }
 
-        private void SaveOBS(ObsJson obs)
+        private static void SaveOBS(ObsJson obs)
         {
             try
             {
@@ -262,6 +263,11 @@ namespace editor
                 obss_[selected_map_] = obs_data_;
             }
 
+            Parallel.ForEach(maps_, mad => SaveMAD(mad));
+            Parallel.ForEach(fmfs_, fmf => SaveFMF(fmf));
+            Parallel.ForEach(obss_, obs => SaveOBS(obs));
+
+            /*
             foreach(var mad in maps_)
             {
                 SaveMAD(mad);
@@ -276,6 +282,7 @@ namespace editor
             {
                 SaveOBS(obs);
             }
+            */
         }
 
         private void SelectMap(int index)

@@ -11,6 +11,7 @@ using System.IO;
 using editor.json;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 // Trainer tab of MainWindow
 
@@ -178,7 +179,7 @@ namespace editor
             }
         }
 
-        private void WriteDod(DodJson dod)
+        private static void WriteDod(DodJson dod)
         {
             try
             {
@@ -195,10 +196,14 @@ namespace editor
 
         private void SaveTrainers()
         {
+            Parallel.ForEach(dods_, dod => WriteDod(dod));
+
+            /*
             foreach(var dod in dods_)
             {
                 WriteDod(dod);
             }
+            */
         }
 
         private void IVSC_ValueChanged(object sender, EventArgs e)
