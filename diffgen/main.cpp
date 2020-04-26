@@ -65,7 +65,7 @@ int wmain(int argc, wchar_t *argv[])
             ("diff,d", boost::program_options::wvalue(&diff_path)->implicit_value(L"diff.bin", "\"diff.bin\""), "Generate a diff between the original game data located at input-path and the extracted files located at output-path\n")
             ("patch,p", "Patch the original game data located at input-path with the diff file located at output-path\n")
             ("repack,r", "Insert files located at output-path into the original game data located at input-path (used to merge modifications back into the game without needing to generate a diff)\n")
-            ("threads,j", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use for compression\n");
+            ("threads,j", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use\n");
 
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), opts);
         boost::program_options::notify(opts);
@@ -124,7 +124,7 @@ int wmain(int argc, wchar_t *argv[])
         else if(opts.count("patch"))
             success = patch(input_path, output_path);
         else if(opts.count("repack"))
-            success = repack(input_path, output_path);
+            success = repack(input_path, output_path, threads);
 
         if(success)
         {

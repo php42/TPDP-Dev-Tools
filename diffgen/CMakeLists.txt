@@ -34,6 +34,7 @@ add_executable(diffgen
     "ziparchive.cpp"
     "main.cpp"
     "../common/console.h"
+    "../common/console.cpp"
     "../common/endian.h"
     "../common/filesystem.h"
     "../common/filesystem.cpp"

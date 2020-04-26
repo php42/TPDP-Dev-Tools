@@ -16,7 +16,6 @@
 
 #pragma once
 #include <filesystem>
-#include <exception>
 #include "diffgen.h"
 
 /* DEPRECATED patching functions

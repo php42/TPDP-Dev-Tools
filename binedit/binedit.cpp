@@ -57,29 +57,6 @@ class WorkerError : public std::runtime_error
     using std::runtime_error::runtime_error;
 };
 
-/* synchronization for console access (scoped ownership, recursive) */
-class ScopedConsoleLock
-{
-private:
-    static std::recursive_mutex mtx_;
-    std::lock_guard<std::recursive_mutex> lock_;
-
-public:
-    ScopedConsoleLock() : lock_(mtx_) {}
-    ScopedConsoleLock(const ScopedConsoleLock&) = delete;
-    ScopedConsoleLock& operator=(const ScopedConsoleLock&) = delete;
-};
-
-std::recursive_mutex ScopedConsoleLock::mtx_;
-
-/* scoped ownership of the console + change console text color (color reverted at end of life) */
-class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed last
-{
-    using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
-};
-
-typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;
-
 static std::wostream& operator<<(std::wostream& os, const fs::path& p)
 {
     os << p.wstring();
@@ -1149,7 +1126,7 @@ bool convert(const Path& input)
                 }
             }
             if(futures.size() >= max_threads)
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::yield();
             else
                 break;
         }
@@ -1315,7 +1292,7 @@ bool patch(const Path& input)
                         ++it;
                     }
                 }
-                catch(const WorkerError & ex)
+                catch(const WorkerError& ex)
                 {
                     ScopedConsoleColorMT color(COLOR_CRITICAL);
                     std::wcerr << utf_widen(ex.what()) << std::endl;
@@ -1323,7 +1300,7 @@ bool patch(const Path& input)
                 }
             }
             if(futures.size() >= max_threads)
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::yield();
             else
                 break;
         }
@@ -1336,7 +1313,7 @@ bool patch(const Path& input)
             if(futures.back().valid())
                 futures.back().get();
         }
-        catch(const WorkerError & ex)
+        catch(const WorkerError& ex)
         {
             ScopedConsoleColorMT color(COLOR_CRITICAL);
             std::wcerr << utf_widen(ex.what()) << std::endl;

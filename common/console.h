@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -56,3 +58,24 @@ public:
             CloseHandle(screen_buffer_);
     }
 };
+
+/* synchronization for console access (scoped ownership, recursive) */
+class ScopedConsoleLock
+{
+private:
+    static std::recursive_mutex mtx_;
+    std::lock_guard<std::recursive_mutex> lock_;
+
+public:
+    ScopedConsoleLock() : lock_(mtx_) {}
+    ScopedConsoleLock(const ScopedConsoleLock&) = delete;
+    ScopedConsoleLock& operator=(const ScopedConsoleLock&) = delete;
+};
+
+/* scoped ownership of the console + change console text color (color reverted at end of life) */
+class ScopedConsoleColorChangerThreadsafe : public ScopedConsoleLock, public ScopedConsoleColorChanger // C++ inheritance rules guarantee ScopedConsoleLock to be constructed first and destroyed last
+{
+    using ScopedConsoleColorChanger::ScopedConsoleColorChanger;
+};
+
+typedef ScopedConsoleColorChangerThreadsafe ScopedConsoleColorMT;

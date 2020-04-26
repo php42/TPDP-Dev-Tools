@@ -16,7 +16,7 @@
 
 #pragma once
 #include <filesystem>
-#include <exception>
+#include <stdexcept>
 
 struct BineditException : public std::runtime_error
 {
