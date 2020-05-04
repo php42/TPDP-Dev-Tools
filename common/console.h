@@ -30,7 +30,7 @@ class ScopedConsoleColorChanger
 {
 private:
     HANDLE screen_buffer_;
-    CONSOLE_SCREEN_BUFFER_INFO info_;
+    CONSOLE_SCREEN_BUFFER_INFO info_{};
     bool changed_;
 
 public:

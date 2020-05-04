@@ -43,6 +43,9 @@ if(MSVC)
         endforeach()
         set(Boost_USE_STATIC_RUNTIME ON)
     endif()
+
+    add_compile_options("$<$<CONFIG:Release>:/GL>" "$<$<CONFIG:Release>:/Oi>")
+    add_link_options("$<$<CONFIG:Release>:/LTCG>")
 endif()
 
 if((BUILD_BINEDIT OR BUILD_DIFFGEN) AND NOT BUILD_LIBTPDP)

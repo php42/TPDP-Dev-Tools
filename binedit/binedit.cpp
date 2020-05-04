@@ -32,30 +32,31 @@
 #include "../common/console.h"
 #include "../common/endian.h"
 #include "../common/version.h"
+#include "../common/thread_pool.h"
 #include <libtpdp.h>
 #include "binedit.h"
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <chrono>
-#include <thread>
-#include <future>
 #include <functional>
-#include <stdexcept>
 #include <utility>
 #include <intrin.h>
+#include <atomic>
+#include <algorithm>
 
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
 namespace b64 = boost::beast::detail::base64;
 
 constexpr unsigned int JSON_MAJOR = 1;
-constexpr unsigned int JSON_MINOR = 2;
+constexpr unsigned int JSON_MINOR = 3;
 
-class WorkerError : public std::runtime_error
-{
-    using std::runtime_error::runtime_error;
-};
+std::atomic_uint g_count_mad(0);
+std::atomic_uint g_count_dod(0);
+std::atomic_uint g_count_chp(0);
+std::atomic_uint g_count_fmf(0);
+std::atomic_uint g_count_obs(0);
 
 static std::wostream& operator<<(std::wostream& os, const fs::path& p)
 {
@@ -551,6 +552,9 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
     tree.put("intro_text_id", read_le16(&file[0x25]));
     tree.put("end_text_id", read_le16(&file[0x27]));
 
+    tree.put("defeat_text_id", read_le16(&file[0x29]));
+    tree.put("ai_difficulty", (uint8_t)file[0x2B]);
+
     unsigned char *buf = (unsigned char*)&file[0x2C];
     for(auto i = 0; i < 6; ++i)
     {
@@ -632,6 +636,11 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
     auto end_text_id = tree.get<uint16_t>("end_text_id");
     write_le16(&file[0x25], intro_text_id);
     write_le16(&file[0x27], end_text_id);
+
+    auto defeat_text_id = tree.get<uint16_t>("defeat_text_id");
+    auto ai_difficulty = tree.get<uint8_t>("ai_difficulty");
+    write_le16(&file[0x29], defeat_text_id);
+    file[0x2B] = ai_difficulty;
 
     if(trainer_name.size() >= 32)
         throw BineditException("Trainer name must be less than 32 bytes!");
@@ -993,21 +1002,30 @@ static std::tuple<unsigned int, unsigned int, std::string> read_version_json(con
 }
 
 template<typename Func, typename... ArgTypes>
-std::function<void()> make_worker(const std::wstring& file, Func func, ArgTypes... args)
+std::function<void()> make_task(const std::wstring& file, Func func, std::atomic_uint *acc, ArgTypes... args)
 {
     return [=]() {
         try
         {
             func(args...);
+            if(acc != nullptr)
+                acc->fetch_add(1u);
         }
         catch(const std::exception& ex)
         {
-            throw WorkerError("Error converting file: " + utf_narrow(file) + "\n" + ex.what());
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::wcerr << L"Error converting file: " << file << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
+        }
+        catch(...)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::wcerr << L"Unknown error converting file: " << file << std::endl;
         }
     };
 }
 
-bool convert(const Path& input)
+bool convert(const Path& input, int threads)
 {
     if(!fs::exists(input) || !fs::is_directory(input))
         throw BineditException("Directory does not exist: " + input.string());
@@ -1020,79 +1038,48 @@ bool convert(const Path& input)
 
     write_version_json(input);
 
-    std::vector<std::future<void>> futures;
-    auto max_threads = std::thread::hardware_concurrency();
-    if(max_threads < 1)
-        max_threads = 1;
+    std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
+    ThreadPool pool(threads);
 
-    std::wcout << L"Using up to " << max_threads << L" concurrent threads" << std::endl;
-
-    auto count_mad = 0;
-    auto count_dod = 0;
-    auto count_chp = 0;
-    auto count_fmf = 0;
-    auto count_obs = 0;
     for(auto& entry : fs::recursive_directory_iterator(input))
     {
-        if(!entry.is_regular_file())
-            continue;
-
         try
         {
+            if(!entry.is_regular_file())
+                continue;
+
             auto in = entry.path();
+            auto json = Path(in).replace_extension(L".json");
+
             if(algo::iequals(in.extension().wstring(), L".mad"))
             {
-                auto json = in;
-                json.replace_extension(L".json");
-                //convert_mad(in, json);
-                ++count_mad;
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_mad, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_mad, &g_count_mad, in, json));
             }
             else if(algo::iequals(in.extension().wstring(), L".dod"))
             {
-                auto json = in;
-                json.replace_extension(L".json");
-                //convert_dod(in, json, rand_data.get());
-                ++count_dod;
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_dod, in, json, rand_data.get())));
+                pool.queue_task(make_task(in.wstring(), convert_dod, &g_count_dod, in, json, rand_data.get()));
             }
             else if(algo::iequals(in.extension().wstring(), L".chp"))
             {
-                auto json = in;
-                json.replace_extension(L".json");
-                //convert_chip(in, json);
-                ++count_chp;
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_chip, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_chip, &g_count_chp, in, json));
             }
             else if(algo::iequals(in.extension().wstring(), L".fmf"))
             {
-                auto json = in;
                 json.replace_filename(json.stem().wstring() + L"_fmf.json");
-                //convert_fmf(in, json);
-                ++count_fmf;
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_fmf, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_fmf, &g_count_fmf, in, json));
             }
             else if(algo::iequals(in.extension().wstring(), L".obs"))
             {
-                auto json = in;
                 json.replace_filename(json.stem().wstring() + L"_obs.json");
-                //convert_obs(in, json);
-                ++count_obs;
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_obs, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_obs, &g_count_obs, in, json));
             }
             else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
             {
-                auto json = in;
-                json.replace_extension(L".json");
-                //convert_nerds(in, json);
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_nerds, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_nerds, nullptr, in, json));
             }
             else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
             {
-                auto json = in;
-                json.replace_extension(L".json");
-                //convert_skills(in, json);
-                futures.push_back(std::async(std::launch::async, make_worker(in.wstring(), convert_skills, in, json)));
+                pool.queue_task(make_task(in.wstring(), convert_skills, nullptr, in, json));
             }
         }
         catch(const std::exception& ex)
@@ -1101,62 +1088,20 @@ bool convert(const Path& input)
             std::wcerr << L"Error converting file: " << entry.path() << std::endl;
             std::wcerr << utf_widen(ex.what()) << std::endl;
         }
-
-        for(;;)
-        {
-            for(auto it = futures.begin(); it != futures.end();)
-            {
-                try
-                {
-                    if(it->wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
-                    {
-                        it->get();
-                        it = futures.erase(it);
-                    }
-                    else
-                    {
-                        ++it;
-                    }
-                }
-                catch(const WorkerError& ex)
-                {
-                    ScopedConsoleColorMT color(COLOR_CRITICAL);
-                    std::wcerr << utf_widen(ex.what()) << std::endl;
-                    it = futures.erase(it);
-                }
-            }
-            if(futures.size() >= max_threads)
-                std::this_thread::yield();
-            else
-                break;
-        }
     }
 
-    while(!futures.empty())
-    {
-        try
-        {
-            if(futures.back().valid())
-                futures.back().get();
-        }
-        catch(const WorkerError& ex)
-        {
-            ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::wcerr << utf_widen(ex.what()) << std::endl;
-        }
-        futures.pop_back();
-    }
+    pool.stop();
 
-    std::wcout << L"converted " << count_dod << L" .dod files." << std::endl;
-    std::wcout << L"converted " << count_mad << L" .mad files." << std::endl;
-    std::wcout << L"converted " << count_chp << L" .chp files." << std::endl;
-    std::wcout << L"converted " << count_fmf << L" .fmf files." << std::endl;
-    std::wcout << L"converted " << count_obs << L" .obs files." << std::endl;
+    std::wcout << L"converted " << g_count_dod.load() << L" .dod files." << std::endl;
+    std::wcout << L"converted " << g_count_mad.load() << L" .mad files." << std::endl;
+    std::wcout << L"converted " << g_count_chp.load() << L" .chp files." << std::endl;
+    std::wcout << L"converted " << g_count_fmf.load() << L" .fmf files." << std::endl;
+    std::wcout << L"converted " << g_count_obs.load() << L" .obs files." << std::endl;
 
     return true;
 }
 
-bool patch(const Path& input)
+bool patch(const Path& input, int threads)
 {
     if(!fs::exists(input) || !fs::is_directory(input))
         throw BineditException("Directory does not exist: " + input.string());
@@ -1184,88 +1129,62 @@ bool patch(const Path& input)
     if(!rand_data || rand_sz != 65536)
         throw BineditException("Error opening file: " + rand_path.string() + "\nThis file is REQUIRED for converting .dod files.");
 
-    std::vector<std::future<void>> futures;
-    auto max_threads = std::thread::hardware_concurrency();
-    if(max_threads < 1)
-        max_threads = 1;
+    std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
+    ThreadPool pool(threads);
 
-    std::wcout << L"Using up to " << max_threads << L" concurrent threads" << std::endl;
-
-    auto count_mad = 0;
-    auto count_dod = 0;
-    auto count_fmf = 0;
-    auto count_obs = 0;
     for(auto& entry : fs::recursive_directory_iterator(input))
     {
-        if(!entry.is_regular_file())
-            continue;
-
         Path json;
+
         try
         {
+            if(!entry.is_regular_file())
+                continue;
+
             auto in = entry.path();
+            json = Path(in).replace_extension(L".json");
             if(algo::iequals(in.extension().wstring(), L".mad"))
             {
-                json = in;
-                json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_mad(in, json);
-                    ++count_mad;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_mad, in, json)));
+                    pool.queue_task(make_task(json.wstring(), patch_mad, &g_count_mad, in, json));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".fmf"))
             {
-                json = in;
                 json.replace_filename(json.stem().wstring() + L"_fmf.json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_fmf(in, json);
-                    ++count_fmf;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_fmf, in, json)));
+                    pool.queue_task(make_task(json.wstring(), patch_fmf, &g_count_fmf, in, json));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".obs"))
             {
-                json = in;
                 json.replace_filename(json.stem().wstring() + L"_obs.json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_obs(in, json);
-                    ++count_obs;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_obs, in, json)));
+                    pool.queue_task(make_task(json.wstring(), patch_obs, &g_count_obs, in, json));
                 }
             }
             else if(algo::iequals(in.extension().wstring(), L".dod"))
             {
-                json = in;
-                json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_dod(in, json, rand_data.get());
-                    ++count_dod;
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_dod, in, json, rand_data.get())));
+                    pool.queue_task(make_task(json.wstring(), patch_dod, &g_count_dod, in, json, rand_data.get()));
                 }
             }
             else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
             {
-                json = in;
-                json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_nerds(in, json);
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_nerds, in, json)));
+                    pool.queue_task(make_task(json.wstring(), patch_nerds, nullptr, in, json));
                 }
             }
             else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
             {
-                json = in;
-                json.replace_extension(L".json");
                 if(fs::exists(json) && fs::is_regular_file(json))
                 {
-                    //patch_skills(in, json);
-                    futures.push_back(std::async(std::launch::async, make_worker(json.wstring(), patch_skills, in, json)));
+                    pool.queue_task(make_task(json.wstring(), patch_skills, nullptr, in, json));
                 }
             }
         }
@@ -1275,56 +1194,14 @@ bool patch(const Path& input)
             std::wcerr << L"Error: " << json << std::endl;
             std::wcerr << utf_widen(ex.what()) << std::endl;
         }
-
-        for(;;)
-        {
-            for(auto it = futures.begin(); it != futures.end();)
-            {
-                try
-                {
-                    if(it->wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
-                    {
-                        it->get();
-                        it = futures.erase(it);
-                    }
-                    else
-                    {
-                        ++it;
-                    }
-                }
-                catch(const WorkerError& ex)
-                {
-                    ScopedConsoleColorMT color(COLOR_CRITICAL);
-                    std::wcerr << utf_widen(ex.what()) << std::endl;
-                    it = futures.erase(it);
-                }
-            }
-            if(futures.size() >= max_threads)
-                std::this_thread::yield();
-            else
-                break;
-        }
     }
 
-    while(!futures.empty())
-    {
-        try
-        {
-            if(futures.back().valid())
-                futures.back().get();
-        }
-        catch(const WorkerError& ex)
-        {
-            ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::wcerr << utf_widen(ex.what()) << std::endl;
-        }
-        futures.pop_back();
-    }
+    pool.stop();
 
-    std::wcout << L"patched " << count_dod << L" .dod files." << std::endl;
-    std::wcout << L"patched " << count_mad << L" .mad files." << std::endl;
-    std::wcout << L"patched " << count_fmf << L" .fmf files." << std::endl;
-    std::wcout << L"patched " << count_obs << L" .obs files." << std::endl;
+    std::wcout << L"patched " << g_count_dod.load() << L" .dod files." << std::endl;
+    std::wcout << L"patched " << g_count_mad.load() << L" .mad files." << std::endl;
+    std::wcout << L"patched " << g_count_fmf.load() << L" .fmf files." << std::endl;
+    std::wcout << L"patched " << g_count_obs.load() << L" .obs files." << std::endl;
 
     return true;
 }

@@ -79,19 +79,19 @@ static_assert(SKILL_TYPE_MAX == g_num_skill_types);
 
 void SkillData::read(const void *data)
 {
-	const uint8_t *buf = (const uint8_t*)data;
+    const uint8_t *buf = (const uint8_t*)data;
 
-	element = buf[32];
-	power = buf[33];
-	accuracy = buf[34];
-	sp = buf[35];
-	priority = buf[36];
-	type = buf[37];
+    element = buf[32];
+    power = buf[33];
+    accuracy = buf[34];
+    sp = buf[35];
+    priority = buf[36];
+    type = buf[37];
     zero = buf[38];
-	effect_id = read_le16(&buf[39]);
-	effect_chance = buf[41];
+    effect_id = read_le16(&buf[39]);
+    effect_chance = buf[41];
     ynk_classification = buf[42];
-	effect_target = buf[43];
+    effect_target = buf[43];
     ynk_id = read_le16(&buf[44]);
 }
 
@@ -115,7 +115,7 @@ void SkillData::write(void *data) const
 
 StyleData::StyleData() : style_type(0), element1(0), element2(0), lv100_skill(0)
 {
-	memset(base_stats, 0, sizeof(base_stats));
+    memset(base_stats, 0, sizeof(base_stats));
     memset(abilities, 0, sizeof(abilities));
     memset(style_skills, 0, sizeof(style_skills));
     memset(skill_compat_table, 0, sizeof(skill_compat_table));
@@ -124,28 +124,28 @@ StyleData::StyleData() : style_type(0), element1(0), element2(0), lv100_skill(0)
 
 void StyleData::read(const void *data)
 {
-	const uint8_t *buf = (const uint8_t*)data;
+    const uint8_t *buf = (const uint8_t*)data;
 
-	style_type = buf[0];
-	element1 = buf[1];
-	element2 = buf[2];
+    style_type = buf[0];
+    element1 = buf[1];
+    element2 = buf[2];
 
-	for(int i = 0; i < 6; ++i)
-		base_stats[i] = buf[3 + i];
+    for(int i = 0; i < 6; ++i)
+        base_stats[i] = buf[3 + i];
 
-	abilities[0] = read_le16(&buf[9]);
-	abilities[1] = read_le16(&buf[11]);
+    abilities[0] = read_le16(&buf[9]);
+    abilities[1] = read_le16(&buf[11]);
 
-	for(int i = 0; i < 11; ++i)
-		style_skills[i] = read_le16(&buf[17 + (i * 2)]);
+    for(int i = 0; i < 11; ++i)
+        style_skills[i] = read_le16(&buf[17 + (i * 2)]);
 
     lv100_skill = read_le16(&buf[0x2D]);
 
-	for(int i = 0; i < 16; ++i)
-		skill_compat_table[i] = buf[49 + i];
+    for(int i = 0; i < 16; ++i)
+        skill_compat_table[i] = buf[49 + i];
 
-	for(int i = 0; i < 8; ++i)
-		lv70_skills[i] = read_le16(&buf[65 + (i * 2)]);
+    for(int i = 0; i < 8; ++i)
+        lv70_skills[i] = read_le16(&buf[65 + (i * 2)]);
 }
 
 void StyleData::write(void * data) const
@@ -191,30 +191,30 @@ std::wstring style_string(unsigned int style)
 
 PuppetData::PuppetData()
 {
-	cost = 0;
-	memset(base_skills, 0, sizeof(base_skills));
-	memset(item_drop_table, 0, sizeof(item_drop_table));
-	id = 0;
+    cost = 0;
+    memset(base_skills, 0, sizeof(base_skills));
+    memset(item_drop_table, 0, sizeof(item_drop_table));
+    id = 0;
 }
 
 void PuppetData::read(const void *data)
 {
-	const uint8_t *buf = (const uint8_t*)data;
+    const uint8_t *buf = (const uint8_t*)data;
 
-	cost = buf[32];
+    cost = buf[32];
 
-	for(int i = 0; i < 5; ++i)
-		base_skills[i] = read_le16(&buf[33 + (i * 2)]);
+    for(int i = 0; i < 5; ++i)
+        base_skills[i] = read_le16(&buf[33 + (i * 2)]);
 
-	for(int i = 0; i < 4; ++i)
-		item_drop_table[i] = read_le16(&buf[43 + (i * 2)]);
+    for(int i = 0; i < 4; ++i)
+        item_drop_table[i] = read_le16(&buf[43 + (i * 2)]);
 
     id = 0; // set by caller
 
     puppetdex_index = read_le16(&buf[51]);
 
-	for(int i = 0; i < 4; ++i)
-		styles[i].read(&buf[93 + (i * STYLE_DATA_SIZE)]);
+    for(int i = 0; i < 4; ++i)
+        styles[i].read(&buf[93 + (i * STYLE_DATA_SIZE)]);
 }
 
 void PuppetData::write(void *data) const
@@ -273,16 +273,16 @@ int PuppetData::level_to_learn(unsigned int style_index, unsigned int skill_id) 
 
 int PuppetData::max_style_index() const
 {
-	int result = 0;
-	for(int i = 0; i < 4; ++i)
-	{
-		if(styles[i].style_type)
-			result = i;
-		else
-			break;
-	}
+    int result = 0;
+    for(int i = 0; i < 4; ++i)
+    {
+        if(styles[i].style_type)
+            result = i;
+        else
+            break;
+    }
 
-	return result;
+    return result;
 }
 
 bool ItemData::parse(const CSVEntry& data, bool ynk)
@@ -454,57 +454,57 @@ void MADData::write(void *data) const
 
 void MADData::clear_encounters()
 {
-	memset(puppet_ids, 0, sizeof(puppet_ids));
-	memset(puppet_levels, 0, sizeof(puppet_levels));
-	memset(puppet_ratios, 0, sizeof(puppet_ratios));
-	memset(puppet_styles, 0, sizeof(puppet_styles));
-	memset(special_puppet_ids, 0, sizeof(special_puppet_ids));
-	memset(special_puppet_levels, 0, sizeof(special_puppet_levels));
-	memset(special_puppet_ratios, 0, sizeof(special_puppet_ratios));
-	memset(special_puppet_styles, 0, sizeof(special_puppet_styles));
+    memset(puppet_ids, 0, sizeof(puppet_ids));
+    memset(puppet_levels, 0, sizeof(puppet_levels));
+    memset(puppet_ratios, 0, sizeof(puppet_ratios));
+    memset(puppet_styles, 0, sizeof(puppet_styles));
+    memset(special_puppet_ids, 0, sizeof(special_puppet_ids));
+    memset(special_puppet_levels, 0, sizeof(special_puppet_levels));
+    memset(special_puppet_ratios, 0, sizeof(special_puppet_ratios));
+    memset(special_puppet_styles, 0, sizeof(special_puppet_styles));
 }
 
 void MADEncounter::read(const MADData& data, int i, bool special)
 {
-	assert(i < 10);
-	assert((i < 5) || !special);
-	index = i;
+    assert(i < 10);
+    assert((i < 5) || !special);
+    index = i;
 
-	if(special)
-	{
-		id = data.special_puppet_ids[i];
-		level = data.special_puppet_levels[i];
-		style = data.special_puppet_styles[i];
-		weight = data.special_puppet_ratios[i];
-	}
-	else
-	{
-		id = data.puppet_ids[i];
-		level = data.puppet_levels[i];
-		style = data.puppet_styles[i];
-		weight = data.puppet_ratios[i];
-	}
+    if(special)
+    {
+        id = data.special_puppet_ids[i];
+        level = data.special_puppet_levels[i];
+        style = data.special_puppet_styles[i];
+        weight = data.special_puppet_ratios[i];
+    }
+    else
+    {
+        id = data.puppet_ids[i];
+        level = data.puppet_levels[i];
+        style = data.puppet_styles[i];
+        weight = data.puppet_ratios[i];
+    }
 }
 
 void MADEncounter::write(MADData& data, int i, bool special) const
 {
-	assert(i < 10);
-	assert((i < 5) || !special);
+    assert(i < 10);
+    assert((i < 5) || !special);
 
-	if(special)
-	{
-		data.special_puppet_ids[i] = id;
-		data.special_puppet_levels[i] = level;
-		data.special_puppet_styles[i] = style;
-		data.special_puppet_ratios[i] = weight;
-	}
-	else
-	{
-		data.puppet_ids[i] = id;
-		data.puppet_levels[i] = level;
-		data.puppet_styles[i] = style;
-		data.puppet_ratios[i] = weight;
-	}
+    if(special)
+    {
+        data.special_puppet_ids[i] = id;
+        data.special_puppet_levels[i] = level;
+        data.special_puppet_styles[i] = style;
+        data.special_puppet_ratios[i] = weight;
+    }
+    else
+    {
+        data.puppet_ids[i] = id;
+        data.puppet_levels[i] = level;
+        data.puppet_styles[i] = style;
+        data.puppet_ratios[i] = weight;
+    }
 }
 
 void ChipData::read(const void *data)

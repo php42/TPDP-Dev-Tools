@@ -21,6 +21,7 @@
 #include "../common/textconvert.h"
 #include "../common/console.h"
 #include "../common/endian.h"
+#include "../common/thread_pool.h"
 #include <boost/algorithm/string.hpp>
 #include <libtpdp.h>
 #include <iostream>
@@ -36,6 +37,10 @@ namespace fs = std::filesystem;
 
 typedef std::pair<Path, Path> DiffPair;
 typedef std::tuple<int, Path, Path> DiffTuple;
+typedef std::vector<DiffTuple> DiffVec;
+typedef std::unordered_map<int, std::vector<DiffPair>> DiffMap;
+
+std::mutex g_mtx;
 
 static std::wostream& operator<<(std::wostream& os, const fs::path& p)
 {
@@ -43,49 +48,93 @@ static std::wostream& operator<<(std::wostream& os, const fs::path& p)
     return os;
 }
 
-/* worker thread for diff generation */
-static std::vector<DiffPair> worker(Path input, const std::vector<Path> *rel_paths, const libtpdp::Archive *arc, std::size_t begin, std::size_t end)
+/* async task for diff generation */
+static void diff_task(Path path, Path rel_path, const libtpdp::Archive& arc, int arc_num, DiffVec& out)
 {
-    std::vector<DiffPair> diffs;
-
-    for(auto i = begin; i < end; ++i)
+    try
     {
-        const Path& relative_path = (*rel_paths)[i];
-        Path path = input / relative_path;
-
-        auto it = arc->find(utf_to_sjis(relative_path.wstring()));
-        if(it >= arc->end())
+        auto it = arc.find(utf_to_sjis(rel_path.wstring()));
+        if(it >= arc.end())
         {
             {
                 ScopedConsoleColorMT color(COLOR_OK);
-                std::wcout << L"Adding new file: " << relative_path << std::endl;
+                std::wcout << L"Adding new file: " << rel_path << std::endl;
             }
-            diffs.push_back({ relative_path, path });
-            continue;
+
+            std::lock_guard lock(g_mtx);
+            out.push_back({ arc_num, std::move(rel_path), std::move(path) });
+            return;
         }
 
-        auto src_file = arc->get_file(it);
+        auto src_file = arc.get_file(it);
         if(!src_file)
-            throw DiffgenException("Error extracting file: " + utf_narrow(relative_path.wstring()));
+            throw DiffgenException("Error extracting file from archive.");
 
         std::size_t sz;
         auto dst_file = read_file(path.wstring(), sz);
         if(!dst_file)
-            throw DiffgenException("Failed to read file: " + utf_narrow(path.wstring()));
+            throw DiffgenException("Failed to read file.");
 
         if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
-            continue;
+            return;
 
-        diffs.push_back({ relative_path, path });
+        std::lock_guard lock(g_mtx);
+        out.push_back({ arc_num, std::move(rel_path), std::move(path) });
     }
-
-    return diffs;
+    catch(const std::exception& ex)
+    {
+        ScopedConsoleColorMT color(COLOR_CRITICAL);
+        std::wcerr << L"Error processing file: " << path << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
+    }
 }
 
-static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, int threads)
+/* async task for file extraction */
+static void extract_task(const libtpdp::Archive& arc, const libtpdp::Archive::iterator& it, const Path& path)
 {
-    std::vector<DiffTuple> diffs;
+    try
+    {
+        auto file = arc.get_file(it);
+        if(!file)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::wcerr << L"Error extracting file: " << path << std::endl;
+            return;
+        }
+
+        auto dir = path.parent_path();
+
+        try
+        {
+            fs::create_directories(dir);
+        }
+        catch(const fs::filesystem_error& ex)
+        {
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
+            std::wcerr << L"Failed to create directory: " << dir << std::endl;
+            std::wcerr << utf_widen(ex.what()) << std::endl;
+            return;
+        }
+
+        if(!write_file(path.wstring(), file.data(), file.size()))
+        {
+            ScopedConsoleColorMT color(COLOR_WARN);
+            std::wcerr << L"Failed to write to file: " << path << std::endl;
+        }
+    }
+    catch(const std::exception& ex)
+    {
+        ScopedConsoleColorMT color(COLOR_CRITICAL);
+        std::wcerr << L"Error extracting file: " << path << std::endl;
+        std::wcerr << utf_widen(ex.what()) << std::endl;
+    }
+}
+
+static DiffVec get_diffs(const Path& in_dir, const Path& output, int threads)
+{
+    DiffVec diffs;
     libtpdp::Archive arc;
+    ThreadPool pool(threads);
     bool suppress_json_warning = false;
 
     for(int i = 1; i < 7; ++i)
@@ -93,7 +142,6 @@ static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, 
         auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
         auto arc_path = in_dir / arc_name;
         auto out_dir = output / arc_name;
-        std::vector<Path> rel_paths;
 
         if(!fs::exists(arc_path) || !fs::is_regular_file(arc_path))
         {
@@ -114,7 +162,7 @@ static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, 
         }
         catch(const libtpdp::ArcError&)
         {
-            ScopedConsoleColorChanger color(COLOR_CRITICAL);
+            ScopedConsoleColorMT color(COLOR_CRITICAL);
             std::wcerr << L"Failed to open file: " << arc_path << std::endl;
             throw;
         }
@@ -124,7 +172,8 @@ static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, 
             if(!entry.is_regular_file())
                 continue;
 
-            auto rel = entry.path().lexically_relative(out_dir);
+            auto path = entry.path();
+            auto rel = path.lexically_relative(out_dir);
             if(rel.empty())
                 continue;
 
@@ -132,49 +181,17 @@ static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, 
             {
                 if(!suppress_json_warning)
                 {
-                    ScopedConsoleColorChanger color(COLOR_WARN);
+                    ScopedConsoleColorMT color(COLOR_WARN);
                     std::wcerr << L"Skipping json files..." << std::endl;
                     suppress_json_warning = true;
                 }
                 continue;
             }
 
-            rel_paths.push_back(std::move(rel));
+            pool.queue_task([=, &arc, &diffs]() mutable { diff_task(std::move(path), std::move(rel), arc, i, diffs); });
         }
 
-        std::vector<std::future<std::vector<std::pair<Path, Path>>>> futures;
-        auto arc_threads = threads;
-        auto files_per_thread = rel_paths.size() / arc_threads;
-        if(files_per_thread < 2)
-            arc_threads = 1;
-
-        std::size_t begin = 0;
-        for(int j = 0; j < arc_threads; ++j)
-        {
-            auto end = (j == (arc_threads - 1)) ? rel_paths.size() : (begin + files_per_thread);
-            futures.emplace_back(std::async(std::launch::async, worker, out_dir, &rel_paths, &arc, begin, end));
-            begin = end;
-        }
-
-        for(auto& j : futures)
-            if(j.valid())
-                j.wait();
-
-        try
-        {
-            for(auto& j : futures)
-            {
-                auto val = j.get();
-                for(auto& k : val)
-                    diffs.emplace_back(i, std::move(k.first), std::move(k.second));
-            }
-        }
-        catch(const std::exception&)
-        {
-            ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::wcerr << L"Exception processing archive: " << arc_path << std::endl;
-            throw;
-        }
+        pool.wait();
     }
 
     return diffs;
@@ -182,11 +199,7 @@ static std::vector<DiffTuple> get_diffs(const Path& in_dir, const Path& output, 
 
 bool diff(const Path& input, const Path& output, const Path& diff_path, int threads)
 {
-    if(threads < 1)
-        threads = 1;
-
-    if(threads > 1)
-        std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
+    std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
 
     Path in_dir(input / L"dat");
     auto diffs = get_diffs(in_dir, output, threads);
@@ -206,7 +219,7 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
 
         for(auto& i : diffs)
         {
-            auto &[arc_num, rel_path, data_path] = i;
+            auto&[arc_num, rel_path, data_path] = i;
             auto arc_name = "gn_dat" + std::to_string(arc_num) + ".arc";
             auto path = utf_narrow((arc_name / rel_path).wstring());
             [[maybe_unused]] auto entry = zip.add_file(path, data_path);
@@ -225,8 +238,11 @@ bool diff(const Path& input, const Path& output, const Path& diff_path, int thre
     return true;
 }
 
-bool extract(const Path& input, const Path& output)
+bool extract(const Path& input, const Path& output, int threads)
 {
+    std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
+    ThreadPool pool(threads);
+
     libtpdp::Archive arc;
     Path in_dir(input / L"dat");
     for(int i = 1; i < 7; ++i)
@@ -269,33 +285,10 @@ bool extract(const Path& input, const Path& output)
             }
 
             auto out_path = out_dir / fp;
-            auto file = arc.get_file(it);
-            if(!file)
-            {
-                ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::wcerr << L"Error extracting file: " << fp << std::endl;
-                std::wcerr << L"From archive: " << arc_path << std::endl;
-                return false;
-            }
-
-            try
-            {
-                fs::create_directories(out_path.parent_path());
-            }
-            catch(const fs::filesystem_error& ex)
-            {
-                ScopedConsoleColorChanger color(COLOR_CRITICAL);
-                std::wcerr << L"Failed to create directory: " << out_path.parent_path() << std::endl;
-                std::wcerr << utf_widen(ex.what()) << std::endl;
-                return false;
-            }
-
-            if(!write_file(out_path.wstring(), file.data(), file.size()))
-            {
-                ScopedConsoleColorChanger color(COLOR_WARN);
-                std::wcerr << L"Failed to write to file: " << out_path << std::endl;
-            }
+            pool.queue_task([=, &arc]() { extract_task(arc, it, out_path); });
         }
+
+        pool.wait();
     }
 
     return true;
@@ -408,11 +401,7 @@ bool repack(const Path& input, const Path& output, int threads)
 {
     std::unordered_map<int, std::vector<DiffPair>> patches;
 
-    if(threads < 1)
-        threads = 1;
-
-    if(threads > 1)
-        std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
+    std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
 
     Path in_dir(input / L"dat");
 
@@ -420,7 +409,7 @@ bool repack(const Path& input, const Path& output, int threads)
         auto diffs = get_diffs(in_dir, output, threads);
 
         if(diffs.empty())
-            throw DiffgenException("Source and target are identical!");
+            throw DiffgenException("Source and target are identical, no files to repack!");
 
         for(auto& i : diffs)
         {

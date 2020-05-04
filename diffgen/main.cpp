@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
+#include <algorithm>
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
@@ -59,16 +60,20 @@ int wmain(int argc, wchar_t *argv[])
         desc.add_options()
             ("help,h", "Display this help text\n")
             ("version,v", "Display version info and exit\n")
-            ("input-path,i", boost::program_options::wvalue(&input_path), "path to the root folder of the input directory (the unmodified game folder)\n")
-            ("output-path,o", boost::program_options::wvalue(&output_path), "path to the root folder of the output directory (the \"romhack\" folder)\n")
-            ("extract,e", "extract data files from the game folder located at input-path to the directory specified by output-path\n")
+            ("input-path,i", boost::program_options::wvalue(&input_path), "Path to the root folder of the input directory (the unmodified game folder)\n")
+            ("output-path,o", boost::program_options::wvalue(&output_path), "Path to the root folder of the output directory (the \"romhack\" folder)\n")
+            ("extract,e", "Extract data files from the game folder located at input-path to the directory specified by output-path\n")
             ("diff,d", boost::program_options::wvalue(&diff_path)->implicit_value(L"diff.bin", "\"diff.bin\""), "Generate a diff between the original game data located at input-path and the extracted files located at output-path\n")
             ("patch,p", "Patch the original game data located at input-path with the diff file located at output-path\n")
-            ("repack,r", "Insert files located at output-path into the original game data located at input-path (used to merge modifications back into the game without needing to generate a diff)\n")
-            ("threads,j", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "maximum number of concurrent threads to use\n");
+            ("repack,r", "Insert files located at output-path into the original game data located at input-path (used to merge modifications back into the game without needing to create a patch)\n")
+            ("threads,j", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "Maximum number of concurrent threads to use\n");
 
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), opts);
         boost::program_options::notify(opts);
+
+        threads = std::clamp(threads, 2, 64);
+        if(threads < 8)
+            threads = (int)(threads * 1.5);
 
         if(opts.empty() || opts.count("help"))
         {
@@ -118,7 +123,7 @@ int wmain(int argc, wchar_t *argv[])
 
         auto begin = std::chrono::high_resolution_clock::now();
         if(opts.count("extract"))
-            success = extract(input_path, output_path);
+            success = extract(input_path, output_path, threads);
         else if(opts.count("diff"))
             success = diff(input_path, output_path, diff_path, threads);
         else if(opts.count("patch"))

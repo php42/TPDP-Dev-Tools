@@ -187,10 +187,10 @@ namespace editor
             try
             {
                 var files = di.GetFiles("*.json", SearchOption.AllDirectories);
-                Regex rx = new Regex(@"(?<id>\d{3})\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                Regex rx = new Regex(@"[\\/]+(?<id>\d{3})[\\/]+(\k<id>)\.json$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
                 Parallel.ForEach(files, file => {
-                    var match = rx.Match(file.Name);
+                    var match = rx.Match(file.FullName);
 
                     if(match.Success)
                     {

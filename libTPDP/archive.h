@@ -1,5 +1,5 @@
 /*
-	Copyright 2018 php42
+    Copyright 2018 php42
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -41,17 +41,17 @@ struct ArcError : public std::runtime_error
 #pragma pack(push, 1)
 struct ArchiveHeader
 {
-	uint16_t magic;					/* 0x5844 "DX" */
-	uint16_t version;
-	uint32_t size;					/* size of the file tables (from filename_table_offset till the end of the file) */
-	uint32_t data_offset;
-	uint32_t filename_table_offset;
-	uint32_t file_table_offset;		/* relative to filename_table_offset */
-	uint32_t dir_table_offset;		/* relative to filename_table_offset */
-	uint32_t codepage;              /* codepage used for encoding of filenames? */
+    uint16_t magic;					/* 0x5844 "DX" */
+    uint16_t version;
+    uint32_t size;					/* size of the file tables (from filename_table_offset till the end of the file) */
+    uint32_t data_offset;
+    uint32_t filename_table_offset;
+    uint32_t file_table_offset;		/* relative to filename_table_offset */
+    uint32_t dir_table_offset;		/* relative to filename_table_offset */
+    uint32_t codepage;              /* codepage used for encoding of filenames? */
 
-	ArchiveHeader() = default;
-	ArchiveHeader(const void *data) {read(data);}
+    ArchiveHeader() = default;
+    ArchiveHeader(const void *data) {read(data);}
 
     void read(const void *data) { memcpy(this, data, sizeof(*this)); }
     void write(void *data) const { memcpy(data, this, sizeof(*this)); }
@@ -59,13 +59,13 @@ struct ArchiveHeader
 
 struct ArchiveFilenameHeader
 {
-	uint16_t length;				/* length of the string divided by 4 (padded with zeros if the actual string is shorter).
-									 * there are actually two strings of this length, one in all caps followed by one with the real
-									 * capitalization. the strings are always NULL terminated */
-	uint16_t checksum;              /* all the bytes of the UPPERCASE filename added together */
+    uint16_t length;				/* length of the string divided by 4 (padded with zeros if the actual string is shorter).
+                                     * there are actually two strings of this length, one in all caps followed by one with the real
+                                     * capitalization. the strings are always NULL terminated */
+    uint16_t checksum;              /* all the bytes of the UPPERCASE filename added together */
 
-	ArchiveFilenameHeader() = default;
-	ArchiveFilenameHeader(const void *data) {read(data);}
+    ArchiveFilenameHeader() = default;
+    ArchiveFilenameHeader(const void *data) {read(data);}
 
     void read(const void *data) { memcpy(this, data, sizeof(*this)); }
     void write(void *data) const { memcpy(data, this, sizeof(*this)); }
@@ -73,17 +73,17 @@ struct ArchiveFilenameHeader
 
 struct ArchiveFileHeader
 {
-	uint32_t filename_offset;		/* relative to filename_table_offset */
-	uint32_t attributes;            /* file attributes as from winapi GetFileAttributes() */
-	uint64_t time_created;          /* file timestamps as if by winapi GetFileTime() */
-	uint64_t time_accessed;
-	uint64_t time_written;
-	uint32_t data_offset;			/* relative to data_offset in the archive header */
-	uint32_t data_size;
-	uint32_t compressed_size;		/* 0xffffffff for no compression */
+    uint32_t filename_offset;		/* relative to filename_table_offset */
+    uint32_t attributes;            /* file attributes as from winapi GetFileAttributes() */
+    uint64_t time_created;          /* file timestamps as if by winapi GetFileTime() */
+    uint64_t time_accessed;
+    uint64_t time_written;
+    uint32_t data_offset;			/* relative to data_offset in the archive header */
+    uint32_t data_size;
+    uint32_t compressed_size;		/* 0xffffffff for no compression */
 
-	ArchiveFileHeader() = default;
-	ArchiveFileHeader(const void *data) {read(data);}
+    ArchiveFileHeader() = default;
+    ArchiveFileHeader(const void *data) {read(data);}
 
     void read(const void *data) { memcpy(this, data, sizeof(*this)); }
     void write(void *data) const { memcpy(data, this, sizeof(*this)); }
@@ -91,13 +91,13 @@ struct ArchiveFileHeader
 
 struct ArchiveDirHeader
 {
-	uint32_t dir_offset;			/* offset of the directory's own file header relative to file_table_offset in the archive header */
-	uint32_t parent_dir_offset;		/* relative to dir_table_offset */
-	uint32_t num_files;				/* number of files in the directory */
-	uint32_t file_header_offset;	/* offset of the directory's contents file headers relative to file_table_offset */
+    uint32_t dir_offset;			/* offset of the directory's own file header relative to file_table_offset in the archive header */
+    uint32_t parent_dir_offset;		/* relative to dir_table_offset */
+    uint32_t num_files;				/* number of files in the directory */
+    uint32_t file_header_offset;	/* offset of the directory's contents file headers relative to file_table_offset */
 
-	ArchiveDirHeader() = default;
-	ArchiveDirHeader(const void *data) {read(data);}
+    ArchiveDirHeader() = default;
+    ArchiveDirHeader(const void *data) {read(data);}
 
     void read(const void *data) { memcpy(this, data, sizeof(*this)); }
     void write(void *data) const { memcpy(data, this, sizeof(*this)); }
@@ -128,18 +128,18 @@ public:
     static constexpr auto npos = std::numeric_limits<std::size_t>::max();
 
 private:
-	ArchiveHeader header_;
+    ArchiveHeader header_;
 
-	std::size_t data_used_, data_max_;
+    std::size_t data_used_, data_max_;
     FileBuf data_; // file buffer
 
     std::size_t file_table_offset_;
     std::size_t dir_table_offset_;
 
-	bool is_ynk_;
+    bool is_ynk_;
 
-	Archive(const Archive&) = delete;
-	Archive& operator=(const Archive&) = delete;
+    Archive(const Archive&) = delete;
+    Archive& operator=(const Archive&) = delete;
 
     std::size_t get_header_offset(const std::string& filepath) const;
     std::size_t get_dir_header_offset(std::size_t file_header_offset) const;
@@ -147,14 +147,14 @@ private:
     iterator make_iterator(std::size_t offset) const;
     directory_iterator make_dir_iterator(std::size_t offset) const;
 
-	void parse();
+    void parse();
     void encrypt();
     void decrypt() { encrypt(); } // encryption is symmetrical, this is an alias of encrypt()
 
     std::size_t offset_from_file_index(std::size_t index) const { return file_table_offset_ + (index * ARCHIVE_FILE_HEADER_SIZE); }
     std::size_t offset_from_dir_index(std::size_t index) const { return dir_table_offset_ + (index * ARCHIVE_DIR_HEADER_SIZE); }
 
-	std::size_t decompress(const void *src, void *dest) const;
+    std::size_t decompress(const void *src, void *dest) const;
 
     /* capitalized and all bytes added together.
      * this is a WEAK HASH, there WILL be collisions.
@@ -166,7 +166,7 @@ private:
     void reallocate(std::size_t sz);
 
 public:
-	Archive() : header_(), data_used_(0), data_max_(0), file_table_offset_(0), dir_table_offset_(0), is_ynk_(false) {};
+    Archive() : header_(), data_used_(0), data_max_(0), file_table_offset_(0), dir_table_offset_(0), is_ynk_(false) {};
     Archive(const void *data, std::size_t len, bool is_ynk);
     ~Archive() { close(); }
 
@@ -181,14 +181,14 @@ public:
     std::size_t size() const { return data_used_; }
 
     /* throws ArcError on failure */
-	void open(const std::string& filename);
-	void open(const std::wstring& filename);
+    void open(const std::string& filename);
+    void open(const std::wstring& filename);
 
     bool save(const std::string& filename);
     bool save(const std::wstring& filename);
 
-	/* returns 0 on error, nonzero otherwise. if dest is NULL, returns decompressed size of the requested file */
-	std::size_t get_file(const std::string& filepath, void *dest) const;
+    /* returns 0 on error, nonzero otherwise. if dest is NULL, returns decompressed size of the requested file */
+    std::size_t get_file(const std::string& filepath, void *dest) const;
     std::size_t get_file(const iterator& file, void *dest) const;
 
     /* returns empty ArcFile on error */
@@ -252,7 +252,7 @@ public:
     /* returns true if object pointed by it represents a folder */
     bool is_dir(iterator it) const;
 
-	bool is_ynk() const { return is_ynk_; }
+    bool is_ynk() const { return is_ynk_; }
 
     void close() { data_.reset(); data_used_ = 0; data_max_ = 0; is_ynk_ = false; }
 };

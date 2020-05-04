@@ -141,6 +141,8 @@
             System.Windows.Forms.Label label58;
             System.Windows.Forms.Label label109;
             System.Windows.Forms.Label label5;
+            System.Windows.Forms.Label label110;
+            System.Windows.Forms.Label label111;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
@@ -192,12 +194,14 @@
             this.PuppetStyleCB = new System.Windows.Forms.ComboBox();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.TrainerAICB = new System.Windows.Forms.ComboBox();
             this.TrainerIDSC = new System.Windows.Forms.NumericUpDown();
             this.NewTrainerBT = new System.Windows.Forms.Button();
             this.HeartMarkCB = new System.Windows.Forms.CheckBox();
             this.TrainerPreviewPB = new System.Windows.Forms.PictureBox();
             this.PortraitIDSC = new System.Windows.Forms.NumericUpDown();
             this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.DefeatTextSC = new System.Windows.Forms.NumericUpDown();
             this.EndTextSC = new System.Windows.Forms.NumericUpDown();
             this.IntroTextSC = new System.Windows.Forms.NumericUpDown();
             this.TrainerLevelSC = new System.Windows.Forms.NumericUpDown();
@@ -425,6 +429,8 @@
             label58 = new System.Windows.Forms.Label();
             label109 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
+            label110 = new System.Windows.Forms.Label();
+            label111 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -448,6 +454,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.TrainerPreviewPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).BeginInit();
             this.groupBox11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DefeatTextSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EndTextSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntroTextSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).BeginInit();
@@ -785,7 +792,7 @@
             // label73
             // 
             label73.AutoSize = true;
-            label73.Location = new System.Drawing.Point(6, 76);
+            label73.Location = new System.Drawing.Point(4, 108);
             label73.Name = "label73";
             label73.Size = new System.Drawing.Size(197, 13);
             label73.TabIndex = 33;
@@ -1554,6 +1561,24 @@
             label5.TabIndex = 28;
             label5.Text = "Puppetdex Position";
             // 
+            // label110
+            // 
+            label110.AutoSize = true;
+            label110.Location = new System.Drawing.Point(6, 76);
+            label110.Name = "label110";
+            label110.Size = new System.Drawing.Size(77, 13);
+            label110.TabIndex = 34;
+            label110.Text = "Defeat Text ID";
+            // 
+            // label111
+            // 
+            label111.AutoSize = true;
+            label111.Location = new System.Drawing.Point(512, 114);
+            label111.Name = "label111";
+            label111.Size = new System.Drawing.Size(60, 13);
+            label111.TabIndex = 40;
+            label111.Text = "AI Difficulty";
+            // 
             // TabControl
             // 
             this.TabControl.Controls.Add(this.FilesTabPage);
@@ -2219,6 +2244,8 @@
             // 
             // TrainersTabPage
             // 
+            this.TrainersTabPage.Controls.Add(this.TrainerAICB);
+            this.TrainersTabPage.Controls.Add(label111);
             this.TrainersTabPage.Controls.Add(this.TrainerIDSC);
             this.TrainersTabPage.Controls.Add(label109);
             this.TrainersTabPage.Controls.Add(this.NewTrainerBT);
@@ -2266,10 +2293,23 @@
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
             // 
+            // TrainerAICB
+            // 
+            this.TrainerAICB.FormattingEnabled = true;
+            this.TrainerAICB.Items.AddRange(new object[] {
+            "Easy",
+            "Medium",
+            "Hard"});
+            this.TrainerAICB.Location = new System.Drawing.Point(578, 111);
+            this.TrainerAICB.Name = "TrainerAICB";
+            this.TrainerAICB.Size = new System.Drawing.Size(88, 21);
+            this.TrainerAICB.TabIndex = 41;
+            this.TrainerAICB.SelectedIndexChanged += new System.EventHandler(this.TrainerAICB_SelectedIndexChanged);
+            // 
             // TrainerIDSC
             // 
             this.TrainerIDSC.Enabled = false;
-            this.TrainerIDSC.Location = new System.Drawing.Point(572, 85);
+            this.TrainerIDSC.Location = new System.Drawing.Point(578, 85);
             this.TrainerIDSC.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -2277,7 +2317,7 @@
             0});
             this.TrainerIDSC.Name = "TrainerIDSC";
             this.TrainerIDSC.ReadOnly = true;
-            this.TrainerIDSC.Size = new System.Drawing.Size(71, 20);
+            this.TrainerIDSC.Size = new System.Drawing.Size(88, 20);
             this.TrainerIDSC.TabIndex = 39;
             // 
             // NewTrainerBT
@@ -2325,6 +2365,8 @@
             // 
             // groupBox11
             // 
+            this.groupBox11.Controls.Add(this.DefeatTextSC);
+            this.groupBox11.Controls.Add(label110);
             this.groupBox11.Controls.Add(label73);
             this.groupBox11.Controls.Add(this.EndTextSC);
             this.groupBox11.Controls.Add(this.IntroTextSC);
@@ -2332,34 +2374,47 @@
             this.groupBox11.Controls.Add(label68);
             this.groupBox11.Location = new System.Drawing.Point(264, 246);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(207, 100);
+            this.groupBox11.Size = new System.Drawing.Size(207, 132);
             this.groupBox11.TabIndex = 32;
             this.groupBox11.TabStop = false;
             this.groupBox11.Text = "Dialogue";
             // 
+            // DefeatTextSC
+            // 
+            this.DefeatTextSC.Location = new System.Drawing.Point(89, 74);
+            this.DefeatTextSC.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.DefeatTextSC.Name = "DefeatTextSC";
+            this.DefeatTextSC.Size = new System.Drawing.Size(109, 20);
+            this.DefeatTextSC.TabIndex = 35;
+            this.DefeatTextSC.ValueChanged += new System.EventHandler(this.DefeatTextSC_ValueChanged);
+            // 
             // EndTextSC
             // 
-            this.EndTextSC.Location = new System.Drawing.Point(78, 47);
+            this.EndTextSC.Location = new System.Drawing.Point(89, 47);
             this.EndTextSC.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.EndTextSC.Name = "EndTextSC";
-            this.EndTextSC.Size = new System.Drawing.Size(120, 20);
+            this.EndTextSC.Size = new System.Drawing.Size(109, 20);
             this.EndTextSC.TabIndex = 20;
             this.EndTextSC.ValueChanged += new System.EventHandler(this.EndTextSC_ValueChanged);
             // 
             // IntroTextSC
             // 
-            this.IntroTextSC.Location = new System.Drawing.Point(78, 20);
+            this.IntroTextSC.Location = new System.Drawing.Point(89, 20);
             this.IntroTextSC.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.IntroTextSC.Name = "IntroTextSC";
-            this.IntroTextSC.Size = new System.Drawing.Size(120, 20);
+            this.IntroTextSC.Size = new System.Drawing.Size(109, 20);
             this.IntroTextSC.TabIndex = 19;
             this.IntroTextSC.ValueChanged += new System.EventHandler(this.IntroTextSC_ValueChanged);
             // 
@@ -3882,6 +3937,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.PortraitIDSC)).EndInit();
             this.groupBox11.ResumeLayout(false);
             this.groupBox11.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DefeatTextSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EndTextSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.IntroTextSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrainerLevelSC)).EndInit();
@@ -4130,6 +4186,8 @@
         private System.Windows.Forms.NumericUpDown MapIDSC;
         private System.Windows.Forms.NumericUpDown TrainerIDSC;
         private System.Windows.Forms.NumericUpDown PuppetdexIndexSC;
+        private System.Windows.Forms.NumericUpDown DefeatTextSC;
+        private System.Windows.Forms.ComboBox TrainerAICB;
     }
 }
 

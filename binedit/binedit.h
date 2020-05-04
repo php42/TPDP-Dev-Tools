@@ -25,5 +25,5 @@ struct BineditException : public std::runtime_error
 
 typedef std::filesystem::path Path;
 
-bool convert(const Path& input);
-bool patch(const Path& input);
+bool convert(const Path& input, int threads);
+bool patch(const Path& input, int threads);

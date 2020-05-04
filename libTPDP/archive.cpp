@@ -48,7 +48,7 @@ void Archive::parse()
     if(data_used_ < ARCHIVE_HEADER_SIZE)
         throw ArcError("Archive corrupt or unrecognized format.");
 
-	if((read_le16(data_.get()) ^ read_le16(KEY)) != ARCHIVE_MAGIC)
+    if((read_le16(data_.get()) ^ read_le16(KEY)) != ARCHIVE_MAGIC)
         throw ArcError("Archive corrupt or unrecognized format.");
 
     if((read_le16(&data_[2]) ^ read_le16(&KEY[2])) > 5)
@@ -57,20 +57,20 @@ void Archive::parse()
     if((read_le16(&data_[2]) ^ read_le16(&KEY[2])) < 4)
         throw ArcError("Unsupported archive version.\r\nUse version 4 (or 5) of the archive file format.");
 
-	if((read_le32(&data_[8]) ^ read_le32(&KEY[8])) == 0x1c)
-	{
-		is_ynk_ = false;
-	}
-	else if((read_le32(&data_[8]) ^ read_le32(&KEY_YNK[8])) == 0x1c)
-	{
-		is_ynk_ = true;
-	}
-	else
+    if((read_le32(&data_[8]) ^ read_le32(&KEY[8])) == 0x1c)
+    {
+        is_ynk_ = false;
+    }
+    else if((read_le32(&data_[8]) ^ read_le32(&KEY_YNK[8])) == 0x1c)
+    {
+        is_ynk_ = true;
+    }
+    else
         throw ArcError("Archive corrupt or unrecognized format.");
 
     decrypt();
 
-	header_.read(data_.get());
+    header_.read(data_.get());
 
     if(header_.data_offset > data_used_ ||
        header_.dir_table_offset > data_used_ ||
@@ -159,10 +159,10 @@ void Archive::encrypt()
 
 void Archive::open(const std::string& filename)
 {
-	close();
+    close();
 
     std::size_t sz;
-	auto buf = read_file(filename, sz);
+    auto buf = read_file(filename, sz);
     if(buf == nullptr)
         throw ArcError("File I/O read error.");
 
@@ -183,7 +183,7 @@ void Archive::open(const std::string& filename)
 
 void Archive::open(const std::wstring& filename)
 {
-	close();
+    close();
 
     std::size_t sz;
     auto buf = read_file(filename, sz);
@@ -811,101 +811,101 @@ bool Archive::is_dir(iterator it) const
 
 std::size_t Archive::decompress(const void *src, void *dest) const
 {
-	uint32_t output_size, input_size, offset, bytes_written = 0, len;
-	uint8_t *outptr, key;
-	const uint8_t *inptr;
-	const uint8_t *endin;
+    uint32_t output_size, input_size, offset, bytes_written = 0, len;
+    uint8_t *outptr, key;
+    const uint8_t *inptr;
+    const uint8_t *endin;
 
-	inptr = (const uint8_t*)src;
-	outptr = (uint8_t*)dest;
+    inptr = (const uint8_t*)src;
+    outptr = (uint8_t*)dest;
 
-	output_size = read_le32(&inptr[0]);
-	input_size = read_le32(&inptr[4]);
+    output_size = read_le32(&inptr[0]);
+    input_size = read_le32(&inptr[4]);
     endin = inptr + input_size;
 
-	if(dest == NULL)
-		return output_size;
+    if(dest == NULL)
+        return output_size;
 
-	key = inptr[8];
-	inptr += 9;
+    key = inptr[8];
+    inptr += 9;
 
-	while(inptr < endin)
-	{
-		if(bytes_written >= output_size)
-			return bytes_written;
+    while(inptr < endin)
+    {
+        if(bytes_written >= output_size)
+            return bytes_written;
 
-		if(inptr[0] != key)
-		{
-			*(outptr++) = *(inptr++);
-			++bytes_written;
-			continue;
-		}
+        if(inptr[0] != key)
+        {
+            *(outptr++) = *(inptr++);
+            ++bytes_written;
+            continue;
+        }
 
-		if(inptr[1] == key)	/* escape sequence */
-		{
-			*(outptr++) = key;
-			inptr += 2;
-			++bytes_written;
-			continue;
-		}
+        if(inptr[1] == key)	/* escape sequence */
+        {
+            *(outptr++) = key;
+            inptr += 2;
+            ++bytes_written;
+            continue;
+        }
 
-		unsigned int val = inptr[1];
-		if(val > key)
-			--val;
+        unsigned int val = inptr[1];
+        if(val > key)
+            --val;
 
-		inptr += 2;
+        inptr += 2;
 
-		unsigned int offset_len = val & 3;
-		len = val >> 3;
+        unsigned int offset_len = val & 3;
+        len = val >> 3;
 
-		if(val & 4)
-		{
-			len |= *inptr++ << 5;
-		}
+        if(val & 4)
+        {
+            len |= *inptr++ << 5;
+        }
 
-		len += 4;
+        len += 4;
 
-		if(offset_len == 0)
-		{
-			offset = *inptr++;
-		}
-		else if(offset_len == 1)
-		{
-			offset = inptr[0];
-			offset |= uint32_t(inptr[1]) << 8;
-			inptr += 2;
-		}
-		else
-		{
-			offset = inptr[0];
-			offset |= uint32_t(inptr[1]) << 8;
-			offset |= uint32_t(inptr[2]) << 16;
-			inptr += 3;
-		}
-		++offset;
+        if(offset_len == 0)
+        {
+            offset = *inptr++;
+        }
+        else if(offset_len == 1)
+        {
+            offset = inptr[0];
+            offset |= uint32_t(inptr[1]) << 8;
+            inptr += 2;
+        }
+        else
+        {
+            offset = inptr[0];
+            offset |= uint32_t(inptr[1]) << 8;
+            offset |= uint32_t(inptr[2]) << 16;
+            inptr += 3;
+        }
+        ++offset;
 
-		while(len > offset)
-		{
-			if((bytes_written + offset) > output_size)
-				return bytes_written;
-			memcpy(outptr, outptr - offset, offset);
-			outptr += offset;
-			len -= offset;
-			bytes_written += offset;
-			offset += offset;
-		}
+        while(len > offset)
+        {
+            if((bytes_written + offset) > output_size)
+                return bytes_written;
+            memcpy(outptr, outptr - offset, offset);
+            outptr += offset;
+            len -= offset;
+            bytes_written += offset;
+            offset += offset;
+        }
 
-		if(len > 0)
-		{
-			if((bytes_written + len) > output_size)
-				return bytes_written;
-			memcpy(outptr, outptr - offset, len);
-			outptr += len;
-			bytes_written += len;
-		}
-	}
+        if(len > 0)
+        {
+            if((bytes_written + len) > output_size)
+                return bytes_written;
+            memcpy(outptr, outptr - offset, len);
+            outptr += len;
+            bytes_written += len;
+        }
+    }
 
-	return bytes_written;
+    return bytes_written;
 }
 
 unsigned int Archive::hash_filename(const std::wstring& filename) const

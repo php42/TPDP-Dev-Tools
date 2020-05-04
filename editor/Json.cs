@@ -25,7 +25,7 @@ namespace editor.json
 
         public static int VersionMinor
         {
-            get { return 2; }
+            get { return 3; }
         }
 
         public bool VersionMatches()
@@ -107,6 +107,12 @@ namespace editor.json
 
         [DataMember]
         public uint end_text_id;
+
+        [DataMember]
+        public uint defeat_text_id;
+
+        [DataMember]
+        public uint ai_difficulty;
 
         [DataMember]
         public PuppetJson[] puppets = { new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson() };

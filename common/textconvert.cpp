@@ -23,7 +23,7 @@
 
 std::wstring sjis_to_utf(const std::string& str)
 {
-	std::wstring ret;
+    std::wstring ret;
 
     if(str.empty())
         return ret;
@@ -38,12 +38,12 @@ std::wstring sjis_to_utf(const std::string& str)
 
     ret.assign(buf.get(), len);
 
-	return ret;
+    return ret;
 }
 
 std::wstring sjis_to_utf(const char *str, std::size_t sz)
 {
-	std::wstring ret;
+    std::wstring ret;
 
     auto len = MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str, (int)sz, NULL, 0);
     if(!len)
@@ -55,12 +55,12 @@ std::wstring sjis_to_utf(const char *str, std::size_t sz)
 
     ret.assign(buf.get(), len);
 
-	return ret;
+    return ret;
 }
 
 std::string utf_to_sjis(const std::wstring& str)
 {
-	std::string ret;
+    std::string ret;
 
     if(str.empty())
         return ret;
@@ -75,12 +75,12 @@ std::string utf_to_sjis(const std::wstring& str)
 
     ret.assign(buf.get(), len);
 
-	return ret;
+    return ret;
 }
 
 std::wstring utf_widen(const std::string& str)
 {
-	std::wstring ret;
+    std::wstring ret;
 
     if(str.empty())
         return ret;
@@ -95,12 +95,12 @@ std::wstring utf_widen(const std::string& str)
 
     ret.assign(buf.get(), len);
 
-	return ret;
+    return ret;
 }
 
 std::string utf_narrow(const std::wstring& str)
 {
-	std::string ret;
+    std::string ret;
 
     if(str.empty())
         return ret;
@@ -115,5 +115,5 @@ std::string utf_narrow(const std::wstring& str)
 
     ret.assign(buf.get(), len);
 
-	return ret;
+    return ret;
 }

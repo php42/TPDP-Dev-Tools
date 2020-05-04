@@ -38,6 +38,7 @@ add_executable(binedit
     "../common/textconvert.cpp"
     "../common/typedefs.h"
     "../common/version.h"
+    "../common/thread_pool.h"
 )
 
 target_link_libraries(binedit PRIVATE libtpdp Boost::boost Boost::program_options)

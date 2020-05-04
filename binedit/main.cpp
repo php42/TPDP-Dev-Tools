@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <io.h>
+#include <algorithm>
 
 #ifndef VERSION_STRING
 #define VERSION_STRING "Unknown Version"
@@ -43,6 +44,7 @@ static void print_desc(const boost::program_options::options_description& desc)
 int wmain(int argc, wchar_t *argv[])
 {
     std::wstring input_path;
+    int threads;
     bool success = false;
 
     _setmode(_fileno(stdout), _O_U8TEXT);
@@ -57,12 +59,17 @@ int wmain(int argc, wchar_t *argv[])
         desc.add_options()
             ("help,h", "Display this help text\n")
             ("version,v", "Display version info and exit\n")
-            ("input-path,i", boost::program_options::wvalue(&input_path), "path to the root folder of the extracted game files (output of diffgen.exe --extract)\n")
-            ("convert,c", "recusively convert data files located at input-path to json.\nnote that input-path must point to files extracted with diffgen --extract, not the original game folder.\nconverted files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder)")
-            ("patch,p", "recusively patch the data files located at input-path with their json counterparts in the same folder");
+            ("input-path,i", boost::program_options::wvalue(&input_path), "Path to the root folder of the extracted game files (output of diffgen.exe --extract)\n")
+            ("convert,c", "Recusively convert data files located at input-path to json.\nnote that input-path must point to files extracted with diffgen --extract, not the original game folder.\nconverted files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder)")
+            ("patch,p", "Recusively patch the data files located at input-path with their json counterparts in the same folder")
+            ("threads,j", boost::program_options::wvalue(&threads)->default_value(std::thread::hardware_concurrency()), "Maximum number of concurrent threads to use\n");
 
         boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), opts);
         boost::program_options::notify(opts);
+
+        threads = std::clamp(threads, 2, 64);
+        if(threads < 8)
+            threads = (int)(threads * 1.5);
 
         if(opts.empty() || opts.count("help"))
         {
@@ -98,9 +105,9 @@ int wmain(int argc, wchar_t *argv[])
 
         auto begin = std::chrono::high_resolution_clock::now();
         if(opts.count("convert"))
-            success = convert(input_path);
+            success = convert(input_path, threads);
         else if(opts.count("patch"))
-            success = patch(input_path);
+            success = patch(input_path, threads);
 
         if(success)
         {

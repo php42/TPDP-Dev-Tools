@@ -189,8 +189,8 @@ bool write_file(const std::string& file, const void *buf, std::size_t len)
 {
 #ifdef _WIN32
     HANDLE outfile = CreateFileA(file.c_str(), GENERIC_WRITE, /*FILE_SHARE_READ*/ 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if(outfile == INVALID_HANDLE_VALUE)
-		return false;
+    if(outfile == INVALID_HANDLE_VALUE)
+        return false;
 
     DWORD bytes_written = 0;
     bool ret = (WriteFile(outfile, buf, (DWORD)len, &bytes_written, NULL) != 0);
@@ -212,8 +212,8 @@ bool write_file(const std::wstring& file, const void *buf, std::size_t len)
 {
 #ifdef _WIN32
     HANDLE outfile = CreateFileW(file.c_str(), GENERIC_WRITE, /*FILE_SHARE_READ*/ 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if(outfile == INVALID_HANDLE_VALUE)
-		return false;
+    if(outfile == INVALID_HANDLE_VALUE)
+        return false;
 
     DWORD bytes_written = 0;
     bool ret = (WriteFile(outfile, buf, (DWORD)len, &bytes_written, NULL) != 0);

@@ -34,7 +34,7 @@ this only applies to *instances* of puppets, e.g. those in a save file or traine
 0x96: u16  hp (battle hp remaining)   |
 0x98: u8   sp[4] (remaining sp)       |
 0x9C: u8   status_effects[2]          |
-0x9E: u8   ???                       _|--0x9F (this portion is present only for party puppets in the save file)
+0x9E: u8   stop_turns (stop status)  _|--0x9F (this portion is present only for party puppets in the save file)
 
 the 0x91 checksum is used to verify the integrity of a puppet.
 it does not seem to actually be used or enforced anywhere, so it is safe to ignore it completely.

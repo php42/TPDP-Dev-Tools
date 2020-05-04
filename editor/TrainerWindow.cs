@@ -304,6 +304,9 @@ namespace editor
 
             IntroTextSC.Value = dod.intro_text_id;
             EndTextSC.Value = dod.end_text_id;
+            DefeatTextSC.Value = dod.defeat_text_id;
+
+            TrainerAICB.SelectedIndex = (int)dod.ai_difficulty;
 
             TrainerSkill1CB.SelectedIndex = -1;
             TrainerSkill2CB.SelectedIndex = -1;
@@ -583,6 +586,25 @@ namespace editor
                 return;
 
             dods_[dodindex].end_text_id = (uint)EndTextSC.Value;
+        }
+
+        private void DefeatTextSC_ValueChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            if(dodindex < 0)
+                return;
+
+            dods_[dodindex].defeat_text_id = (uint)DefeatTextSC.Value;
+        }
+
+        private void TrainerAICB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var dodindex = TrainerLB.SelectedIndex;
+            var index = TrainerAICB.SelectedIndex;
+            if(dodindex < 0 || index < 0)
+                return;
+
+            dods_[dodindex].ai_difficulty = (uint)index;
         }
 
         private void PortraitIDSC_ValueChanged(object sender, EventArgs e)

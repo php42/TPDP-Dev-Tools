@@ -42,6 +42,7 @@ add_executable(diffgen
     "../common/textconvert.cpp"
     "../common/typedefs.h"
     "../common/version.h"
+    "../common/thread_pool.h"
 )
 
 target_link_libraries(diffgen PRIVATE libtpdp zlib zip vcdcom vcddec vcdenc Boost::boost Boost::program_options)

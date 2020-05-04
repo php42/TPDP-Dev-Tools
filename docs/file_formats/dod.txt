@@ -17,6 +17,8 @@ if you're clever, you can defeat the encryption without the use of efile.bin, bu
 "start_bgm": ID of music played during initial dialogue before the battle begins.
 "battle_bgm": ID of music played during battle.
 "victory_bgm": ID of music played on the result screen.
+"defeat_text_id": ID of the text file that's displayed when the player is defeated by the trainer.
+"ai_difficulty": difficulty of trainer AI (valid values are 0, 1, 2).
 
 
 ---BINARY FORMAT---
@@ -28,7 +30,8 @@ if you're clever, you can defeat the encryption without the use of efile.bin, bu
 0x0024: u8  victory_bgm   |
 0x0025: u16 intro_text_id |
 0x0027: u16 end_text_id   |--0x42A
-0x0029-0x002B: ???        |
+0x0029: u16 defeat_text_id|
+0x002B: u8  ai_difficulty |
 0x002C: puppet[6]         | (0x95 per puppet)
 0x03AA: char title[128]  _|
 
