@@ -1055,9 +1055,11 @@
             label70.AutoSize = true;
             label70.Location = new System.Drawing.Point(212, 36);
             label70.Name = "label70";
-            label70.Size = new System.Drawing.Size(375, 13);
+            label70.Size = new System.Drawing.Size(378, 39);
             label70.TabIndex = 19;
-            label70.Text = "Note: You\'ll need to change the name in SkillData.csv as well (requires reload)";
+            label70.Text = "Note: You\'ll need to change the name in SkillData.csv as well (requires reload).\r" +
+    "\nYou can also rename the default \"SKILL1234\" skills in SkillData.csv to enable\r\n" +
+    "them for editing here.";
             // 
             // label66
             // 
@@ -1461,9 +1463,9 @@
             label105.AutoSize = true;
             label105.Location = new System.Drawing.Point(6, 16);
             label105.Name = "label105";
-            label105.Size = new System.Drawing.Size(293, 13);
+            label105.Size = new System.Drawing.Size(315, 13);
             label105.TabIndex = 19;
-            label105.Text = "Seems to affect interactions with certain abilities and the like.";
+            label105.Text = "Seems to affect interactions with certain abilities and/or trainer AI.";
             // 
             // groupBox10
             // 
@@ -2236,6 +2238,7 @@
             this.PuppetLB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.PuppetLB.FormattingEnabled = true;
+            this.PuppetLB.HorizontalScrollbar = true;
             this.PuppetLB.Location = new System.Drawing.Point(6, 6);
             this.PuppetLB.Name = "PuppetLB";
             this.PuppetLB.Size = new System.Drawing.Size(108, 537);
@@ -2870,6 +2873,7 @@
             this.TrainerLB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.TrainerLB.FormattingEnabled = true;
+            this.TrainerLB.HorizontalScrollbar = true;
             this.TrainerLB.Location = new System.Drawing.Point(6, 6);
             this.TrainerLB.Name = "TrainerLB";
             this.TrainerLB.Size = new System.Drawing.Size(108, 537);
@@ -3902,9 +3906,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(776, 581);
             this.Controls.Add(this.TabControl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.2.1 BETA";
+            this.Text = "TPDP Editor v1.3.0";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);

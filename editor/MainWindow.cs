@@ -629,9 +629,6 @@ namespace editor
                 return;
             }
 
-            // keep UI alive
-            Update();
-
             // Parse puppet names
             string puppetnames = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/DollName.csv" : "/gn_dat3.arc/name/DollName.csv");
             try
@@ -668,8 +665,6 @@ namespace editor
                 Reset();
                 return;
             }
-
-            Update();
 
             // Parse ability names
             ability_names_.Clear();
@@ -814,8 +809,6 @@ namespace editor
                 return;
             }
 
-            Update();
-
             // Populate Trainers tab
             try
             {
@@ -828,8 +821,6 @@ namespace editor
                 Reset();
                 return;
             }
-
-            Update();
 
             // Populate Skills tab
             try
@@ -844,8 +835,6 @@ namespace editor
                 return;
             }
 
-            Update();
-
             // Populate Design tab
             try
             {
@@ -857,8 +846,6 @@ namespace editor
                 Reset();
                 return;
             }
-
-            Update();
 
             // Populate Event tab
             try

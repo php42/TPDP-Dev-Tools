@@ -1,11 +1,23 @@
 # TPDP-Dev-Tools
 This is a set of "Romhacking" tools for TPDP.  
-While a GUI front-end is provided, these are primarily command-line tools. Basic knowledge of the windows command prompt is strongly recommended.  
-An explanation of the individual tools follows below.  
+The toolchain consists of a GUI front-end editor and some command-line back-end tools.  
+Basic knowledge of the windows command prompt is recommended, but not required.  
+An explanation of the individual tools follows below.
+
+## Editor
+The GUI editing interface. It supports editing puppets, trainers, skills, and maps.  
+It also handles invoking the command-line tools for most tasks, including creating patch files.  
+However not everything can be handled by the GUI. As part of the setup, all of the games files will be extracted to a "working directory".  
+Changes to any of the files in the working directory (as well as files added to the directory) will be reflected in the game data when repacking or creating a patch.  
+Sprites and other data files must be edited manually in this way.
+
+## Patcher
+GUI front-end for patching the game.  
+It literally is just a wrapper that invokes diffgen.exe with appropriate arguments.  
 
 ## Diffgen
-This is a patching utility, you don't need to use it if you'd prefer to use xdelta or whatever.  
-It also provides a convenient way to extract all the files from the archives for editing.  
+This is a command-line utility for manipulating the games encrypted archives.  
+It supports extracting, repacking, and patching the game data.  
 Invoke with --help for syntax.
 
 Patches are applied on a **per-file** (within the archive) basis.  
@@ -16,27 +28,18 @@ The patch format is actually just a zip file that mirrors the layout of the game
 Note that deleting files from the archive is presently unsupported.
 
 ## BinEdit
-This converts the games various binary file formats to human-readable json and back. The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).  
+This is a command-line utility for converting the games various binary file formats to human-readable json and back.  
+The produced json files are saved alongside the original (e.g. DollData.dbs -> DollData.json in the same folder).  
 Note that these are also patches in the sense that the json files are used to "patch" the extracted binary files.  
 The reason for this is that the entire file format is not always known, so this allows edits to be made to the known portions of existing files.  
 Be prepared to bust out some python scripts or something because some of these produce large quantities of json.  
 Invoke with --help for syntax.
 
 ## LibTPDP
-This is a c++ static library that provides facilities for manipulating the games various binary formats, including the archives themselves.  
+This is a C++ static library that provides facilities for manipulating the games various binary formats, including the archives themselves.  
 It was made for the other tools in this project, but you can use it to make your own tools if you'd like.  
 Documentation is in the form of comments in the header files.  
-Its only dependency is windows.h.  
-
-## Patcher
-This is a C# GUI front-end for patching the game with a diffgen patch file.  
-It literally is just a wrapper that invokes diffgen.exe with appropriate arguments for the convenience of people who don't want to use the command-line.  
-This is intended to make it easy for end-users to apply a mod to their game.
-
-## Editor
-This is a C# GUI front-end for diffgen and binedit.  
-It also helps with some of the editing, providing cross-referencing of names and IDs, a graphical map editor, and similar utilities.  
-Note that it is _not_ a complete substitute for manual editing and is provided as a convenience for certain tasks.
+Its only dependency is windows.h.
 
 ## Example Session
 ```batch

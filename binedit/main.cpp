@@ -68,7 +68,7 @@ int wmain(int argc, wchar_t *argv[])
         boost::program_options::notify(opts);
 
         threads = std::clamp(threads, 2, 64);
-        if(threads < 8)
+        if(threads < 6)
             threads = (int)(threads * 1.5);
 
         if(opts.empty() || opts.count("help"))

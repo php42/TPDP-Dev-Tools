@@ -23,12 +23,13 @@
 #include <future>
 #include <utility>
 #include <stdexcept>
+#include <type_traits>
 
-template<typename T = void>
+template<typename FuncType = std::function<void()>>
 class ThreadPool
 {
 public:
-    typedef std::function<T()> Task;
+    typedef FuncType Task;
 
 protected:
     std::mutex mtx_;
@@ -38,8 +39,6 @@ protected:
     std::vector<std::thread> threads_;
     int busy_threads_ = 0;
     bool stop_ = false;
-
-    ThreadPool() {}
 
     void worker()
     {
@@ -69,21 +68,8 @@ protected:
     }
 
 public:
-    ThreadPool(std::size_t num_threads)
-    {
-        try
-        {
-            for(std::size_t i = 0; i < num_threads; ++i)
-            {
-                threads_.push_back(std::thread(&ThreadPool::worker, this));
-            }
-        }
-        catch(...)
-        {
-            stop();
-            throw;
-        }
-    }
+    ThreadPool() = default;
+    ThreadPool(std::size_t num_threads) { start(num_threads); }
 
     ~ThreadPool()
     {
@@ -95,6 +81,24 @@ public:
     ThreadPool(ThreadPool&&) = delete;
     ThreadPool& operator=(const ThreadPool&) = delete;
     ThreadPool& operator=(ThreadPool&&) = delete;
+
+    void start(std::size_t num_threads)
+    {
+        try
+        {
+            std::lock_guard lock(mtx_);
+            stop_ = false;
+            while(threads_.size() < num_threads)
+            {
+                threads_.push_back(std::thread(&ThreadPool::worker, this));
+            }
+        }
+        catch(...)
+        {
+            stop();
+            throw;
+        }
+    }
 
     void stop()
     {
@@ -114,21 +118,13 @@ public:
         task_queue_ = {};
     }
 
-    void queue_task(const Task& task)
+    template<typename T>
+    void queue_task(T&& task)
     {
         std::lock_guard lock(mtx_);
         if(stop_)
             throw std::logic_error("Posting to a stopped thread pool.");
-        task_queue_.push(task);
-        cv_.notify_one();
-    }
-
-    void queue_task(Task&& task)
-    {
-        std::lock_guard lock(mtx_);
-        if(stop_)
-            throw std::logic_error("Posting to a stopped thread pool.");
-        task_queue_.push(std::move(task));
+        task_queue_.emplace(std::forward<T>(task));
         cv_.notify_one();
     }
 
@@ -157,90 +153,27 @@ public:
     }
 };
 
-template<typename T>
-class PackagedThreadPool : public ThreadPool<T>
+template<typename RetType>
+class PackagedThreadPool : public ThreadPool<std::packaged_task<RetType()>>
 {
 public:
     using ThreadPool::Task;
 
-protected:
-    std::queue<std::future<T>> futures_;
-
-    void worker()
-    {
-        std::unique_lock lock(mtx_);
-
-        for(;;)
-        {
-            while(task_queue_.empty())
-            {
-                if(stop_)
-                    return;
-                cv_.wait(lock);
-            }
-
-            std::packaged_task<T(void)> task(std::move(task_queue_.front()));
-            task_queue_.pop();
-
-            futures_.push(task.get_future());
-
-            ++busy_threads_;
-            lock.unlock();
-
-            task();
-
-            lock.lock();
-            --busy_threads_;
-            consumer_cv_.notify_all();
-        }
-    }
-
 public:
-    PackagedThreadPool(std::size_t num_threads)
+    PackagedThreadPool() = default;
+    PackagedThreadPool(std::size_t num_threads) { start(num_threads); }
+
+    template<typename T>
+    std::future<RetType> queue_task(T&& task)
     {
-        try
-        {
-            for(std::size_t i = 0; i < num_threads; ++i)
-            {
-                threads_.push_back(std::thread(&PackagedThreadPool::worker, this));
-            }
-        }
-        catch(...)
-        {
-            stop();
-            throw;
-        }
-    }
+        Task t(std::forward<T>(task));
+        auto ret = t.get_future();
 
-    bool pop_future(std::future<T>& out)
-    {
-        std::unique_lock lock(mtx_);
-
-        while(futures_.empty() && !task_queue_.empty())
-            consumer_cv_.wait(lock);
-
-        if(futures_.empty())
-            return false;
-
-        out = std::move(futures_.front());
-        futures_.pop();
-        return true;
-    }
-
-    std::vector<std::future<T>> get_futures()
-    {
-        std::unique_lock lock(mtx_);
-        std::vector<std::future<T>> vec;
-
-        while(futures_.empty() && !task_queue_.empty())
-            consumer_cv_.wait(lock);
-
-        while(!futures_.empty())
-        {
-            vec.push_back(std::move(futures_.front()));
-            futures_.pop();
-        }
-
-        return vec;
+        std::lock_guard lock(mtx_);
+        if(stop_)
+            throw std::logic_error("Posting to a stopped thread pool.");
+        task_queue_.emplace(std::move(t));
+        cv_.notify_one();
+        return std::move(ret);
     }
 };
