@@ -61,20 +61,18 @@ namespace editor
         {
             InitializeComponent();
 
-            // detect game folder location
-            var appdata_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var path = appdata_path + "/FocasLens/幻想人形演舞-ユメノカケラ-/install.ini";
-            if(!File.Exists(path))
-            {
-                path = appdata_path + "/FocasLens/幻想人形演舞/gn_enbu.ini";
-                if(!File.Exists(path))
-                    return;
-            }
-
             InitDesign();
 
             try
             {
+                // detect game folder location
+                var appdata_path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var path = appdata_path + "/FocasLens/幻想人形演舞-ユメノカケラ-/install.ini";
+                if(!File.Exists(path))
+                {
+                    path = appdata_path + "/FocasLens/幻想人形演舞/gn_enbu.ini";
+                }
+
                 var str = File.ReadAllText(path, Encoding.GetEncoding(932));
                 if(String.IsNullOrEmpty(str))
                     return;
