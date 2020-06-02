@@ -62,10 +62,18 @@ namespace editor
                 return;
 
             var id = ((Tuple<string, uint>)SkillDataCB.Items[index]).Item2;
+
+            if(skill_names_[id] != skills_[id].name)
+            {
+                if(MessageBox.Show(this, "Embedded name does not match entry in SkillData.csv\nOverwrite?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    skills_[id].name = skill_names_[id];
+            }
+
             var skill = skills_[id];
 
             SkillDataIDSC.Value = id;
-            SkillDataTB.Text = skill.name;
+            SkillDataTB.Text = skill_names_[id];
+            SkillDescTB.Text = skill_descs_[id];
             SkillDataElementCB.SelectedIndex = SkillDataElementCB.FindStringExact(skill.element);
             SkillDataTypeCB.SelectedIndex = SkillDataTypeCB.FindStringExact(skill.type);
             SkillDataSPSC.Value = skill.sp;
@@ -92,10 +100,15 @@ namespace editor
             {
                 var name = SkillDataTB.Text;
                 skills_[id].name = name;
+                skill_names_[id] = name;
 
                 SkillDataCB.SelectedIndexChanged -= SkillDataChanged;
                 SkillDataCB.Items[index] = new Tuple<string, uint>(name, id);
                 SkillDataCB.SelectedIndexChanged += SkillDataChanged;
+            }
+            else if(sender == (object)SkillDescTB)
+            {
+                skill_descs_[id] = SkillDescTB.Text;
             }
             else if(sender == (object)SkillDataElementCB)       // skill element
             {
@@ -153,6 +166,31 @@ namespace editor
                     return;
                 skills_[id].ynk_classification = (uint)val;
             }
+        }
+
+        private void NewSkillBT_Click(object sender, EventArgs e)
+        {
+            uint id = 0;
+            using(var dialog = new NewIDDialog("New Skill", 1023))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
+            if(skills_.ContainsKey(id))
+            {
+                ErrMsg("ID already in use!");
+                return;
+            }
+
+            var str = "Skill" + id.ToString();
+            skill_names_[id] = str;
+            skill_descs_[id] = str;
+            skills_[id] = new SkillData { id = id, name = str };
+
+            var index = SkillDataCB.Items.Add(new Tuple<string, uint>(str, id));
+            SkillDataCB.SelectedIndex = index;
         }
     }
 }

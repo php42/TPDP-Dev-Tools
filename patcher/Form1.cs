@@ -67,6 +67,11 @@ namespace patcher
             }
         }
 
+        private void ErrMsg(string msg)
+        {
+            MessageBox.Show(this, msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
@@ -126,27 +131,27 @@ namespace patcher
         {
             if(proc_ != null)
             {
-                MessageBox.Show("Please wait for the current operation to complete.");
+                ErrMsg("Please wait for the current operation to complete.");
                 return;
             }
 
             if(!File.Exists("diffgen.exe"))
             {
-                MessageBox.Show("Could not find diffgen.exe, please make sure it is in the same folder as this program", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrMsg("Could not find diffgen.exe, please make sure it is in the same folder as this program");
                 return;
             }
 
             textBox1.Text = textBox1.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!Directory.Exists(textBox1.Text))
             {
-                MessageBox.Show("Invalid game folder path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrMsg("Invalid game folder path");
                 return;
             }
 
             textBox2.Text = textBox2.Text.TrimEnd("/\\".ToCharArray()); // Remove trailing slashes
             if(!File.Exists(textBox2.Text))
             {
-                MessageBox.Show("Invalid patch file path", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrMsg("Invalid patch file path");
                 return;
             }
 
@@ -178,7 +183,7 @@ namespace patcher
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrMsg(ex.Message);
                 proc_.Close();
                 proc_ = null;
             }

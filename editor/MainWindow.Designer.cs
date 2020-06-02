@@ -88,7 +88,6 @@
             System.Windows.Forms.Label label34;
             System.Windows.Forms.Label label33;
             System.Windows.Forms.Label label71;
-            System.Windows.Forms.Label label70;
             System.Windows.Forms.Label label66;
             System.Windows.Forms.Label label64;
             System.Windows.Forms.Label label65;
@@ -143,6 +142,8 @@
             System.Windows.Forms.Label label5;
             System.Windows.Forms.Label label110;
             System.Windows.Forms.Label label111;
+            System.Windows.Forms.Label label112;
+            System.Windows.Forms.Label label70;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
@@ -242,6 +243,8 @@
             this.TrainerNameTB = new System.Windows.Forms.TextBox();
             this.TrainerLB = new System.Windows.Forms.ListBox();
             this.SkillsTabPage = new System.Windows.Forms.TabPage();
+            this.SkillDescTB = new System.Windows.Forms.TextBox();
+            this.NewSkillBT = new System.Windows.Forms.Button();
             this.SkillDataClassCB = new System.Windows.Forms.ComboBox();
             this.SkillDataEffectIDSC = new System.Windows.Forms.NumericUpDown();
             this.SkillDataEffectChanceSC = new System.Windows.Forms.NumericUpDown();
@@ -376,7 +379,6 @@
             label34 = new System.Windows.Forms.Label();
             label33 = new System.Windows.Forms.Label();
             label71 = new System.Windows.Forms.Label();
-            label70 = new System.Windows.Forms.Label();
             label66 = new System.Windows.Forms.Label();
             label64 = new System.Windows.Forms.Label();
             label65 = new System.Windows.Forms.Label();
@@ -431,6 +433,8 @@
             label5 = new System.Windows.Forms.Label();
             label110 = new System.Windows.Forms.Label();
             label111 = new System.Windows.Forms.Label();
+            label112 = new System.Windows.Forms.Label();
+            label70 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -1050,17 +1054,6 @@
             label71.TabIndex = 20;
             label71.Text = "0 = self, 1 = opponent, 3 = hazard/indirect, 4 = weather/terrain";
             // 
-            // label70
-            // 
-            label70.AutoSize = true;
-            label70.Location = new System.Drawing.Point(212, 36);
-            label70.Name = "label70";
-            label70.Size = new System.Drawing.Size(378, 39);
-            label70.TabIndex = 19;
-            label70.Text = "Note: You\'ll need to change the name in SkillData.csv as well (requires reload).\r" +
-    "\nYou can also rename the default \"SKILL1234\" skills in SkillData.csv to enable\r\n" +
-    "them for editing here.";
-            // 
             // label66
             // 
             label66.AutoSize = true;
@@ -1073,7 +1066,7 @@
             // label64
             // 
             label64.AutoSize = true;
-            label64.Location = new System.Drawing.Point(8, 246);
+            label64.Location = new System.Drawing.Point(8, 272);
             label64.Name = "label64";
             label64.Size = new System.Drawing.Size(75, 13);
             label64.TabIndex = 16;
@@ -1082,7 +1075,7 @@
             // label65
             // 
             label65.AutoSize = true;
-            label65.Location = new System.Drawing.Point(8, 272);
+            label65.Location = new System.Drawing.Point(8, 298);
             label65.Name = "label65";
             label65.Size = new System.Drawing.Size(49, 13);
             label65.TabIndex = 17;
@@ -1091,7 +1084,7 @@
             // label63
             // 
             label63.AutoSize = true;
-            label63.Location = new System.Drawing.Point(8, 220);
+            label63.Location = new System.Drawing.Point(8, 246);
             label63.Name = "label63";
             label63.Size = new System.Drawing.Size(38, 13);
             label63.TabIndex = 13;
@@ -1100,7 +1093,7 @@
             // label62
             // 
             label62.AutoSize = true;
-            label62.Location = new System.Drawing.Point(8, 194);
+            label62.Location = new System.Drawing.Point(8, 220);
             label62.Name = "label62";
             label62.Size = new System.Drawing.Size(37, 13);
             label62.TabIndex = 11;
@@ -1109,7 +1102,7 @@
             // label61
             // 
             label61.AutoSize = true;
-            label61.Location = new System.Drawing.Point(8, 168);
+            label61.Location = new System.Drawing.Point(8, 194);
             label61.Name = "label61";
             label61.Size = new System.Drawing.Size(52, 13);
             label61.TabIndex = 9;
@@ -1118,7 +1111,7 @@
             // label60
             // 
             label60.AutoSize = true;
-            label60.Location = new System.Drawing.Point(8, 142);
+            label60.Location = new System.Drawing.Point(8, 168);
             label60.Name = "label60";
             label60.Size = new System.Drawing.Size(21, 13);
             label60.TabIndex = 7;
@@ -1127,7 +1120,7 @@
             // label59
             // 
             label59.AutoSize = true;
-            label59.Location = new System.Drawing.Point(6, 89);
+            label59.Location = new System.Drawing.Point(6, 115);
             label59.Name = "label59";
             label59.Size = new System.Drawing.Size(31, 13);
             label59.TabIndex = 5;
@@ -1136,7 +1129,7 @@
             // SkillDataElementLabel
             // 
             SkillDataElementLabel.AutoSize = true;
-            SkillDataElementLabel.Location = new System.Drawing.Point(6, 62);
+            SkillDataElementLabel.Location = new System.Drawing.Point(6, 88);
             SkillDataElementLabel.Name = "SkillDataElementLabel";
             SkillDataElementLabel.Size = new System.Drawing.Size(45, 13);
             SkillDataElementLabel.TabIndex = 3;
@@ -1443,7 +1436,7 @@
             // label67
             // 
             label67.AutoSize = true;
-            label67.Location = new System.Drawing.Point(6, 116);
+            label67.Location = new System.Drawing.Point(6, 142);
             label67.Name = "label67";
             label67.Size = new System.Drawing.Size(68, 13);
             label67.TabIndex = 21;
@@ -1580,6 +1573,25 @@
             label111.Size = new System.Drawing.Size(60, 13);
             label111.TabIndex = 40;
             label111.Text = "AI Difficulty";
+            // 
+            // label112
+            // 
+            label112.AutoSize = true;
+            label112.Location = new System.Drawing.Point(92, 402);
+            label112.Name = "label112";
+            label112.Size = new System.Drawing.Size(392, 13);
+            label112.TabIndex = 23;
+            label112.Text = "(Requires reload) Note: New skills will not have proper animations without hacker" +
+    "y";
+            // 
+            // label70
+            // 
+            label70.AutoSize = true;
+            label70.Location = new System.Drawing.Point(6, 62);
+            label70.Name = "label70";
+            label70.Size = new System.Drawing.Size(60, 13);
+            label70.TabIndex = 24;
+            label70.Text = "Description";
             // 
             // TabControl
             // 
@@ -2882,11 +2894,14 @@
             // 
             // SkillsTabPage
             // 
+            this.SkillsTabPage.Controls.Add(this.SkillDescTB);
+            this.SkillsTabPage.Controls.Add(label70);
+            this.SkillsTabPage.Controls.Add(label112);
+            this.SkillsTabPage.Controls.Add(this.NewSkillBT);
             this.SkillsTabPage.Controls.Add(this.SkillDataClassCB);
             this.SkillsTabPage.Controls.Add(this.SkillDataEffectIDSC);
             this.SkillsTabPage.Controls.Add(label67);
             this.SkillsTabPage.Controls.Add(this.SkillDataEffectChanceSC);
-            this.SkillsTabPage.Controls.Add(label70);
             this.SkillsTabPage.Controls.Add(label64);
             this.SkillsTabPage.Controls.Add(label65);
             this.SkillsTabPage.Controls.Add(this.label69);
@@ -2915,6 +2930,24 @@
             this.SkillsTabPage.Text = "Skills";
             this.SkillsTabPage.UseVisualStyleBackColor = true;
             // 
+            // SkillDescTB
+            // 
+            this.SkillDescTB.Location = new System.Drawing.Point(80, 59);
+            this.SkillDescTB.Name = "SkillDescTB";
+            this.SkillDescTB.Size = new System.Drawing.Size(448, 20);
+            this.SkillDescTB.TabIndex = 25;
+            this.SkillDescTB.TextChanged += new System.EventHandler(this.SkillDataChanged);
+            // 
+            // NewSkillBT
+            // 
+            this.NewSkillBT.Location = new System.Drawing.Point(11, 397);
+            this.NewSkillBT.Name = "NewSkillBT";
+            this.NewSkillBT.Size = new System.Drawing.Size(75, 23);
+            this.NewSkillBT.TabIndex = 22;
+            this.NewSkillBT.Text = "New Skill";
+            this.NewSkillBT.UseVisualStyleBackColor = true;
+            this.NewSkillBT.Click += new System.EventHandler(this.NewSkillBT_Click);
+            // 
             // SkillDataClassCB
             // 
             this.SkillDataClassCB.FormattingEnabled = true;
@@ -2922,7 +2955,7 @@
             "None",
             "BU",
             "EN"});
-            this.SkillDataClassCB.Location = new System.Drawing.Point(80, 113);
+            this.SkillDataClassCB.Location = new System.Drawing.Point(80, 139);
             this.SkillDataClassCB.Name = "SkillDataClassCB";
             this.SkillDataClassCB.Size = new System.Drawing.Size(126, 21);
             this.SkillDataClassCB.TabIndex = 7;
@@ -2930,7 +2963,7 @@
             // 
             // SkillDataEffectIDSC
             // 
-            this.SkillDataEffectIDSC.Location = new System.Drawing.Point(89, 270);
+            this.SkillDataEffectIDSC.Location = new System.Drawing.Point(89, 296);
             this.SkillDataEffectIDSC.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -2943,7 +2976,7 @@
             // 
             // SkillDataEffectChanceSC
             // 
-            this.SkillDataEffectChanceSC.Location = new System.Drawing.Point(89, 244);
+            this.SkillDataEffectChanceSC.Location = new System.Drawing.Point(89, 270);
             this.SkillDataEffectChanceSC.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2983,7 +3016,7 @@
             this.groupBox9.Controls.Add(this.SkillDataEffectTargetSC);
             this.groupBox9.Controls.Add(label66);
             this.groupBox9.Controls.Add(label71);
-            this.groupBox9.Location = new System.Drawing.Point(11, 296);
+            this.groupBox9.Location = new System.Drawing.Point(11, 322);
             this.groupBox9.Name = "groupBox9";
             this.groupBox9.Size = new System.Drawing.Size(517, 69);
             this.groupBox9.TabIndex = 15;
@@ -3005,7 +3038,7 @@
             // 
             // SkillDataPrioSC
             // 
-            this.SkillDataPrioSC.Location = new System.Drawing.Point(89, 218);
+            this.SkillDataPrioSC.Location = new System.Drawing.Point(89, 244);
             this.SkillDataPrioSC.Maximum = new decimal(new int[] {
             127,
             0,
@@ -3023,7 +3056,7 @@
             // 
             // SkillDataPowerSC
             // 
-            this.SkillDataPowerSC.Location = new System.Drawing.Point(89, 192);
+            this.SkillDataPowerSC.Location = new System.Drawing.Point(89, 218);
             this.SkillDataPowerSC.Maximum = new decimal(new int[] {
             255,
             0,
@@ -3036,7 +3069,7 @@
             // 
             // SkillDataAccSC
             // 
-            this.SkillDataAccSC.Location = new System.Drawing.Point(89, 166);
+            this.SkillDataAccSC.Location = new System.Drawing.Point(89, 192);
             this.SkillDataAccSC.Maximum = new decimal(new int[] {
             255,
             0,
@@ -3049,7 +3082,7 @@
             // 
             // SkillDataSPSC
             // 
-            this.SkillDataSPSC.Location = new System.Drawing.Point(89, 140);
+            this.SkillDataSPSC.Location = new System.Drawing.Point(89, 166);
             this.SkillDataSPSC.Maximum = new decimal(new int[] {
             255,
             0,
@@ -3067,7 +3100,7 @@
             "Focus",
             "Spread",
             "Status"});
-            this.SkillDataTypeCB.Location = new System.Drawing.Point(80, 86);
+            this.SkillDataTypeCB.Location = new System.Drawing.Point(80, 112);
             this.SkillDataTypeCB.Name = "SkillDataTypeCB";
             this.SkillDataTypeCB.Size = new System.Drawing.Size(126, 21);
             this.SkillDataTypeCB.TabIndex = 6;
@@ -3097,7 +3130,7 @@
             "Sound",
             "Dream",
             "Warped"});
-            this.SkillDataElementCB.Location = new System.Drawing.Point(80, 59);
+            this.SkillDataElementCB.Location = new System.Drawing.Point(80, 85);
             this.SkillDataElementCB.Name = "SkillDataElementCB";
             this.SkillDataElementCB.Size = new System.Drawing.Size(126, 21);
             this.SkillDataElementCB.TabIndex = 4;
@@ -4193,6 +4226,8 @@
         private System.Windows.Forms.NumericUpDown PuppetdexIndexSC;
         private System.Windows.Forms.NumericUpDown DefeatTextSC;
         private System.Windows.Forms.ComboBox TrainerAICB;
+        private System.Windows.Forms.Button NewSkillBT;
+        private System.Windows.Forms.TextBox SkillDescTB;
     }
 }
 

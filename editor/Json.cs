@@ -2,10 +2,6 @@
 
 namespace editor.json
 {
-    // Compiler can't detect members being set
-    // by the JSON serializer and complains a lot
-#pragma warning disable CS0649
-
     [DataContract]
     class VersionJson
     {
@@ -348,7 +344,7 @@ namespace editor.json
     class SkillJson
     {
         [DataMember]
-        public SkillData[] skills;
+        public SkillData[] skills = new SkillData[1024];
     }
 
     [DataContract]
@@ -363,6 +359,4 @@ namespace editor.json
         [DataMember]
         public bool map_popup = true;
     }
-
-#pragma warning restore CS0649
 }

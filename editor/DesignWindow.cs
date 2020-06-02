@@ -898,7 +898,7 @@ namespace editor
                 return;
             }
 
-            if(MessageBox.Show("Are you sure you want to clear the entire map?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if(MessageBox.Show(this, "Are you sure you want to clear the entire map?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 SaveHistory();
                 var layer_sz = fmf_data_.width * fmf_data_.height * 2;

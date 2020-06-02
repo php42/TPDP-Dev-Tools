@@ -1041,52 +1041,60 @@ bool convert(const Path& input, int threads)
     std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
     ThreadPool pool(threads);
 
-    for(auto& entry : fs::recursive_directory_iterator(input))
+    for(int i = 1; i < 7; ++i)
     {
-        try
-        {
-            if(!entry.is_regular_file())
-                continue;
+        auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
+        auto arc_path = input / arc_name;
+        if(!fs::exists(arc_path) || !fs::is_directory(arc_path))
+            continue;
 
-            auto in = entry.path();
-            auto json = Path(in).replace_extension(L".json");
-
-            if(algo::iequals(in.extension().wstring(), L".mad"))
-            {
-                pool.queue_task(make_task(in.wstring(), convert_mad, &g_count_mad, in, json));
-            }
-            else if(algo::iequals(in.extension().wstring(), L".dod"))
-            {
-                pool.queue_task(make_task(in.wstring(), convert_dod, &g_count_dod, in, json, rand_data.get()));
-            }
-            else if(algo::iequals(in.extension().wstring(), L".chp"))
-            {
-                pool.queue_task(make_task(in.wstring(), convert_chip, &g_count_chp, in, json));
-            }
-            else if(algo::iequals(in.extension().wstring(), L".fmf"))
-            {
-                json.replace_filename(json.stem().wstring() + L"_fmf.json");
-                pool.queue_task(make_task(in.wstring(), convert_fmf, &g_count_fmf, in, json));
-            }
-            else if(algo::iequals(in.extension().wstring(), L".obs"))
-            {
-                json.replace_filename(json.stem().wstring() + L"_obs.json");
-                pool.queue_task(make_task(in.wstring(), convert_obs, &g_count_obs, in, json));
-            }
-            else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
-            {
-                pool.queue_task(make_task(in.wstring(), convert_nerds, nullptr, in, json));
-            }
-            else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
-            {
-                pool.queue_task(make_task(in.wstring(), convert_skills, nullptr, in, json));
-            }
-        }
-        catch(const std::exception& ex)
+        for(auto& entry : fs::recursive_directory_iterator(arc_path))
         {
-            ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::wcerr << L"Error converting file: " << entry.path() << std::endl;
-            std::wcerr << utf_widen(ex.what()) << std::endl;
+            try
+            {
+                if(!entry.is_regular_file())
+                    continue;
+
+                auto in = entry.path();
+                auto json = Path(in).replace_extension(L".json");
+
+                if(algo::iequals(in.extension().wstring(), L".mad"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_mad, &g_count_mad, in, json));
+                }
+                else if(algo::iequals(in.extension().wstring(), L".dod"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_dod, &g_count_dod, in, json, rand_data.get()));
+                }
+                else if(algo::iequals(in.extension().wstring(), L".chp"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_chip, &g_count_chp, in, json));
+                }
+                else if(algo::iequals(in.extension().wstring(), L".fmf"))
+                {
+                    json.replace_filename(json.stem().wstring() + L"_fmf.json");
+                    pool.queue_task(make_task(in.wstring(), convert_fmf, &g_count_fmf, in, json));
+                }
+                else if(algo::iequals(in.extension().wstring(), L".obs"))
+                {
+                    json.replace_filename(json.stem().wstring() + L"_obs.json");
+                    pool.queue_task(make_task(in.wstring(), convert_obs, &g_count_obs, in, json));
+                }
+                else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_nerds, nullptr, in, json));
+                }
+                else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_skills, nullptr, in, json));
+                }
+            }
+            catch(const std::exception& ex)
+            {
+                ScopedConsoleColorMT color(COLOR_CRITICAL);
+                std::wcerr << L"Error converting file: " << entry.path() << std::endl;
+                std::wcerr << utf_widen(ex.what()) << std::endl;
+            }
         }
     }
 
@@ -1132,67 +1140,75 @@ bool patch(const Path& input, int threads)
     std::wcout << L"Using up to " << threads << L" concurrent threads" << std::endl;
     ThreadPool pool(threads);
 
-    for(auto& entry : fs::recursive_directory_iterator(input))
+    for(int i = 1; i < 7; ++i)
     {
-        Path json;
+        auto arc_name = (L"gn_dat" + std::to_wstring(i) + L".arc");
+        auto arc_path = input / arc_name;
+        if(!fs::exists(arc_path) || !fs::is_directory(arc_path))
+            continue;
 
-        try
+        for(auto& entry : fs::recursive_directory_iterator(arc_path))
         {
-            if(!entry.is_regular_file())
-                continue;
+            Path json;
 
-            auto in = entry.path();
-            json = Path(in).replace_extension(L".json");
-            if(algo::iequals(in.extension().wstring(), L".mad"))
+            try
             {
-                if(fs::exists(json) && fs::is_regular_file(json))
+                if(!entry.is_regular_file())
+                    continue;
+
+                auto in = entry.path();
+                json = Path(in).replace_extension(L".json");
+                if(algo::iequals(in.extension().wstring(), L".mad"))
                 {
-                    pool.queue_task(make_task(json.wstring(), patch_mad, &g_count_mad, in, json));
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_mad, &g_count_mad, in, json));
+                    }
+                }
+                else if(algo::iequals(in.extension().wstring(), L".fmf"))
+                {
+                    json.replace_filename(json.stem().wstring() + L"_fmf.json");
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_fmf, &g_count_fmf, in, json));
+                    }
+                }
+                else if(algo::iequals(in.extension().wstring(), L".obs"))
+                {
+                    json.replace_filename(json.stem().wstring() + L"_obs.json");
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_obs, &g_count_obs, in, json));
+                    }
+                }
+                else if(algo::iequals(in.extension().wstring(), L".dod"))
+                {
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_dod, &g_count_dod, in, json, rand_data.get()));
+                    }
+                }
+                else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
+                {
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_nerds, nullptr, in, json));
+                    }
+                }
+                else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
+                {
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_skills, nullptr, in, json));
+                    }
                 }
             }
-            else if(algo::iequals(in.extension().wstring(), L".fmf"))
+            catch(const std::exception& ex)
             {
-                json.replace_filename(json.stem().wstring() + L"_fmf.json");
-                if(fs::exists(json) && fs::is_regular_file(json))
-                {
-                    pool.queue_task(make_task(json.wstring(), patch_fmf, &g_count_fmf, in, json));
-                }
+                ScopedConsoleColorMT color(COLOR_CRITICAL);
+                std::wcerr << L"Error: " << json << std::endl;
+                std::wcerr << utf_widen(ex.what()) << std::endl;
             }
-            else if(algo::iequals(in.extension().wstring(), L".obs"))
-            {
-                json.replace_filename(json.stem().wstring() + L"_obs.json");
-                if(fs::exists(json) && fs::is_regular_file(json))
-                {
-                    pool.queue_task(make_task(json.wstring(), patch_obs, &g_count_obs, in, json));
-                }
-            }
-            else if(algo::iequals(in.extension().wstring(), L".dod"))
-            {
-                if(fs::exists(json) && fs::is_regular_file(json))
-                {
-                    pool.queue_task(make_task(json.wstring(), patch_dod, &g_count_dod, in, json, rand_data.get()));
-                }
-            }
-            else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
-            {
-                if(fs::exists(json) && fs::is_regular_file(json))
-                {
-                    pool.queue_task(make_task(json.wstring(), patch_nerds, nullptr, in, json));
-                }
-            }
-            else if(algo::iequals(in.filename().wstring(), L"SkillData.sbs"))
-            {
-                if(fs::exists(json) && fs::is_regular_file(json))
-                {
-                    pool.queue_task(make_task(json.wstring(), patch_skills, nullptr, in, json));
-                }
-            }
-        }
-        catch(const std::exception& ex)
-        {
-            ScopedConsoleColorMT color(COLOR_CRITICAL);
-            std::wcerr << L"Error: " << json << std::endl;
-            std::wcerr << utf_widen(ex.what()) << std::endl;
         }
     }
 

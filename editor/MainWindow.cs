@@ -26,6 +26,7 @@ namespace editor
         private Dictionary<uint, SkillData> skills_ = new Dictionary<uint, SkillData>();
         private Dictionary<uint, string> ability_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> skill_names_ = new Dictionary<uint, string>();
+        private Dictionary<uint, string> skill_descs_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> item_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> skillcard_names_ = new Dictionary<uint, string>();
         private string[] puppet_names_ = new string[1] { "" };
@@ -46,6 +47,7 @@ namespace editor
             skills_ = new Dictionary<uint, SkillData>();
             ability_names_ = new Dictionary<uint, string>();
             skill_names_ = new Dictionary<uint, string>();
+            skill_descs_ = new Dictionary<uint, string>();
             item_names_ = new Dictionary<uint, string>();
             skillcard_names_ = new Dictionary<uint, string>();
             puppet_names_ = new string[1] { "" };
@@ -132,7 +134,7 @@ namespace editor
 
         private void ErrMsg(string msg)
         {
-            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void EnableConsoleButtons(bool enable)
@@ -331,7 +333,7 @@ namespace editor
 
             if(working_dir_ != WorkingDirTextBox.Text)
             {
-                if(MessageBox.Show("Working directory has changed since the data was loaded, this probably won't work as expected.\r\nContinue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                if(MessageBox.Show(this, "Working directory has changed since the data was loaded, this probably won't work as expected.\r\nContinue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                     return;
                 working_dir_ = WorkingDirTextBox.Text;
             }
@@ -427,14 +429,62 @@ namespace editor
             }
 
             // Save Skills
-            string skills = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.json" : "/gn_dat3.arc/doll/skill/SkillData.json");
             try
             {
+                string skills = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.json" : "/gn_dat3.arc/doll/skill/SkillData.json");
                 SaveSkills(skills);
             }
             catch(Exception ex)
             {
                 ErrMsg("Failed to save skills: " + ex.Message);
+                return;
+            }
+
+            // Save Skill names and descriptions
+            string skl = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.csv" : "/gn_dat3.arc/doll/skill/SkillData.csv");
+            try
+            {
+                var skills = File.ReadAllLines(skl, Encoding.GetEncoding(932));
+                bool dirty = false;
+                for(var i = 0; i < skills.Length; ++i)
+                {
+                    var fields = skills[i].Split(',');
+                    if(fields.Length < (is_ynk_ ? 4 : 2))
+                        continue;
+
+                    uint id;
+                    try
+                    {
+                        id = is_ynk_ ? uint.Parse(fields[0]) : (uint)i;
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                    if(id == 0 || !skills_.ContainsKey(id))
+                        continue;
+
+                    var name_index = is_ynk_ ? 1 : 0;
+                    var desc_index = is_ynk_ ? 3 : 1;
+                    var name = skill_names_[id];
+                    var desc = skill_descs_[id];
+
+                    if((fields[name_index] != name) || (fields[desc_index] != desc))
+                    {
+                        fields[name_index] = name;
+                        fields[desc_index] = desc;
+                        skills[i] = string.Join(",", fields);
+                        dirty = true;
+                    }
+                }
+
+                if(dirty)
+                    File.WriteAllLines(skl, skills, Encoding.GetEncoding(932));
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error reading file: " + skl + "\r\n" + ex.Message);
                 return;
             }
 
@@ -695,6 +745,7 @@ namespace editor
 
             // Parse skill names
             skill_names_.Clear();
+            skill_descs_.Clear();
             string skl = wkdir + (is_ynk_ ? "/gn_dat6.arc/doll/SkillData.csv" : "/gn_dat3.arc/doll/skill/SkillData.csv");
             try
             {
@@ -703,8 +754,9 @@ namespace editor
                 foreach(var skill in skills)
                 {
                     var fields = skill.Split(',');
-                    if(fields.Length < 2)
+                    if(fields.Length < (is_ynk_ ? 4 : 2))
                         continue;
+
                     uint id;
                     try
                     {
@@ -714,7 +766,9 @@ namespace editor
                     {
                         continue;
                     }
+
                     var name = is_ynk_ ? fields[1] : fields[0];
+                    var desc = is_ynk_ ? fields[3] : fields[1];
 
                     if(id == 0 || string.IsNullOrEmpty(name))
                         continue;
@@ -723,6 +777,7 @@ namespace editor
                         continue;
 
                     skill_names_[id] = name;
+                    skill_descs_[id] = desc;
                 }
             }
             catch(Exception ex)
@@ -871,7 +926,7 @@ namespace editor
                 string msg = "Right click to erase.\r\nCtrl + left click to select brush from active layer.\r\nShift + drag left to copy.\r\nAlt + left click to paste.\r\n\r\n";
                 msg += "Please see \"MAP EDITOR README.txt\" in the docs folder for more information.";
 
-                MessageBox.Show(msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this, msg, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 TabControl.SelectedIndexChanged -= TabControl_SelectedIndexChanged;
                 cfg_.map_popup = false;
                 WriteCfg();

@@ -18,7 +18,7 @@ namespace editor
             DialogResult = DialogResult.Cancel;
             Text = title;
             IDSC.Maximum = max;
-            ID = 0;
+            ID = 1;
         }
 
         private void IDSC_ValueChanged(object sender, EventArgs e)

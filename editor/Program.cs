@@ -15,15 +15,7 @@ namespace editor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            try
-            {
-                Application.Run(new EditorMainWindow());
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show("Unhandled Exception: " + e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            Application.Run(new EditorMainWindow());
         }
     }
 }

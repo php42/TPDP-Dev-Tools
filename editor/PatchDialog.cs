@@ -34,7 +34,7 @@ namespace editor
         {
             if(!Directory.Exists(DirTB.Text))
             {
-                MessageBox.Show("Invalid game folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, "Invalid game folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
