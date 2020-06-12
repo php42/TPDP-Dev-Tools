@@ -994,5 +994,18 @@ namespace editor
                 LayerVisibiltyCB.SetItemChecked(index, !c);
             }
         }
+
+        private void HookLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                HookLinkLabel.LinkVisited = true;
+                Process.Start(@"https://github.com/php42/TPDPHook");
+            }
+            catch
+            {
+                // ...
+            }
+        }
     }
 }

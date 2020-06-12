@@ -144,10 +144,12 @@
             System.Windows.Forms.Label label111;
             System.Windows.Forms.Label label112;
             System.Windows.Forms.Label label70;
+            System.Windows.Forms.Label label113;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
             this.VictoryBGMCB = new System.Windows.Forms.ComboBox();
+            this.HookLinkLabel = new System.Windows.Forms.LinkLabel();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.FilesTabPage = new System.Windows.Forms.TabPage();
             this.ConsoleOutput = new System.Windows.Forms.RichTextBox();
@@ -435,6 +437,7 @@
             label111 = new System.Windows.Forms.Label();
             label112 = new System.Windows.Forms.Label();
             label70 = new System.Windows.Forms.Label();
+            label113 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -1592,6 +1595,27 @@
             label70.Size = new System.Drawing.Size(60, 13);
             label70.TabIndex = 24;
             label70.Text = "Description";
+            // 
+            // HookLinkLabel
+            // 
+            this.HookLinkLabel.AutoSize = true;
+            this.HookLinkLabel.Location = new System.Drawing.Point(441, 423);
+            this.HookLinkLabel.Name = "HookLinkLabel";
+            this.HookLinkLabel.Size = new System.Drawing.Size(190, 13);
+            this.HookLinkLabel.TabIndex = 26;
+            this.HookLinkLabel.TabStop = true;
+            this.HookLinkLabel.Text = "https://github.com/php42/TPDPHook";
+            this.HookLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HookLinkLabel_LinkClicked);
+            // 
+            // label113
+            // 
+            label113.AutoSize = true;
+            label113.Location = new System.Drawing.Point(8, 423);
+            label113.Name = "label113";
+            label113.Size = new System.Drawing.Size(427, 13);
+            label113.TabIndex = 27;
+            label113.Text = "For skill animations and other hackery, there is a separate patch for the game ex" +
+    "ecutable:";
             // 
             // TabControl
             // 
@@ -2894,6 +2918,8 @@
             // 
             // SkillsTabPage
             // 
+            this.SkillsTabPage.Controls.Add(label113);
+            this.SkillsTabPage.Controls.Add(this.HookLinkLabel);
             this.SkillsTabPage.Controls.Add(this.SkillDescTB);
             this.SkillsTabPage.Controls.Add(label70);
             this.SkillsTabPage.Controls.Add(label112);
@@ -4228,6 +4254,7 @@
         private System.Windows.Forms.ComboBox TrainerAICB;
         private System.Windows.Forms.Button NewSkillBT;
         private System.Windows.Forms.TextBox SkillDescTB;
+        private System.Windows.Forms.LinkLabel HookLinkLabel;
     }
 }
 
