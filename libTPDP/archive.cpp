@@ -441,9 +441,11 @@ Archive::iterator Archive::repack_file(const iterator& it, const void *src, size
     /* adjust the offsets of all files after the repacked file */
     for(size_t k = file_table_offset_; k < dir_table_offset_; k += ARCHIVE_FILE_HEADER_SIZE)
     {
-        uint32_t *off = (uint32_t*)&data_[k + 32];
-        if(*off > file_header.data_offset)
-            *off += (uint32_t)diff;
+        ArchiveFileHeader *hdr = (ArchiveFileHeader*)&data_[k];
+        if(hdr->attributes & FILE_ATTRIBUTE_DIRECTORY)
+            continue;
+        if(hdr->data_offset > file_header.data_offset)
+            hdr->data_offset += (uint32_t)diff;
     }
 
     return make_iterator(header_offset);

@@ -297,9 +297,9 @@ namespace editor
             VictoryBGMCB.SelectedIndex = -1;
             if(bgm_data_.ContainsKey(dod.start_bgm))
                 StartBGMCB.SelectedIndex = StartBGMCB.FindStringExact(bgm_data_[dod.start_bgm]);
-            if(bgm_data_.ContainsKey(dod.start_bgm))
+            if(bgm_data_.ContainsKey(dod.battle_bgm))
                 BattleBGMCB.SelectedIndex = BattleBGMCB.FindStringExact(bgm_data_[dod.battle_bgm]);
-            if(bgm_data_.ContainsKey(dod.start_bgm))
+            if(bgm_data_.ContainsKey(dod.victory_bgm))
                 VictoryBGMCB.SelectedIndex = VictoryBGMCB.FindStringExact(bgm_data_[dod.victory_bgm]);
 
             IntroTextSC.Value = dod.intro_text_id;
