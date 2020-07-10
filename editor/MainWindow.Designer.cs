@@ -1596,6 +1596,16 @@
             label70.TabIndex = 24;
             label70.Text = "Description";
             // 
+            // label113
+            // 
+            label113.AutoSize = true;
+            label113.Location = new System.Drawing.Point(8, 423);
+            label113.Name = "label113";
+            label113.Size = new System.Drawing.Size(427, 13);
+            label113.TabIndex = 27;
+            label113.Text = "For skill animations and other hackery, there is a separate patch for the game ex" +
+    "ecutable:";
+            // 
             // HookLinkLabel
             // 
             this.HookLinkLabel.AutoSize = true;
@@ -1606,16 +1616,6 @@
             this.HookLinkLabel.TabStop = true;
             this.HookLinkLabel.Text = "https://github.com/php42/TPDPHook";
             this.HookLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HookLinkLabel_LinkClicked);
-            // 
-            // label113
-            // 
-            label113.AutoSize = true;
-            label113.Location = new System.Drawing.Point(8, 423);
-            label113.Name = "label113";
-            label113.Size = new System.Drawing.Size(427, 13);
-            label113.TabIndex = 27;
-            label113.Text = "For skill animations and other hackery, there is a separate patch for the game ex" +
-    "ecutable:";
             // 
             // TabControl
             // 
@@ -3968,7 +3968,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.3.0";
+            this.Text = "TPDP Editor v1.3.1";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);
