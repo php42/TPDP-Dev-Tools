@@ -22,6 +22,7 @@
 #include <cstring>
 #include <map>
 #include "../common/textconvert.h"
+#include <intrin.h>
 
 static const uint8_t save_magic[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x00};
 static const uint8_t save_magic_ynk[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x41, 0x50, 0x00};
@@ -29,17 +30,78 @@ static const uint8_t save_magic_ynk[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8
 static const unsigned int pocket_offsets[] = {0x00, 0x80, 0x100, 0x200, 0x300, 0x400, 0x480};
 static const unsigned int pocket_sizes[] = {0x40, 0x40, 0x80, 0x80, 0x80, 0x40, 0x20};
 
+// faster memcmp implementation to speed up save file compression
+static inline int sse2_memcmp(const void *block1, const void *block2, std::size_t sz)
+{
+    auto pos1 = (uint8_t*)block1;
+    auto pos2 = (uint8_t*)block2;
+
+    while(sz > 0)
+    {
+        if(sz >= 32) // branch avoidance and pipelining (no avx for compat)
+        {
+            auto b1 = _mm_loadu_si128((__m128i*)pos1);
+            auto b2 = _mm_loadu_si128((__m128i*)pos2);
+            auto cmp1 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
+
+            auto b3 = _mm_loadu_si128((__m128i*)&pos1[16]);
+            auto b4 = _mm_loadu_si128((__m128i*)&pos2[16]);
+            auto cmp2 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b3, b4));
+
+            if((cmp1 & cmp2) != 0xffffu)
+                return -1;
+
+            pos1 += 32;
+            pos2 += 32;
+            sz -= 32;
+        }
+        else if(sz >= 16)
+        {
+            auto b1 = _mm_loadu_si128((__m128i*)pos1);
+            auto b2 = _mm_loadu_si128((__m128i*)pos2);
+            auto cmp = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
+
+            if(cmp != 0xffffu)
+                return -1;
+
+            pos1 += 16;
+            pos2 += 16;
+            sz -= 16;
+        }
+        else if(sz >= 8)
+        {
+            if(*(uint64_t*)pos1 != *(uint64_t*)pos2)
+                return -1;
+
+            pos1 += 8;
+            pos2 += 8;
+            sz -= 8;
+        }
+        else
+        {
+            if(*pos1 != *pos2)
+                return -1;
+
+            ++pos1;
+            ++pos2;
+            --sz;
+        }
+    }
+
+    return 0;
+}
+
 namespace libtpdp
 {
 
-/* TODO: replace raw pointers to heap memory with unique_ptr */
+/* FIXME: lots of very old, bad code */
 
 SaveFile::SaveFile(SaveFile&& old)
 {
     close();
 
     cryptobuf_ = old.cryptobuf_;
-    savebuf_ = old.savebuf_;
+    savebuf_ = std::move(old.savebuf_);
     cryptobuf_len_ = old.cryptobuf_len_;
     savebuf_len_ = old.savebuf_len_;
     puppet_offset_ = old.puppet_offset_;
@@ -52,7 +114,7 @@ SaveFile::SaveFile(SaveFile&& old)
     is_expansion_ = old.is_expansion_;
 
     old.cryptobuf_ = NULL;
-    old.savebuf_ = NULL;
+    old.savebuf_.reset();
     old.close();
 }
 
@@ -61,7 +123,7 @@ SaveFile& SaveFile::operator=(SaveFile&& old)
     close();
 
     cryptobuf_ = old.cryptobuf_;
-    savebuf_ = old.savebuf_;
+    savebuf_ = std::move(old.savebuf_);
     cryptobuf_len_ = old.cryptobuf_len_;
     savebuf_len_ = old.savebuf_len_;
     puppet_offset_ = old.puppet_offset_;
@@ -74,7 +136,7 @@ SaveFile& SaveFile::operator=(SaveFile&& old)
     is_expansion_ = old.is_expansion_;
 
     old.cryptobuf_ = NULL;
-    old.savebuf_ = NULL;
+    old.savebuf_.reset();
     old.close();
     return *this;
 }
@@ -117,19 +179,18 @@ bool SaveFile::save()
         return false;
 
     std::size_t len;
-    char *outfile = generate_save(len);
+    auto outfile = generate_save(len);
 
     bool ret = false;
     if(!filename_.empty())
     {
-        ret = write_file(filename_, outfile, len);
+        ret = write_file(filename_, outfile.get(), len);
     }
     else if(!wfilename_.empty())
     {
-        ret = write_file(wfilename_, outfile, len);
+        ret = write_file(wfilename_, outfile.get(), len);
     }
 
-    delete[] outfile;
     return ret;
 }
 
@@ -139,11 +200,10 @@ bool SaveFile::save(const std::string& filename)
         return false;
 
     std::size_t len;
-    char *outfile = generate_save(len);
+    auto outfile = generate_save(len);
 
-    bool ret = write_file(filename, outfile, len);
+    bool ret = write_file(filename, outfile.get(), len);
 
-    delete[] outfile;
     return ret;
 }
 
@@ -153,11 +213,10 @@ bool SaveFile::save(const std::wstring& filename)
         return false;
 
     std::size_t len;
-    char *outfile = generate_save(len);
+    auto outfile = generate_save(len);
 
-    bool ret = write_file(filename, outfile, len);
+    bool ret = write_file(filename, outfile.get(), len);
 
-    delete[] outfile;
     return ret;
 }
 
@@ -203,9 +262,9 @@ bool SaveFile::load_savefile(char *buf, std::size_t len)
         return false;
     }
 
-    savebuf_ = new char[savebuf_len_];
+    savebuf_ = std::make_unique<char[]>(savebuf_len_);
 
-    if(decompress(packed_buf, savebuf_) != savebuf_len_)
+    if(decompress(packed_buf, savebuf_.get()) != savebuf_len_)
     {
         close();
         return false;
@@ -228,20 +287,20 @@ bool SaveFile::load_savefile(char *buf, std::size_t len)
     return true;
 }
 
-char *SaveFile::generate_save(std::size_t& size)
+std::unique_ptr<char[]> SaveFile::generate_save(std::size_t& size)
 {
     /* allocate an oversized buffer in case compression expands the data */
-    char *filebuf = new char[savebuf_len_ * 2];
-    memcpy(filebuf, cryptobuf_, cryptobuf_len_);
-    memcpy(filebuf, is_expansion_ ? save_magic_ynk : save_magic, is_expansion_ ? sizeof(save_magic_ynk) : sizeof(save_magic));
+    auto filebuf = std::make_unique<char[]>(savebuf_len_ * 2);
+    memcpy(filebuf.get(), cryptobuf_, cryptobuf_len_);
+    memcpy(filebuf.get(), is_expansion_ ? save_magic_ynk : save_magic, is_expansion_ ? sizeof(save_magic_ynk) : sizeof(save_magic));
 
     encrypt_all_puppets();
-    seed_ = update_savefile_hash(savebuf_, savebuf_len_);
-    write_le32(filebuf + SAVEFILE_SEED_OFFSET, seed_);
-    std::size_t len = compress(savebuf_, filebuf + SAVEFILE_DATA_OFFSET, savebuf_len_);
-    write_le32(filebuf + SAVEFILE_LENGTH_OFFSET, (uint32_t)len);
-    encrypt(filebuf + SAVEFILE_DATA_OFFSET, seed_, len);
-    scramble(filebuf + SAVEFILE_DATA_OFFSET, cryptobuf_, seed_, (uint32_t)len);
+    seed_ = update_savefile_hash(savebuf_.get(), savebuf_len_);
+    write_le32(&filebuf[SAVEFILE_SEED_OFFSET], seed_);
+    std::size_t len = compress(savebuf_.get(), &filebuf[SAVEFILE_DATA_OFFSET], savebuf_len_);
+    write_le32(&filebuf[SAVEFILE_LENGTH_OFFSET], (uint32_t)len);
+    encrypt(&filebuf[SAVEFILE_DATA_OFFSET], seed_, len);
+    scramble(&filebuf[SAVEFILE_DATA_OFFSET], cryptobuf_, seed_, (uint32_t)len);
     decrypt_all_puppets();
 
     size = std::max((len + SAVEFILE_DATA_OFFSET), cryptobuf_len_);
@@ -261,7 +320,7 @@ std::size_t SaveFile::get_puppet_offset(unsigned int index)
 
 void SaveFile::decrypt_all_puppets()
 {
-    char *puppet = savebuf_ + puppet_offset_;
+    char *puppet = &savebuf_[puppet_offset_];
 
     for(unsigned int i = 0; i < (30 * num_boxes_) + 6; ++i)
     {
@@ -277,7 +336,7 @@ void SaveFile::decrypt_all_puppets()
 
 void SaveFile::encrypt_all_puppets()
 {
-    char *puppet = savebuf_ + puppet_offset_;
+    char *puppet = &savebuf_[puppet_offset_];
 
     for(unsigned int i = 0; i < (30 * num_boxes_) + 6; ++i)
     {
@@ -296,8 +355,7 @@ void SaveFile::encrypt_all_puppets()
 
 void SaveFile::close()
 {
-    if(savebuf_ != NULL)
-        delete[] savebuf_;
+    savebuf_.reset();
 
     cryptobuf_ = NULL;
     savebuf_ = NULL;
@@ -321,11 +379,11 @@ bool SaveFile::get_puppet(Puppet& puppet, unsigned int index)
 
     offset += puppet_offset_;
 
-    uint32_t hash = read_le32(savebuf_ + offset + PUPPET_SIZE);
+    uint32_t hash = read_le32(&savebuf_[offset + PUPPET_SIZE]);
     if(hash == 0)
         return false;
 
-    puppet.read(savebuf_ + offset, index < 6);
+    puppet.read(&savebuf_[offset], index < 6);
 
     return true;
 }
@@ -346,10 +404,10 @@ void SaveFile::delete_puppet(unsigned int index)
     else
         size = PUPPET_SIZE_BOX;
 
-    memset(savebuf_ + offset, 0, size);
+    memset(&savebuf_[offset], 0, size);
 
     if(index < 6)
-        Puppet().write(savebuf_ + offset, true);
+        Puppet().write(&savebuf_[offset], true);
 }
 
 void SaveFile::save_puppet(const Puppet& puppet, unsigned int index)
@@ -362,8 +420,8 @@ void SaveFile::save_puppet(const Puppet& puppet, unsigned int index)
         return;
     offset += puppet_offset_;
 
-    puppet.write(savebuf_ + offset, index < 6);
-    update_puppet_hash(savebuf_ + offset);
+    puppet.write(&savebuf_[offset], index < 6);
+    update_puppet_hash(&savebuf_[offset]);
 }
 
 int SaveFile::get_item_id(unsigned int pocket, unsigned int index)
@@ -390,7 +448,7 @@ int SaveFile::get_item_quantity(unsigned int item_id)
     if(!(item_id < 1024))
         return -1;
 
-    uint8_t *buf = (uint8_t*)savebuf_ + item_num_offset_;
+    uint8_t *buf = (uint8_t*)&savebuf_[item_num_offset_];
 
     return buf[item_id];
 }
@@ -426,7 +484,7 @@ bool SaveFile::set_item_quantity(unsigned int item_id, unsigned int quantity)
     if(!(item_id < 1024))
         return false;
 
-    uint8_t *buf = (uint8_t*)savebuf_ + item_num_offset_;
+    uint8_t *buf = (uint8_t*)&savebuf_[item_num_offset_];
 
     buf[item_id] = uint8_t(quantity);
 
@@ -691,14 +749,14 @@ std::size_t SaveFile::decompress(const void *src, void *dest)
  * (this is valid so long as the escape sequence is used to escape occurrences of 'key') */
 
 /* This algorithm uses brute-force to find the best compression using the method described above.
- * it is therefore rather slow.
+ * This implementaion is somewhat optimized for speed.
  *
  * as an additional restriction, the length cannot be larger than the offset. the algorithm supports
  * this (sequence would be repeated), but the game does not. also, neither the length nor the offset
  * can be less than 4. */
 std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 {
-    unsigned int frequency_table[256];
+    unsigned int frequency_table[256] = {};
     std::size_t bytes_written = 0;
     uint8_t *destp, *outptr, key = 0, len = 0, offset = 0;
     const uint8_t *inptr;
@@ -729,58 +787,25 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 
     while(inptr < endin)
     {
-        if(inptr[0] == key)
-        {
-            outptr[0] = key;
-            outptr[1] = key;
-
-            ++inptr;
-            outptr += 2;
-            bytes_written += 2;
-            continue;
-        }
-
         offset = 0;
         len = 0;
-        for(int i = 4; i < 0xff; ++i)
+        auto maxlen = std::min((std::size_t)(endin - inptr), (std::size_t)0xfe);
+        auto maxoff = std::min((std::size_t)(inptr - srcp), (std::size_t)0xfe);
+        maxlen = std::min(maxoff, maxlen);
+        for(auto i = maxlen; i >= 8; i -= 8) // increments of 8 trades compression ratio for speed
         {
-            if((inptr - i) < srcp)
-                continue;
-
-            for(int j = 4; j <= i; ++j)
+            for(auto j = i; j <= maxoff; ++j)
             {
-                if(inptr + j > endin)
-                    continue;
-
-                int k = j;
-                const uint8_t *pos = inptr;
-                while(k >= i)
+                if(sse2_memcmp(inptr - j, inptr, i) == 0)
                 {
-                    if(memcmp(pos - i, pos, i) != 0)
-                    {
-                        k = -1;
-                        break;
-                    }
-
-                    pos += i;
-                    k -= i;
-                }
-
-                if(k > 0)
-                {
-                    if(memcmp(pos - i, pos, k) != 0)
-                        k = -1;
-                }
-
-                if(k < 0)
-                    continue;
-
-                if(j > len)
-                {
-                    offset = (uint8_t)i;
-                    len = (uint8_t)j;
+                    offset = (uint8_t)j;
+                    len = (uint8_t)i;
+                    break;
                 }
             }
+
+            if(len)
+                break;
         }
 
         if(len < 4)
@@ -801,56 +826,30 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
         }
         else
         {
-            outptr[0] = inptr[0];
 
-            ++outptr;
-            ++bytes_written;
-            ++inptr;
+            if(inptr[0] == key)
+            {
+                outptr[0] = key;
+                outptr[1] = key;
+
+                outptr += 2;
+                bytes_written += 2;
+                ++inptr;
+            }
+            else
+            {
+                outptr[0] = inptr[0];
+
+                ++outptr;
+                ++bytes_written;
+                ++inptr;
+            }
         }
     }
 
     write_le32(&destp[4], (uint32_t)bytes_written);
 
     return bytes_written;
-}
-
-void SaveFile::decrypt_puppet(void *src, const void *rand_data, std::size_t len)
-{
-    uint8_t *buf = (uint8_t*)src;
-    const uint8_t *randbuf = (const uint8_t*)rand_data;
-
-    for(unsigned int i = 0; i < (len / 3); ++i)
-    {
-        int index = (i * 3) % len;
-        uint32_t crypto = read_le32(&randbuf[(i * 4) & 0x3fff]);
-
-        /* need the higher half of this multiplication, right shifted 1 */
-        uint32_t temp = (uint64_t(uint64_t(0xAAAAAAABu) * uint64_t(crypto)) >> 33);
-        temp *= 3;
-
-        if(crypto - temp == 0)
-            buf[index] = ~buf[index];
-        buf[index] -= uint8_t(crypto);
-    }
-}
-
-void SaveFile::encrypt_puppet(void *src, const void *rand_data, std::size_t len)
-{
-    uint8_t *buf = (uint8_t*)src;
-    const uint8_t *randbuf = (const uint8_t*)rand_data;
-
-    for(unsigned int i = 0; i < (len / 3); ++i)
-    {
-        int index = (i * 3) % len;
-        uint32_t crypto = read_le32(&randbuf[(i * 4) & 0x3fff]);
-
-        uint32_t temp = (uint64_t(uint64_t(0xAAAAAAABu) * uint64_t(crypto)) >> 33);
-        temp *= 3;
-
-        buf[index] += uint8_t(crypto);
-        if(crypto - temp == 0)
-            buf[index] = ~buf[index];
-    }
 }
 
 }

@@ -121,6 +121,26 @@ int wmain(int argc, wchar_t *argv[])
             return EXIT_ERROR;
         }
 
+        // check for jank installs
+        for(int i = 1; i < 7; ++i)
+        {
+            auto arc_name = (L"gn_dat" + std::to_wstring(i));
+            auto arc_path = Path(input_path) / L"dat" / (arc_name + L".arc");
+            auto folder_path = Path(input_path) / L"dat" / arc_name;
+
+            if(std::filesystem::exists(arc_path) && std::filesystem::is_regular_file(arc_path)) // this is what we expect
+                continue;
+
+            if(std::filesystem::exists(folder_path) && std::filesystem::is_directory(folder_path)) // if this exists and the above doesn't, it's borked
+            {
+                std::wcerr << L"You seem to have an old pirated copy of the game with broken dat files." << std::endl;
+                std::wcerr << L"gn_dat1-6.arc must exist in in your dat folder (and NOT as folders)." << std::endl;
+                std::wcerr << L"Please get a better copy of the game." << std::endl;
+                std::wcerr << L"Operation aborted." << std::endl;
+                return EXIT_ERROR;
+            }
+        }
+
         auto begin = std::chrono::high_resolution_clock::now();
         if(opts.count("extract"))
             success = extract(input_path, output_path, threads);

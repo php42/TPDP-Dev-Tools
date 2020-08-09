@@ -44,16 +44,12 @@
             System.Windows.Forms.Label label25;
             System.Windows.Forms.Label label24;
             System.Windows.Forms.Label label23;
-            System.Windows.Forms.Label label21;
-            System.Windows.Forms.Label label22;
             System.Windows.Forms.Label label79;
             System.Windows.Forms.Label label78;
             System.Windows.Forms.Label label77;
             System.Windows.Forms.Label label76;
             System.Windows.Forms.Label label75;
             System.Windows.Forms.Label label74;
-            System.Windows.Forms.Label label20;
-            System.Windows.Forms.Label label19;
             System.Windows.Forms.Label label18;
             System.Windows.Forms.Label label17;
             System.Windows.Forms.Label label16;
@@ -164,6 +160,7 @@
             this.GameDirButton = new System.Windows.Forms.Button();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.PuppetMovesetBT = new System.Windows.Forms.Button();
             this.PuppetdexIndexSC = new System.Windows.Forms.NumericUpDown();
             this.ExportPuppetButton = new System.Windows.Forms.Button();
             this.NewPuppetButton = new System.Windows.Forms.Button();
@@ -180,17 +177,11 @@
             this.PuppetAbility1CB = new System.Windows.Forms.ComboBox();
             this.PuppetElement2CB = new System.Windows.Forms.ComboBox();
             this.PuppetElement1CB = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.StyleSkillCB = new System.Windows.Forms.ComboBox();
-            this.StyleSkillLvlCB = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.Item4CB = new System.Windows.Forms.ComboBox();
             this.Item3CB = new System.Windows.Forms.ComboBox();
             this.Item2CB = new System.Windows.Forms.ComboBox();
             this.Item1CB = new System.Windows.Forms.ComboBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.BaseSkillCB = new System.Windows.Forms.ComboBox();
-            this.BaseSkillLvlCB = new System.Windows.Forms.ComboBox();
             this.PuppetCostSC = new System.Windows.Forms.NumericUpDown();
             this.PuppetIDSC = new System.Windows.Forms.NumericUpDown();
             this.PuppetStyleTypeCB = new System.Windows.Forms.ComboBox();
@@ -322,6 +313,7 @@
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
+            this.PuppetBSTLabel = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -337,16 +329,12 @@
             label25 = new System.Windows.Forms.Label();
             label24 = new System.Windows.Forms.Label();
             label23 = new System.Windows.Forms.Label();
-            label21 = new System.Windows.Forms.Label();
-            label22 = new System.Windows.Forms.Label();
             label79 = new System.Windows.Forms.Label();
             label78 = new System.Windows.Forms.Label();
             label77 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
             label74 = new System.Windows.Forms.Label();
-            label20 = new System.Windows.Forms.Label();
-            label19 = new System.Windows.Forms.Label();
             label18 = new System.Windows.Forms.Label();
             label17 = new System.Windows.Forms.Label();
             label16 = new System.Windows.Forms.Label();
@@ -451,9 +439,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatFASC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatHPSC)).BeginInit();
             this.groupBox4.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).BeginInit();
             this.TrainersTabPage.SuspendLayout();
@@ -661,24 +647,6 @@
             label23.TabIndex = 12;
             label23.Text = "Element 1";
             // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Location = new System.Drawing.Point(6, 49);
-            label21.Name = "label21";
-            label21.Size = new System.Drawing.Size(26, 13);
-            label21.TabIndex = 14;
-            label21.Text = "Skill";
-            // 
-            // label22
-            // 
-            label22.AutoSize = true;
-            label22.Location = new System.Drawing.Point(6, 22);
-            label22.Name = "label22";
-            label22.Size = new System.Drawing.Size(33, 13);
-            label22.TabIndex = 12;
-            label22.Text = "Level";
-            // 
             // label79
             // 
             label79.AutoSize = true;
@@ -732,24 +700,6 @@
             label74.Size = new System.Drawing.Size(31, 13);
             label74.TabIndex = 28;
             label74.Text = "80%*";
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.Location = new System.Drawing.Point(6, 49);
-            label20.Name = "label20";
-            label20.Size = new System.Drawing.Size(26, 13);
-            label20.TabIndex = 2;
-            label20.Text = "Skill";
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Location = new System.Drawing.Point(6, 22);
-            label19.Name = "label19";
-            label19.Size = new System.Drawing.Size(33, 13);
-            label19.TabIndex = 0;
-            label19.Text = "Level";
             // 
             // label18
             // 
@@ -1777,6 +1727,7 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.PuppetMovesetBT);
             this.PuppetsTabPage.Controls.Add(this.PuppetdexIndexSC);
             this.PuppetsTabPage.Controls.Add(label5);
             this.PuppetsTabPage.Controls.Add(this.ExportPuppetButton);
@@ -1791,9 +1742,7 @@
             this.PuppetsTabPage.Controls.Add(this.PuppetElement1CB);
             this.PuppetsTabPage.Controls.Add(label24);
             this.PuppetsTabPage.Controls.Add(label23);
-            this.PuppetsTabPage.Controls.Add(this.groupBox3);
             this.PuppetsTabPage.Controls.Add(this.groupBox2);
-            this.PuppetsTabPage.Controls.Add(this.groupBox1);
             this.PuppetsTabPage.Controls.Add(this.PuppetCostSC);
             this.PuppetsTabPage.Controls.Add(label18);
             this.PuppetsTabPage.Controls.Add(label17);
@@ -1811,6 +1760,16 @@
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
             // 
+            // PuppetMovesetBT
+            // 
+            this.PuppetMovesetBT.Location = new System.Drawing.Point(500, 31);
+            this.PuppetMovesetBT.Name = "PuppetMovesetBT";
+            this.PuppetMovesetBT.Size = new System.Drawing.Size(116, 23);
+            this.PuppetMovesetBT.TabIndex = 0;
+            this.PuppetMovesetBT.Text = "Edit Moveset";
+            this.PuppetMovesetBT.UseVisualStyleBackColor = true;
+            this.PuppetMovesetBT.Click += new System.EventHandler(this.PuppetMovesetBT_Click);
+            // 
             // PuppetdexIndexSC
             // 
             this.PuppetdexIndexSC.Location = new System.Drawing.Point(601, 7);
@@ -1826,7 +1785,7 @@
             // 
             // ExportPuppetButton
             // 
-            this.ExportPuppetButton.Location = new System.Drawing.Point(120, 504);
+            this.ExportPuppetButton.Location = new System.Drawing.Point(201, 401);
             this.ExportPuppetButton.Name = "ExportPuppetButton";
             this.ExportPuppetButton.Size = new System.Drawing.Size(75, 23);
             this.ExportPuppetButton.TabIndex = 27;
@@ -1837,7 +1796,7 @@
             // 
             // NewPuppetButton
             // 
-            this.NewPuppetButton.Location = new System.Drawing.Point(120, 475);
+            this.NewPuppetButton.Location = new System.Drawing.Point(120, 401);
             this.NewPuppetButton.Name = "NewPuppetButton";
             this.NewPuppetButton.Size = new System.Drawing.Size(75, 23);
             this.NewPuppetButton.TabIndex = 24;
@@ -1847,6 +1806,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.PuppetBSTLabel);
             this.groupBox5.Controls.Add(this.StatSPDSC);
             this.groupBox5.Controls.Add(label32);
             this.groupBox5.Controls.Add(this.StatSDSC);
@@ -1859,9 +1819,9 @@
             this.groupBox5.Controls.Add(label28);
             this.groupBox5.Controls.Add(this.StatHPSC);
             this.groupBox5.Controls.Add(label27);
-            this.groupBox5.Location = new System.Drawing.Point(120, 361);
+            this.groupBox5.Location = new System.Drawing.Point(120, 274);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(200, 108);
+            this.groupBox5.Size = new System.Drawing.Size(200, 121);
             this.groupBox5.TabIndex = 21;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Stats";
@@ -1947,19 +1907,20 @@
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.SkillCardLB);
-            this.groupBox4.Location = new System.Drawing.Point(326, 199);
+            this.groupBox4.Location = new System.Drawing.Point(326, 112);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(200, 270);
+            this.groupBox4.Size = new System.Drawing.Size(200, 283);
             this.groupBox4.TabIndex = 20;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Skill Cards";
             // 
             // SkillCardLB
             // 
+            this.SkillCardLB.CheckOnClick = true;
             this.SkillCardLB.FormattingEnabled = true;
             this.SkillCardLB.Location = new System.Drawing.Point(6, 19);
             this.SkillCardLB.Name = "SkillCardLB";
-            this.SkillCardLB.Size = new System.Drawing.Size(188, 244);
+            this.SkillCardLB.Size = new System.Drawing.Size(188, 259);
             this.SkillCardLB.TabIndex = 17;
             this.SkillCardLB.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.SkillCardLB_ItemCheck);
             // 
@@ -2049,62 +2010,6 @@
             this.PuppetElement1CB.Text = "Element";
             this.PuppetElement1CB.SelectedIndexChanged += new System.EventHandler(this.PuppetElement1CB_SelectedIndexChanged);
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.StyleSkillCB);
-            this.groupBox3.Controls.Add(this.StyleSkillLvlCB);
-            this.groupBox3.Controls.Add(label21);
-            this.groupBox3.Controls.Add(label22);
-            this.groupBox3.Location = new System.Drawing.Point(326, 112);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 81);
-            this.groupBox3.TabIndex = 11;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Style Skills";
-            // 
-            // StyleSkillCB
-            // 
-            this.StyleSkillCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.StyleSkillCB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.StyleSkillCB.FormattingEnabled = true;
-            this.StyleSkillCB.Location = new System.Drawing.Point(45, 46);
-            this.StyleSkillCB.Name = "StyleSkillCB";
-            this.StyleSkillCB.Size = new System.Drawing.Size(121, 21);
-            this.StyleSkillCB.TabIndex = 12;
-            this.StyleSkillCB.Text = "Skill";
-            this.StyleSkillCB.SelectedIndexChanged += new System.EventHandler(this.StyleSkillCB_SelectedIndexChanged);
-            // 
-            // StyleSkillLvlCB
-            // 
-            this.StyleSkillLvlCB.FormattingEnabled = true;
-            this.StyleSkillLvlCB.Items.AddRange(new object[] {
-            "Starting Skill 1",
-            "Starting Skill 2",
-            "Starting Skill 3",
-            "Starting Skill 4",
-            "Lvl 30",
-            "Lvl 36",
-            "Lvl 42",
-            "Lvl 49",
-            "Lvl 56",
-            "Lvl 63",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 70",
-            "Lvl 100"});
-            this.StyleSkillLvlCB.Location = new System.Drawing.Point(45, 19);
-            this.StyleSkillLvlCB.Name = "StyleSkillLvlCB";
-            this.StyleSkillLvlCB.Size = new System.Drawing.Size(121, 21);
-            this.StyleSkillLvlCB.TabIndex = 11;
-            this.StyleSkillLvlCB.Text = "Level";
-            this.StyleSkillLvlCB.SelectedIndexChanged += new System.EventHandler(this.StyleSkillLvlCB_SelectedIndexChanged);
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(label79);
@@ -2117,7 +2022,7 @@
             this.groupBox2.Controls.Add(this.Item3CB);
             this.groupBox2.Controls.Add(this.Item2CB);
             this.groupBox2.Controls.Add(this.Item1CB);
-            this.groupBox2.Location = new System.Drawing.Point(120, 199);
+            this.groupBox2.Location = new System.Drawing.Point(120, 112);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(200, 156);
             this.groupBox2.TabIndex = 10;
@@ -2167,47 +2072,6 @@
             this.Item1CB.Size = new System.Drawing.Size(121, 21);
             this.Item1CB.TabIndex = 13;
             this.Item1CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.BaseSkillCB);
-            this.groupBox1.Controls.Add(label20);
-            this.groupBox1.Controls.Add(this.BaseSkillLvlCB);
-            this.groupBox1.Controls.Add(label19);
-            this.groupBox1.Location = new System.Drawing.Point(120, 112);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(200, 81);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Base Skills";
-            // 
-            // BaseSkillCB
-            // 
-            this.BaseSkillCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.BaseSkillCB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.BaseSkillCB.FormattingEnabled = true;
-            this.BaseSkillCB.Location = new System.Drawing.Point(45, 46);
-            this.BaseSkillCB.Name = "BaseSkillCB";
-            this.BaseSkillCB.Size = new System.Drawing.Size(121, 21);
-            this.BaseSkillCB.TabIndex = 10;
-            this.BaseSkillCB.Text = "Skill";
-            this.BaseSkillCB.SelectedIndexChanged += new System.EventHandler(this.BaseSkillCB_SelectedIndexChanged);
-            // 
-            // BaseSkillLvlCB
-            // 
-            this.BaseSkillLvlCB.FormattingEnabled = true;
-            this.BaseSkillLvlCB.Items.AddRange(new object[] {
-            "Lvl 7",
-            "Lvl 10",
-            "Lvl 14",
-            "Lvl 19",
-            "Lvl 24"});
-            this.BaseSkillLvlCB.Location = new System.Drawing.Point(45, 19);
-            this.BaseSkillLvlCB.Name = "BaseSkillLvlCB";
-            this.BaseSkillLvlCB.Size = new System.Drawing.Size(121, 21);
-            this.BaseSkillLvlCB.TabIndex = 9;
-            this.BaseSkillLvlCB.Text = "Level";
-            this.BaseSkillLvlCB.SelectedIndexChanged += new System.EventHandler(this.BaseSkillLvlCB_SelectedIndexChanged);
             // 
             // PuppetCostSC
             // 
@@ -3959,16 +3823,26 @@
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
             // 
+            // PuppetBSTLabel
+            // 
+            this.PuppetBSTLabel.AutoSize = true;
+            this.PuppetBSTLabel.Location = new System.Drawing.Point(70, 99);
+            this.PuppetBSTLabel.Name = "PuppetBSTLabel";
+            this.PuppetBSTLabel.Size = new System.Drawing.Size(40, 13);
+            this.PuppetBSTLabel.TabIndex = 30;
+            this.PuppetBSTLabel.Text = "BST: 0";
+            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(776, 581);
             this.Controls.Add(this.TabControl);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.3.1";
+            this.Text = "TPDP Editor v1.3.2";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);
@@ -3986,12 +3860,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.StatFASC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StatHPSC)).EndInit();
             this.groupBox4.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetCostSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PuppetIDSC)).EndInit();
             this.TrainersTabPage.ResumeLayout(false);
@@ -4114,17 +3984,11 @@
         private System.Windows.Forms.NumericUpDown PuppetIDSC;
         private System.Windows.Forms.ComboBox PuppetElement2CB;
         private System.Windows.Forms.ComboBox PuppetElement1CB;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.ComboBox StyleSkillCB;
-        private System.Windows.Forms.ComboBox StyleSkillLvlCB;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ComboBox Item4CB;
         private System.Windows.Forms.ComboBox Item3CB;
         private System.Windows.Forms.ComboBox Item2CB;
         private System.Windows.Forms.ComboBox Item1CB;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ComboBox BaseSkillCB;
-        private System.Windows.Forms.ComboBox BaseSkillLvlCB;
         private System.Windows.Forms.ComboBox PuppetAbility2CB;
         private System.Windows.Forms.ComboBox PuppetAbility1CB;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -4255,6 +4119,8 @@
         private System.Windows.Forms.Button NewSkillBT;
         private System.Windows.Forms.TextBox SkillDescTB;
         private System.Windows.Forms.LinkLabel HookLinkLabel;
+        private System.Windows.Forms.Button PuppetMovesetBT;
+        private System.Windows.Forms.Label PuppetBSTLabel;
     }
 }
 

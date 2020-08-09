@@ -81,27 +81,6 @@ namespace editor
                 Item4CB.Items.Add(new Tuple<string, uint>(name, id));
             }
 
-            // Skills
-            BaseSkillLvlCB.SelectedIndex = -1;
-            BaseSkillCB.SelectedIndex = -1;
-            BaseSkillCB.Items.Clear();
-            BaseSkillCB.DisplayMember = "Item1";
-            BaseSkillCB.ValueMember = "Item2";
-            StyleSkillLvlCB.SelectedIndex = -1;
-            StyleSkillCB.SelectedIndex = -1;
-            StyleSkillCB.Items.Clear();
-            StyleSkillCB.DisplayMember = "Item1";
-            StyleSkillCB.ValueMember = "Item2";
-            BaseSkillCB.Items.Add(new Tuple<string, uint>("None", 0));
-            StyleSkillCB.Items.Add(new Tuple<string, uint>("None", 0));
-            foreach(var it in skill_names_)
-            {
-                var id = it.Key;
-                var name = it.Value;
-                BaseSkillCB.Items.Add(new Tuple<string, uint>(name, id));
-                StyleSkillCB.Items.Add(new Tuple<string, uint>(name, id));
-            }
-
             // Skillcards
             SkillCardLB.Items.Clear();
             SkillCardLB.DisplayMember = "Item1";
@@ -133,10 +112,6 @@ namespace editor
             PuppetAbility2CB.SelectedIndex = -1;
             PuppetElement1CB.SelectedIndex = -1;
             PuppetElement2CB.SelectedIndex = -1;
-            BaseSkillLvlCB.SelectedIndex = -1;
-            BaseSkillCB.SelectedIndex = -1;
-            StyleSkillLvlCB.SelectedIndex = -1;
-            StyleSkillCB.SelectedIndex = -1;
             for(var i = 0; i < 128; ++i)
                 SkillCardLB.SetItemChecked(i, false);
             StatHPSC.Value = 0;
@@ -181,9 +156,6 @@ namespace editor
             var puppetid = ((Tuple<string, uint>)PuppetLB.Items[puppetindex]).Item2;
             var puppet = puppets_[puppetid];
             var style = puppet.styles[index];
-
-            StyleSkillLvlCB.SelectedIndex = -1;
-            StyleSkillCB.SelectedIndex = -1;
 
             PuppetStyleTypeCB.SelectedIndex = PuppetStyleTypeCB.FindStringExact(style.type);
             PuppetElement1CB.SelectedIndex = PuppetElement1CB.FindStringExact(style.element1);
@@ -231,81 +203,6 @@ namespace editor
 
             var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
             puppets_[id].puppetdex_index = (uint)PuppetdexIndexSC.Value;
-        }
-
-        private void BaseSkillLvlCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var index = BaseSkillLvlCB.SelectedIndex;
-            var puppetindex = PuppetLB.SelectedIndex;
-            if(index < 0 || puppetindex < 0)
-                return;
-
-            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
-            var puppet = puppets_[id];
-            var skillid = puppet.base_skills[index];
-
-            if(skill_names_.ContainsKey(skillid))
-                BaseSkillCB.SelectedIndex = BaseSkillCB.FindStringExact(skill_names_[skillid]);
-            else
-                BaseSkillCB.SelectedIndex = 0;
-        }
-
-        private void StyleSkillLvlCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var index = StyleSkillLvlCB.SelectedIndex;
-            var puppetindex = PuppetLB.SelectedIndex;
-            var styleindex = PuppetStyleCB.SelectedIndex;
-            if(index < 0 || puppetindex < 0 || styleindex < 0)
-                return;
-
-            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
-            var style = puppets_[id].styles[styleindex];
-            uint skillid;
-
-            if(index < 11)
-                skillid = style.style_skills[index];
-            else if(index < 19)
-                skillid = style.lvl70_skills[index - 11];
-            else
-                skillid = style.lvl100_skill;
-
-            if(skill_names_.ContainsKey(skillid))
-                StyleSkillCB.SelectedIndex = StyleSkillCB.FindStringExact(skill_names_[skillid]);
-            else
-                StyleSkillCB.SelectedIndex = 0;
-        }
-
-        private void BaseSkillCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var index = BaseSkillCB.SelectedIndex;
-            var lvlindex = BaseSkillLvlCB.SelectedIndex;
-            var puppetindex = PuppetLB.SelectedIndex;
-            if(index < 0 || puppetindex < 0 || lvlindex < 0)
-                return;
-
-            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
-            var skillid = ((Tuple<string, uint>)BaseSkillCB.SelectedItem).Item2;
-            puppets_[id].base_skills[lvlindex] = skillid;
-        }
-
-        private void StyleSkillCB_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var index = StyleSkillCB.SelectedIndex;
-            var lvlindex = StyleSkillLvlCB.SelectedIndex;
-            var puppetindex = PuppetLB.SelectedIndex;
-            var styleindex = PuppetStyleCB.SelectedIndex;
-            if(index < 0 || puppetindex < 0 || styleindex < 0 || lvlindex < 0)
-                return;
-
-            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
-            var skillid = ((Tuple<string, uint>)StyleSkillCB.SelectedItem).Item2;
-
-            if(lvlindex < 11)
-                puppets_[id].styles[styleindex].style_skills[lvlindex] = skillid;
-            else if(lvlindex < 19)
-                puppets_[id].styles[styleindex].lvl70_skills[lvlindex - 11] = skillid;
-            else
-                puppets_[id].styles[styleindex].lvl100_skill = skillid;
         }
 
         private void PuppetElement1CB_SelectedIndexChanged(object sender, EventArgs e)
@@ -394,6 +291,9 @@ namespace editor
 
             var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
             puppets_[id].styles[styleindex].base_stats[statindex] = (uint)val;
+
+            var bst = StatHPSC.Value + StatFASC.Value + StatFDSC.Value + StatSASC.Value + StatSDSC.Value + StatSPDSC.Value;
+            PuppetBSTLabel.Text = "BST: " + bst.ToString();
         }
 
         private void ItemCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -538,10 +438,13 @@ namespace editor
                     typestring += ")";
 
                     output += style.type + " " + puppet_names_[id] + " " + typestring + " " + costs[puppet.cost] + " Cost\r\n";
+                    uint bst = 0;
                     for(uint j = 0; j < 6; ++j)
                     {
                         output += stats[j] + style.base_stats[j].ToString() + "\r\n";
+                        bst += style.base_stats[j];
                     }
+                    output += "\tBST: " + bst.ToString() + "\r\n";
 
                     output += "\r\n\tAbilities:\r\n";
                     foreach(var ability in style.abilities)
@@ -630,6 +533,61 @@ namespace editor
             catch(Exception ex)
             {
                 ErrMsg("Error exporting puppet stats: " + ex.Message);
+            }
+        }
+
+        private void PuppetMovesetBT_Click(object sender, EventArgs e)
+        {
+            var puppetindex = PuppetLB.SelectedIndex;
+            var styleindex = PuppetStyleCB.SelectedIndex;
+
+            if(puppetindex < 0)
+            {
+                ErrMsg("No puppet selected.");
+                return;
+            }
+
+            var base_skills = new List<uint>();
+            var style_skills = new List<uint>();
+
+            var id = ((Tuple<string, uint>)PuppetLB.SelectedItem).Item2;
+            var puppet = puppets_[id];
+
+            base_skills.AddRange(puppet.base_skills);
+
+            if(styleindex >= 0)
+            {
+                style_skills.AddRange(puppet.styles[styleindex].style_skills);
+                style_skills.AddRange(puppet.styles[styleindex].lvl70_skills);
+                style_skills.Add(puppet.styles[styleindex].lvl100_skill);
+            }
+            else
+            {
+                for(var i = 0; i < 20; ++i)
+                    style_skills.Add(0);
+            }
+
+            using(var dlg = new SkillEditDialog(skill_names_, style_skills, base_skills))
+            {
+                dlg.ShowDialog(this);
+
+                for(var i = 0; i < dlg.BaseSkills.Count; ++i)
+                {
+                    puppets_[id].base_skills[i] = dlg.BaseSkills[i];
+                }
+
+                if(styleindex >= 0)
+                {
+                    for(var i = 0; i < dlg.StyleSkills.Count; ++i)
+                    {
+                        if(i < 11)
+                            puppets_[id].styles[styleindex].style_skills[i] = dlg.StyleSkills[i];
+                        else if(i < 19)
+                            puppets_[id].styles[styleindex].lvl70_skills[i - 11] = dlg.StyleSkills[i];
+                        else
+                            puppets_[id].styles[styleindex].lvl100_skill = dlg.StyleSkills[i];
+                    }
+                }
             }
         }
     }

@@ -17,6 +17,7 @@
 #pragma once
 #include "puppet.h"
 #include <string>
+#include <memory>
 
 namespace libtpdp
 {
@@ -38,14 +39,14 @@ constexpr unsigned int SAVEFILE_BOX_NAME_OFFSET_YNK = 0x5A0BD;
 class SaveFile
 {
 private:
-    char *savebuf_;
-    const char *cryptobuf_;
-    std::size_t cryptobuf_len_, savebuf_len_;
-    std::size_t puppet_offset_, item_offset_, item_num_offset_;
-    uint32_t seed_, num_boxes_;
+    std::unique_ptr<char[]> savebuf_;
+    const char *cryptobuf_ = nullptr;
+    std::size_t cryptobuf_len_ = 0, savebuf_len_ = 0;
+    std::size_t puppet_offset_ = 0, item_offset_ = 0, item_num_offset_ = 0;
+    uint32_t seed_ = 0, num_boxes_ = 0;
     std::string filename_;
     std::wstring wfilename_;
-    bool is_expansion_;
+    bool is_expansion_ = false;
 
     SaveFile(const SaveFile&) = delete;
     SaveFile& operator=(const SaveFile&) = delete;
@@ -62,20 +63,16 @@ private:
     std::size_t decompress(const void *src, void *dest);
     std::size_t compress(const void *src, void *dest, std::size_t src_len);
 
-    void decrypt_puppet(void *src, const void *rand_data, std::size_t len);
-    void encrypt_puppet(void *src, const void *rand_data, std::size_t len);
-
     void decrypt_all_puppets();
     void encrypt_all_puppets();
 
     bool load_savefile(char *buf, std::size_t len);
-    char *generate_save(std::size_t& size);
+    std::unique_ptr<char[]> generate_save(std::size_t& size);
 
     std::size_t get_puppet_offset(unsigned int index);
 
 public:
-    SaveFile() : savebuf_(NULL), cryptobuf_(NULL),
-        cryptobuf_len_(0), savebuf_len_(0), num_boxes_(0), is_expansion_(false) {}
+    SaveFile() = default;
     ~SaveFile() {close();}
 
     /* move constructor/assignment */
@@ -83,7 +80,7 @@ public:
     SaveFile& operator=(SaveFile&& old);
 
     /* get the raw, decrypted save data */
-    inline const char *get_savebuf() const {return savebuf_;}
+    inline const char *get_savebuf() const {return savebuf_.get();}
     inline std::size_t get_savebuf_len() const {return savebuf_len_;}
 
     /* rand_data is the random data source used for encryption,
@@ -91,22 +88,22 @@ public:
     bool open(const std::string& filename, const void *rand_data, std::size_t rand_len);
     bool open(const std::wstring& filename, const void *rand_data, std::size_t rand_len);
 
-    bool save();								/* save to file (overwiting the original) */
-    bool save(const std::string& filename);		/* save to a new file */
+    bool save();                                /* save to file (overwiting the original) */
+    bool save(const std::string& filename);     /* save to a new file */
     bool save(const std::wstring& filename);
 
-    void close();	/* release all associated resources */
+    void close();   /* release all associated resources */
 
     inline int get_max_puppets() const {return (num_boxes_ * 30) + 6;}
     inline int get_num_boxes() const { return num_boxes_; }
-    bool get_puppet(Puppet& puppet, unsigned int index);		/* returns false if no puppet at that index */
-    void delete_puppet(unsigned int index);						/* delete from memory */
-    void save_puppet(const Puppet& puppet, unsigned int index);	/* save to memory */
+    bool get_puppet(Puppet& puppet, unsigned int index);        /* returns false if no puppet at that index */
+    void delete_puppet(unsigned int index);                     /* delete from memory */
+    void save_puppet(const Puppet& puppet, unsigned int index); /* save to memory */
 
-    int get_item_id(unsigned int pocket, unsigned int index);	/* get id of the item stored in pocket. returns -1 if pocket/index is out-of-range. */
-    int get_item_quantity(unsigned int item_id);				/* get the number of items held by id. returns -1 if id is out-of-range (>= 1024) */
+    int get_item_id(unsigned int pocket, unsigned int index);   /* get id of the item stored in pocket. returns -1 if pocket/index is out-of-range. */
+    int get_item_quantity(unsigned int item_id);                /* get the number of items held by id. returns -1 if id is out-of-range (>= 1024) */
 
-    bool set_item_id(unsigned int pocket, unsigned int index, unsigned int item_id);	/* returns false on range error */
+    bool set_item_id(unsigned int pocket, unsigned int index, unsigned int item_id);    /* returns false on range error */
     bool set_item_quantity(unsigned int item_id, unsigned int quantity);
 
     std::wstring get_box_name(std::size_t index);
@@ -122,7 +119,7 @@ public:
     uint32_t get_player_secret_id();
     void set_player_secret_id(uint32_t id);
 
-    inline bool is_expansion_file() const {return is_expansion_;}			/* returns true if this is a YnK save file */
+    inline bool is_expansion_file() const {return is_expansion_;}   /* returns true if this is a YnK save file */
 
     inline bool empty() const {return savebuf_ == NULL;}
 };
