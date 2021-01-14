@@ -24,12 +24,19 @@ See "EVENT README.txt" for details on how to place and edit events/warps/objects
 "Zone" values for the zone mask:
 1: Elevated terrain
 2: Ramp (transition up/down from elevated terrain)
-4: Cliff (drop down one-way)
 3: Collision (solid wall)
+4: One-way ledge from up to down
+5: One-way ledge from right to left
+6: One-way ledge from left to right
+7: One-way ledge from down to up
 8: Water (allows boat riding)
+10: Waterfall
 11: Doors
 12: Disable bike riding
-Probably more, look around.
+13: Ramp down from collision layer 2
+14: Ramp up to collision layer 2
+15: Slide on ice
+Possibly more, look around.
 
 The "Background Pattern" layer contains a pattern of tiles in the top left corner used as the background (beyond the edge of the map).
 Leaving it blank produces a reflection of the sky.

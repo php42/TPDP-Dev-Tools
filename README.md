@@ -71,7 +71,7 @@ diffgen.exe -i "C:\games\TPDP" -o "C:\extract" --repack
 
 ## Compiling
 Prerequisites:  
-[CMake](https://cmake.org/), [boost](https://www.boost.org/), and Visual Studio 2017 or newer
+[CMake](https://cmake.org/), [boost](https://www.boost.org/) (1.72.0 preferred), and Visual Studio 2017 or newer
 
 Cloning the repo:  
 Make sure to clone with submodules: `git clone --recurse-submodules https://github.com/php42/TPDP-Dev-Tools.git`  
