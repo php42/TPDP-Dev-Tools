@@ -11,6 +11,7 @@ If the sum of weights is very low (minimum in vanilla SoD is 28) you run the ris
 "battle_background": background id
 "encounter_type": 0 = grass encounters, 1 = encounters everywhere (e.g. inside caves)
 "forbid_bike": disallow riding the bike on this map (e.g. indoor maps)
+"forbid_gap_map": disallow teleporting with the gap map
 
 "special" encounters are blue grass encounters
 
@@ -33,4 +34,5 @@ http://thpp.supersanctuary.net/forum/index.php?topic=493.msg3141#msg3141
 0x4f: u8 special styles[5]   |
 0x54: u8 special weights[5]  |
 0x59: char name[32]          |
-0x79-0x8A: ???              _|
+0x79: u8 forbid_gap_map      |
+0x7A-0x8A: ???              _|

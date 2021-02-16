@@ -4,7 +4,8 @@ Right click: Erase.
 Ctrl + left click: Select brush from active layer.
 Ctrl + right click: Erase (all  layers).
 Shift + drag left click: Copy region (all layers).
-Alt + left click: Paste
+Alt + left click: Paste.
+Alt + right click: Flood fill.
 
 Hotkeys (when the map is focused):
 Ctrl + Z: Undo.
@@ -12,6 +13,7 @@ Ctrl + Shift + Z: Redo.
 1-8: Select active layer.
 Ctrl + 1-8: Toggle layer visibility.
 G: Toggle grid.
+L: Toggle labels.
 
 Some important notes about map editing:
 

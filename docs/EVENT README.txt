@@ -25,7 +25,7 @@ The purpose of "Event Arg" varies depending on the value of "Event Index".
 512+: Points to trainer dod files in gn_dat5/script/dollOperator.
 896+: The map ID to warp to. For warps within the same map, use the current map ID.
 
-The "Flags" values are mostly unknown, but the 3rd value adjusts the maximum distance that trainers will go to intercept the player when entering line of sight.
+The "Flags" values are mostly unknown, but the 1st value controls collision and the 3rd value adjusts the maximum distance that trainers will go to intercept the player when entering line of sight.
 When set to 0, the player will need to explicitly interact with the trainer to begin the battle.
 
 "Movement Mode" values:
