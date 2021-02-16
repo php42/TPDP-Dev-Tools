@@ -78,7 +78,7 @@ Make sure to clone with submodules: `git clone --recurse-submodules https://gith
 If you already cloned without submodules, you can get them like so: `git submodule update --init --recursive`
 
 Installing Boost:  
-Download boost from [here]https://www.boost.org/users/history/version_1_72_0.html)  
+Download boost from [here](https://www.boost.org/users/history/version_1_72_0.html)  
 You can use the prebuilt binaries if they are provided for your version of Visual Studio, but it is strongly recommended that you follow
 the [instructions](https://www.boost.org/doc/libs/1_72_0/more/getting_started/windows.html) and build them from source.  
 In short:  
