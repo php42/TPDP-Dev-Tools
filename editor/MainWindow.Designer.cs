@@ -2253,7 +2253,8 @@
             this.TrainerEquipBT.Size = new System.Drawing.Size(119, 23);
             this.TrainerEquipBT.TabIndex = 43;
             this.TrainerEquipBT.Text = "Equip \"Best\" Moves";
-            this.toolTip1.SetToolTip(this.TrainerEquipBT, "Equip the \"best\" moves this puppet can learn by levelup at its current level");
+            this.toolTip1.SetToolTip(this.TrainerEquipBT, "Attempt to equip the most powerful level up moves available at the puppets curren" +
+        "t level");
             this.TrainerEquipBT.UseVisualStyleBackColor = true;
             this.TrainerEquipBT.Click += new System.EventHandler(this.TrainerEquipBT_Click);
             // 
