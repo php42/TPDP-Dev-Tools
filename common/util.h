@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#pragma once
 #include <cstdint>
 #include <cstddef>
 #include <intrin.h>
@@ -23,19 +24,19 @@
 // returns 0 when block1 and block2 are equal, nonzero otherwise
 static inline int sse2_memcmp(const void *block1, const void *block2, std::size_t sz)
 {
-    auto pos1 = (uint8_t*)block1;
-    auto pos2 = (uint8_t*)block2;
+    auto pos1 = (const uint8_t*)block1;
+    auto pos2 = (const uint8_t*)block2;
 
     while(sz > 0)
     {
         if(sz >= 32) // branch avoidance and pipelining (no avx for compat)
         {
-            auto b1 = _mm_loadu_si128((__m128i*)pos1);
-            auto b2 = _mm_loadu_si128((__m128i*)pos2);
+            auto b1 = _mm_loadu_si128((const __m128i*)pos1);
+            auto b2 = _mm_loadu_si128((const __m128i*)pos2);
             auto cmp1 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
 
-            auto b3 = _mm_loadu_si128((__m128i*)&pos1[16]);
-            auto b4 = _mm_loadu_si128((__m128i*)&pos2[16]);
+            auto b3 = _mm_loadu_si128((const __m128i*)&pos1[16]);
+            auto b4 = _mm_loadu_si128((const __m128i*)&pos2[16]);
             auto cmp2 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b3, b4));
 
             if((cmp1 & cmp2) != 0xffffu)
@@ -47,8 +48,8 @@ static inline int sse2_memcmp(const void *block1, const void *block2, std::size_
         }
         else if(sz >= 16) // following cases could be implemented as jump table for further branch avoidance
         {
-            auto b1 = _mm_loadu_si128((__m128i*)pos1);
-            auto b2 = _mm_loadu_si128((__m128i*)pos2);
+            auto b1 = _mm_loadu_si128((const __m128i*)pos1);
+            auto b2 = _mm_loadu_si128((const __m128i*)pos2);
             auto cmp = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
 
             if(cmp != 0xffffu)
@@ -60,7 +61,7 @@ static inline int sse2_memcmp(const void *block1, const void *block2, std::size_
         }
         else if(sz >= 8)
         {
-            if(*(uint64_t*)pos1 != *(uint64_t*)pos2)
+            if(*(const uint64_t*)pos1 != *(const uint64_t*)pos2)
                 return -1;
 
             pos1 += 8;
@@ -69,7 +70,7 @@ static inline int sse2_memcmp(const void *block1, const void *block2, std::size_
         }
         else if(sz >= 4)
         {
-            if(*(uint32_t*)pos1 != *(uint32_t*)pos2)
+            if(*(const uint32_t*)pos1 != *(const uint32_t*)pos2)
                 return -1;
 
             pos1 += 4;
