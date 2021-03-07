@@ -1,6 +1,7 @@
 Controls:
 Left click: Paint.
 Right click: Erase.
+Middle Click: Edit event.
 Ctrl + left click: Select brush from active layer.
 Ctrl + right click: Erase (all  layers).
 Shift + drag left click: Copy region (all layers).
@@ -33,7 +34,7 @@ See "EVENT README.txt" for details on how to place and edit events/warps/objects
 7: One-way ledge from down to up
 8: Water (allows boat riding)
 10: Waterfall
-11: Doors
+11: Disable running + bike
 12: Disable bike riding
 13: Ramp down from collision layer 2
 14: Ramp up to collision layer 2
