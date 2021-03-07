@@ -192,5 +192,41 @@ namespace editor
             var index = SkillDataCB.Items.Add(new Tuple<string, uint>(str, id));
             SkillDataCB.SelectedIndex = index;
         }
+
+        private void HookLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                HookLinkLabel.LinkVisited = true;
+                Process.Start(@"https://github.com/php42/TPDPHook");
+            }
+            catch
+            {
+                // ...
+            }
+        }
+
+        private void SkillSearchBT_Click(object sender, EventArgs e)
+        {
+            uint id = 0;
+            using(var dialog = new NewIDDialog("Find Skill by ID", 1023))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
+
+            for(var i = 0; i < SkillDataCB.Items.Count; ++i)
+            {
+                if(((Tuple<string, uint>)SkillDataCB.Items[i]).Item2 == id)
+                {
+                    SkillDataCB.SelectedIndex = i;
+                    return;
+                }
+            }
+
+            ErrMsg("ID not found.");
+        }
     }
 }

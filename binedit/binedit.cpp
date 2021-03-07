@@ -50,7 +50,7 @@ namespace fs = std::filesystem;
 namespace b64 = boost::beast::detail::base64;
 
 constexpr unsigned int JSON_MAJOR = 1;
-constexpr unsigned int JSON_MINOR = 3;
+constexpr unsigned int JSON_MINOR = 4;
 
 std::atomic_uint g_count_mad(0);
 std::atomic_uint g_count_dod(0);
@@ -395,6 +395,7 @@ static void convert_mad(const Path& in, const Path& out)
     tree.put("forbid_bike", data.forbid_bike);
     tree.put("encounter_type", data.encounter_type);
     tree.put("unknown", data.unknown);
+    tree.put("forbid_gap_map", data.forbid_gap_map);
 
     if(data.weather > 9)
     {
@@ -464,6 +465,7 @@ static void patch_mad(const Path& data, const Path& json)
     mad.forbid_bike = tree.get<uint8_t>("forbid_bike");
     mad.encounter_type = tree.get<uint8_t>("encounter_type");
     mad.unknown = tree.get<uint8_t>("unknown");
+    mad.forbid_gap_map = tree.get<uint8_t>("forbid_gap_map");
 
     if(tree.get_child("special_encounters").size() > 5)
         throw BineditException("Too many special encounters! Max is 5");

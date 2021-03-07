@@ -47,6 +47,7 @@ add_library(libtpdp STATIC
     "../common/textconvert.h"
     "../common/textconvert.cpp"
     "../common/typedefs.h"
+    "../common/util.h"
 )
 
 target_include_directories(libtpdp PUBLIC ".")

@@ -188,7 +188,7 @@ namespace editor
             {
                 var ecode = proc_.ExitCode;
                 if((ecode != 0) && (ecode != 1))
-                    AppendConsoleErr("Failed with exit code: " + ecode.ToString());
+                    AppendConsoleErr("Failed with exit code: " + ((uint)ecode).ToString("X"));
             }
 
             proc_.Close();
@@ -448,7 +448,7 @@ namespace editor
                 bool dirty = false;
                 for(var i = 0; i < skills.Length; ++i)
                 {
-                    var fields = skills[i].Split(',');
+                    var fields = skills[i].Split(new char[] { ',' }, is_ynk_ ? 4 : 2);
                     if(fields.Length < (is_ynk_ ? 4 : 2))
                         continue;
 
@@ -753,7 +753,7 @@ namespace editor
                 uint count = 0;
                 foreach(var skill in skills)
                 {
-                    var fields = skill.Split(',');
+                    var fields = skill.Split(new char[] {','}, is_ynk_ ? 4 : 2);
                     if(fields.Length < (is_ynk_ ? 4 : 2))
                         continue;
 
@@ -952,6 +952,11 @@ namespace editor
                 MapGridCB.Checked = !MapGridCB.Checked;
                 return;
             }
+            if((e.KeyCode == Keys.L) && (e.Modifiers == Keys.None))
+            {
+                DesignLabelCB.Checked = !DesignLabelCB.Checked;
+                return;
+            }
 
             int index;
             switch(e.KeyCode)
@@ -992,19 +997,6 @@ namespace editor
             {
                 bool c = LayerVisibiltyCB.CheckedIndices.Contains(index);
                 LayerVisibiltyCB.SetItemChecked(index, !c);
-            }
-        }
-
-        private void HookLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            try
-            {
-                HookLinkLabel.LinkVisited = true;
-                Process.Start(@"https://github.com/php42/TPDPHook");
-            }
-            catch
-            {
-                // ...
             }
         }
     }

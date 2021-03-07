@@ -108,6 +108,8 @@
             // 
             // CBSS4
             // 
+            this.CBSS4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBSS4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBSS4.FormattingEnabled = true;
             this.CBSS4.Location = new System.Drawing.Point(6, 100);
             this.CBSS4.Name = "CBSS4";
@@ -116,6 +118,8 @@
             // 
             // CBSS3
             // 
+            this.CBSS3.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBSS3.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBSS3.FormattingEnabled = true;
             this.CBSS3.Location = new System.Drawing.Point(6, 73);
             this.CBSS3.Name = "CBSS3";
@@ -124,6 +128,8 @@
             // 
             // CBSS2
             // 
+            this.CBSS2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBSS2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBSS2.FormattingEnabled = true;
             this.CBSS2.Location = new System.Drawing.Point(6, 46);
             this.CBSS2.Name = "CBSS2";
@@ -132,6 +138,8 @@
             // 
             // CBSS1
             // 
+            this.CBSS1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBSS1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBSS1.FormattingEnabled = true;
             this.CBSS1.Location = new System.Drawing.Point(6, 19);
             this.CBSS1.Name = "CBSS1";
@@ -157,6 +165,8 @@
             // 
             // CB708
             // 
+            this.CB708.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB708.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB708.FormattingEnabled = true;
             this.CB708.Location = new System.Drawing.Point(6, 208);
             this.CB708.Name = "CB708";
@@ -165,6 +175,8 @@
             // 
             // CB707
             // 
+            this.CB707.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB707.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB707.FormattingEnabled = true;
             this.CB707.Location = new System.Drawing.Point(6, 181);
             this.CB707.Name = "CB707";
@@ -173,6 +185,8 @@
             // 
             // CB706
             // 
+            this.CB706.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB706.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB706.FormattingEnabled = true;
             this.CB706.Location = new System.Drawing.Point(6, 154);
             this.CB706.Name = "CB706";
@@ -181,6 +195,8 @@
             // 
             // CB705
             // 
+            this.CB705.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB705.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB705.FormattingEnabled = true;
             this.CB705.Location = new System.Drawing.Point(6, 127);
             this.CB705.Name = "CB705";
@@ -189,6 +205,8 @@
             // 
             // CB704
             // 
+            this.CB704.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB704.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB704.FormattingEnabled = true;
             this.CB704.Location = new System.Drawing.Point(6, 100);
             this.CB704.Name = "CB704";
@@ -197,6 +215,8 @@
             // 
             // CB703
             // 
+            this.CB703.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB703.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB703.FormattingEnabled = true;
             this.CB703.Location = new System.Drawing.Point(6, 73);
             this.CB703.Name = "CB703";
@@ -205,6 +225,8 @@
             // 
             // CB702
             // 
+            this.CB702.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB702.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB702.FormattingEnabled = true;
             this.CB702.Location = new System.Drawing.Point(6, 46);
             this.CB702.Name = "CB702";
@@ -213,6 +235,8 @@
             // 
             // CB701
             // 
+            this.CB701.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CB701.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CB701.FormattingEnabled = true;
             this.CB701.Location = new System.Drawing.Point(6, 19);
             this.CB701.Name = "CB701";
@@ -309,6 +333,8 @@
             // 
             // CBLVL100
             // 
+            this.CBLVL100.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLVL100.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLVL100.FormattingEnabled = true;
             this.CBLVL100.Location = new System.Drawing.Point(54, 208);
             this.CBLVL100.Name = "CBLVL100";
@@ -326,6 +352,8 @@
             // 
             // CBLU7
             // 
+            this.CBLU7.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU7.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU7.FormattingEnabled = true;
             this.CBLU7.Location = new System.Drawing.Point(54, 181);
             this.CBLU7.Name = "CBLU7";
@@ -334,6 +362,8 @@
             // 
             // CBLU6
             // 
+            this.CBLU6.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU6.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU6.FormattingEnabled = true;
             this.CBLU6.Location = new System.Drawing.Point(54, 154);
             this.CBLU6.Name = "CBLU6";
@@ -342,6 +372,8 @@
             // 
             // CBLU5
             // 
+            this.CBLU5.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU5.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU5.FormattingEnabled = true;
             this.CBLU5.Location = new System.Drawing.Point(54, 127);
             this.CBLU5.Name = "CBLU5";
@@ -350,6 +382,8 @@
             // 
             // CBLU4
             // 
+            this.CBLU4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU4.FormattingEnabled = true;
             this.CBLU4.Location = new System.Drawing.Point(54, 100);
             this.CBLU4.Name = "CBLU4";
@@ -358,6 +392,8 @@
             // 
             // CBLU1
             // 
+            this.CBLU1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU1.FormattingEnabled = true;
             this.CBLU1.Location = new System.Drawing.Point(54, 19);
             this.CBLU1.Name = "CBLU1";
@@ -366,6 +402,8 @@
             // 
             // CBLU3
             // 
+            this.CBLU3.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU3.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU3.FormattingEnabled = true;
             this.CBLU3.Location = new System.Drawing.Point(54, 73);
             this.CBLU3.Name = "CBLU3";
@@ -374,6 +412,8 @@
             // 
             // CBLU2
             // 
+            this.CBLU2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBLU2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBLU2.FormattingEnabled = true;
             this.CBLU2.Location = new System.Drawing.Point(54, 46);
             this.CBLU2.Name = "CBLU2";
@@ -446,6 +486,8 @@
             // 
             // CBBase1
             // 
+            this.CBBase1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBBase1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBBase1.FormattingEnabled = true;
             this.CBBase1.Location = new System.Drawing.Point(56, 19);
             this.CBBase1.Name = "CBBase1";
@@ -454,6 +496,8 @@
             // 
             // CBBase5
             // 
+            this.CBBase5.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBBase5.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBBase5.FormattingEnabled = true;
             this.CBBase5.Location = new System.Drawing.Point(56, 127);
             this.CBBase5.Name = "CBBase5";
@@ -462,6 +506,8 @@
             // 
             // CBBase2
             // 
+            this.CBBase2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBBase2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBBase2.FormattingEnabled = true;
             this.CBBase2.Location = new System.Drawing.Point(56, 46);
             this.CBBase2.Name = "CBBase2";
@@ -470,6 +516,8 @@
             // 
             // CBBase4
             // 
+            this.CBBase4.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBBase4.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBBase4.FormattingEnabled = true;
             this.CBBase4.Location = new System.Drawing.Point(56, 100);
             this.CBBase4.Name = "CBBase4";
@@ -478,6 +526,8 @@
             // 
             // CBBase3
             // 
+            this.CBBase3.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.CBBase3.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.CBBase3.FormattingEnabled = true;
             this.CBBase3.Location = new System.Drawing.Point(56, 73);
             this.CBBase3.Name = "CBBase3";

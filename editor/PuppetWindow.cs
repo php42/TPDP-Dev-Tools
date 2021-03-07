@@ -590,5 +590,28 @@ namespace editor
                 }
             }
         }
+
+        private void PuppetSearchBT_Click(object sender, EventArgs e)
+        {
+            uint id = 0;
+            using(var dialog = new NewIDDialog("Find Puppet by ID", 511))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
+
+            for(var i = 0; i < PuppetLB.Items.Count; ++i)
+            {
+                if(((Tuple<string, uint>)PuppetLB.Items[i]).Item2 == id)
+                {
+                    PuppetLB.SelectedIndex = i;
+                    return;
+                }
+            }
+
+            ErrMsg("ID not found.");
+        }
     }
 }

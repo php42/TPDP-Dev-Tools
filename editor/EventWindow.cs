@@ -153,5 +153,13 @@ namespace editor
             else
                 event_flags_[index] &= (byte)~flag;
         }
+
+        private void EventReadmeBT_Click(object sender, EventArgs e)
+        {
+            var path = @".\docs\EVENT README.txt";
+            if(!File.Exists(path))
+                path = @"https://github.com/php42/TPDP-Dev-Tools/blob/master/docs/EVENT%20README.txt";
+            Process.Start(path);
+        }
     }
 }

@@ -22,74 +22,13 @@
 #include <cstring>
 #include <map>
 #include "../common/textconvert.h"
-#include <intrin.h>
+#include "../common/util.h"
 
 static const uint8_t save_magic[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x00};
 static const uint8_t save_magic_ynk[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x41, 0x50, 0x00};
 
 static const unsigned int pocket_offsets[] = {0x00, 0x80, 0x100, 0x200, 0x300, 0x400, 0x480};
 static const unsigned int pocket_sizes[] = {0x40, 0x40, 0x80, 0x80, 0x80, 0x40, 0x20};
-
-// faster memcmp implementation to speed up save file compression
-static inline int sse2_memcmp(const void *block1, const void *block2, std::size_t sz)
-{
-    auto pos1 = (uint8_t*)block1;
-    auto pos2 = (uint8_t*)block2;
-
-    while(sz > 0)
-    {
-        if(sz >= 32) // branch avoidance and pipelining (no avx for compat)
-        {
-            auto b1 = _mm_loadu_si128((__m128i*)pos1);
-            auto b2 = _mm_loadu_si128((__m128i*)pos2);
-            auto cmp1 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
-
-            auto b3 = _mm_loadu_si128((__m128i*)&pos1[16]);
-            auto b4 = _mm_loadu_si128((__m128i*)&pos2[16]);
-            auto cmp2 = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b3, b4));
-
-            if((cmp1 & cmp2) != 0xffffu)
-                return -1;
-
-            pos1 += 32;
-            pos2 += 32;
-            sz -= 32;
-        }
-        else if(sz >= 16)
-        {
-            auto b1 = _mm_loadu_si128((__m128i*)pos1);
-            auto b2 = _mm_loadu_si128((__m128i*)pos2);
-            auto cmp = (uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(b1, b2));
-
-            if(cmp != 0xffffu)
-                return -1;
-
-            pos1 += 16;
-            pos2 += 16;
-            sz -= 16;
-        }
-        else if(sz >= 8)
-        {
-            if(*(uint64_t*)pos1 != *(uint64_t*)pos2)
-                return -1;
-
-            pos1 += 8;
-            pos2 += 8;
-            sz -= 8;
-        }
-        else
-        {
-            if(*pos1 != *pos2)
-                return -1;
-
-            ++pos1;
-            ++pos2;
-            --sz;
-        }
-    }
-
-    return 0;
-}
 
 namespace libtpdp
 {

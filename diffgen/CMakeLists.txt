@@ -43,6 +43,7 @@ add_executable(diffgen
     "../common/typedefs.h"
     "../common/version.h"
     "../common/thread_pool.h"
+    "../common/util.h"
 )
 
 target_link_libraries(diffgen PRIVATE libtpdp zlib zip vcdcom vcddec vcdenc Boost::boost Boost::program_options)

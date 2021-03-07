@@ -21,7 +21,7 @@ namespace editor.json
 
         public static int VersionMinor
         {
-            get { return 3; }
+            get { return 4; }
         }
 
         public bool VersionMatches()
@@ -153,6 +153,9 @@ namespace editor.json
 
         [DataMember]
         public uint forbid_bike = 0;
+
+        [DataMember]
+        public uint forbid_gap_map = 0;
 
         [DataMember]
         public uint encounter_type = 0;
@@ -287,6 +290,50 @@ namespace editor.json
 
         [DataMember]
         public StyleData[] styles = { new StyleData(), new StyleData(), new StyleData(), new StyleData() };
+
+        public int LevelToLearn(uint style_index, uint skill_id)
+        {
+            var styledata = styles[style_index];
+            if(skill_id == 0)
+                return -1;
+            if(styledata.type == "None")
+                return -1;
+
+            int[] style_levels = { 0, 0, 0, 0, 30, 36, 42, 49, 56, 63, 70 };
+            int[] base_levels = { 7, 10, 14, 19, 24 };
+
+            if(style_index > 0)
+            {
+                for(var i = 0; i < 4; ++i)
+                {
+                    if(styles[0].style_skills[i] == skill_id)
+                        return 0;
+                }
+            }
+
+            for(var i = 0; i < 5; ++i)
+            {
+                if(base_skills[i] == skill_id)
+                    return base_levels[i];
+            }
+
+            for(var i = 0; i < 11; ++i)
+            {
+                if(styledata.style_skills[i] == skill_id)
+                    return style_levels[i];
+            }
+
+            foreach(var i in styledata.lvl70_skills)
+            {
+                if(i == skill_id)
+                    return 70;
+            }
+
+            if(styledata.lvl100_skill == skill_id)
+                return 100;
+
+            return -1;
+        }
     }
 
     [DataContract]

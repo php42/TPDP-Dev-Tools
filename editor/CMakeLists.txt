@@ -36,6 +36,7 @@ set(editor_sources
     "SkillEditDialog.Designer.cs"
     "SkillEditDialog.resx"
     "EventWindow.cs"
+    "EvsWindow.cs"
     "Bitmap.cs"
     "MapPanel.cs"
     "Properties/AssemblyInfo.cs"

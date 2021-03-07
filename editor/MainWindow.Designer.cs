@@ -141,6 +141,7 @@
             System.Windows.Forms.Label label112;
             System.Windows.Forms.Label label70;
             System.Windows.Forms.Label label113;
+            System.Windows.Forms.Label label19;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
@@ -160,11 +161,13 @@
             this.GameDirButton = new System.Windows.Forms.Button();
             this.GameDirTextBox = new System.Windows.Forms.TextBox();
             this.PuppetsTabPage = new System.Windows.Forms.TabPage();
+            this.PuppetSearchBT = new System.Windows.Forms.Button();
             this.PuppetMovesetBT = new System.Windows.Forms.Button();
             this.PuppetdexIndexSC = new System.Windows.Forms.NumericUpDown();
             this.ExportPuppetButton = new System.Windows.Forms.Button();
             this.NewPuppetButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.PuppetBSTLabel = new System.Windows.Forms.Label();
             this.StatSPDSC = new System.Windows.Forms.NumericUpDown();
             this.StatSDSC = new System.Windows.Forms.NumericUpDown();
             this.StatSASC = new System.Windows.Forms.NumericUpDown();
@@ -188,6 +191,8 @@
             this.PuppetStyleCB = new System.Windows.Forms.ComboBox();
             this.PuppetLB = new System.Windows.Forms.ListBox();
             this.TrainersTabPage = new System.Windows.Forms.TabPage();
+            this.TrainerEquipBT = new System.Windows.Forms.Button();
+            this.TrainerSearchBT = new System.Windows.Forms.Button();
             this.TrainerAICB = new System.Windows.Forms.ComboBox();
             this.TrainerIDSC = new System.Windows.Forms.NumericUpDown();
             this.NewTrainerBT = new System.Windows.Forms.Button();
@@ -236,6 +241,7 @@
             this.TrainerNameTB = new System.Windows.Forms.TextBox();
             this.TrainerLB = new System.Windows.Forms.ListBox();
             this.SkillsTabPage = new System.Windows.Forms.TabPage();
+            this.SkillSearchBT = new System.Windows.Forms.Button();
             this.SkillDescTB = new System.Windows.Forms.TextBox();
             this.NewSkillBT = new System.Windows.Forms.Button();
             this.SkillDataClassCB = new System.Windows.Forms.ComboBox();
@@ -254,11 +260,13 @@
             this.SkillDataTB = new System.Windows.Forms.TextBox();
             this.SkillDataCB = new System.Windows.Forms.ComboBox();
             this.MapsTabPage = new System.Windows.Forms.TabPage();
+            this.MapSearchBT = new System.Windows.Forms.Button();
             this.MapIDSC = new System.Windows.Forms.NumericUpDown();
             this.BattleBGPB = new System.Windows.Forms.PictureBox();
             this.NewMapBT = new System.Windows.Forms.Button();
             this.MapPercentLabel = new System.Windows.Forms.Label();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.ForbidGapCB = new System.Windows.Forms.CheckBox();
             this.MapMusicCB = new System.Windows.Forms.ComboBox();
             this.ForbidBikeCB = new System.Windows.Forms.CheckBox();
             this.MapEncounterTypeCB = new System.Windows.Forms.ComboBox();
@@ -275,6 +283,7 @@
             this.MapListBox = new System.Windows.Forms.ListBox();
             this.DesignTabPage = new System.Windows.Forms.TabPage();
             this.DesignSplit = new System.Windows.Forms.SplitContainer();
+            this.MapReadmeBT = new System.Windows.Forms.Button();
             this.MapGridCB = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.BrushValueSC = new System.Windows.Forms.NumericUpDown();
@@ -295,6 +304,7 @@
             this.Tileset3SC = new System.Windows.Forms.NumericUpDown();
             this.Tileset4SC = new System.Windows.Forms.NumericUpDown();
             this.EventTabPage = new System.Windows.Forms.TabPage();
+            this.EventReadmeBT = new System.Windows.Forms.Button();
             this.EventMapCB = new System.Windows.Forms.ComboBox();
             this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.label102 = new System.Windows.Forms.Label();
@@ -309,11 +319,17 @@
             this.EventObjIDSC = new System.Windows.Forms.NumericUpDown();
             this.EventObjectPB = new System.Windows.Forms.PictureBox();
             this.EventIDSC = new System.Windows.Forms.NumericUpDown();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.EvsHexCB = new System.Windows.Forms.CheckBox();
+            this.EvsReadmeBT = new System.Windows.Forms.Button();
+            this.EvsNewBT = new System.Windows.Forms.Button();
+            this.EvsSaveBT = new System.Windows.Forms.Button();
+            this.EvsOpenBT = new System.Windows.Forms.Button();
+            this.EvsTB = new System.Windows.Forms.TextBox();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ExportPuppetDialog = new System.Windows.Forms.SaveFileDialog();
-            this.PuppetBSTLabel = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -426,6 +442,7 @@
             label112 = new System.Windows.Forms.Label();
             label70 = new System.Windows.Forms.Label();
             label113 = new System.Windows.Forms.Label();
+            label19 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -508,6 +525,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).BeginInit();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -668,7 +686,7 @@
             // label77
             // 
             label77.AutoSize = true;
-            label77.Location = new System.Drawing.Point(133, 103);
+            label77.Location = new System.Drawing.Point(156, 103);
             label77.Name = "label77";
             label77.Size = new System.Drawing.Size(27, 13);
             label77.TabIndex = 28;
@@ -677,7 +695,7 @@
             // label76
             // 
             label76.AutoSize = true;
-            label76.Location = new System.Drawing.Point(133, 76);
+            label76.Location = new System.Drawing.Point(156, 76);
             label76.Name = "label76";
             label76.Size = new System.Drawing.Size(35, 13);
             label76.TabIndex = 28;
@@ -686,7 +704,7 @@
             // label75
             // 
             label75.AutoSize = true;
-            label75.Location = new System.Drawing.Point(133, 49);
+            label75.Location = new System.Drawing.Point(156, 49);
             label75.Name = "label75";
             label75.Size = new System.Drawing.Size(27, 13);
             label75.TabIndex = 29;
@@ -695,7 +713,7 @@
             // label74
             // 
             label74.AutoSize = true;
-            label74.Location = new System.Drawing.Point(133, 22);
+            label74.Location = new System.Drawing.Point(156, 22);
             label74.Name = "label74";
             label74.Size = new System.Drawing.Size(31, 13);
             label74.TabIndex = 28;
@@ -1556,6 +1574,15 @@
             label113.Text = "For skill animations and other hackery, there is a separate patch for the game ex" +
     "ecutable:";
             // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new System.Drawing.Point(8, 3);
+            label19.Name = "label19";
+            label19.Size = new System.Drawing.Size(417, 52);
+            label19.TabIndex = 1;
+            label19.Text = resources.GetString("label19.Text");
+            // 
             // HookLinkLabel
             // 
             this.HookLinkLabel.AutoSize = true;
@@ -1576,6 +1603,7 @@
             this.TabControl.Controls.Add(this.MapsTabPage);
             this.TabControl.Controls.Add(this.DesignTabPage);
             this.TabControl.Controls.Add(this.EventTabPage);
+            this.TabControl.Controls.Add(this.tabPage1);
             this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl.Location = new System.Drawing.Point(0, 0);
             this.TabControl.Name = "TabControl";
@@ -1727,6 +1755,7 @@
             // 
             // PuppetsTabPage
             // 
+            this.PuppetsTabPage.Controls.Add(this.PuppetSearchBT);
             this.PuppetsTabPage.Controls.Add(this.PuppetMovesetBT);
             this.PuppetsTabPage.Controls.Add(this.PuppetdexIndexSC);
             this.PuppetsTabPage.Controls.Add(label5);
@@ -1759,6 +1788,16 @@
             this.PuppetsTabPage.TabIndex = 1;
             this.PuppetsTabPage.Text = "Puppets";
             this.PuppetsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // PuppetSearchBT
+            // 
+            this.PuppetSearchBT.Location = new System.Drawing.Point(245, 60);
+            this.PuppetSearchBT.Name = "PuppetSearchBT";
+            this.PuppetSearchBT.Size = new System.Drawing.Size(59, 23);
+            this.PuppetSearchBT.TabIndex = 30;
+            this.PuppetSearchBT.Text = "Find ID";
+            this.PuppetSearchBT.UseVisualStyleBackColor = true;
+            this.PuppetSearchBT.Click += new System.EventHandler(this.PuppetSearchBT_Click);
             // 
             // PuppetMovesetBT
             // 
@@ -1825,6 +1864,15 @@
             this.groupBox5.TabIndex = 21;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Stats";
+            // 
+            // PuppetBSTLabel
+            // 
+            this.PuppetBSTLabel.AutoSize = true;
+            this.PuppetBSTLabel.Location = new System.Drawing.Point(70, 99);
+            this.PuppetBSTLabel.Name = "PuppetBSTLabel";
+            this.PuppetBSTLabel.Size = new System.Drawing.Size(40, 13);
+            this.PuppetBSTLabel.TabIndex = 30;
+            this.PuppetBSTLabel.Text = "BST: 0";
             // 
             // StatSPDSC
             // 
@@ -2036,7 +2084,7 @@
             this.Item4CB.FormattingEnabled = true;
             this.Item4CB.Location = new System.Drawing.Point(6, 100);
             this.Item4CB.Name = "Item4CB";
-            this.Item4CB.Size = new System.Drawing.Size(121, 21);
+            this.Item4CB.Size = new System.Drawing.Size(144, 21);
             this.Item4CB.TabIndex = 16;
             this.Item4CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
@@ -2047,7 +2095,7 @@
             this.Item3CB.FormattingEnabled = true;
             this.Item3CB.Location = new System.Drawing.Point(6, 73);
             this.Item3CB.Name = "Item3CB";
-            this.Item3CB.Size = new System.Drawing.Size(121, 21);
+            this.Item3CB.Size = new System.Drawing.Size(144, 21);
             this.Item3CB.TabIndex = 15;
             this.Item3CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
@@ -2058,7 +2106,7 @@
             this.Item2CB.FormattingEnabled = true;
             this.Item2CB.Location = new System.Drawing.Point(6, 46);
             this.Item2CB.Name = "Item2CB";
-            this.Item2CB.Size = new System.Drawing.Size(121, 21);
+            this.Item2CB.Size = new System.Drawing.Size(144, 21);
             this.Item2CB.TabIndex = 14;
             this.Item2CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
@@ -2069,7 +2117,7 @@
             this.Item1CB.FormattingEnabled = true;
             this.Item1CB.Location = new System.Drawing.Point(6, 19);
             this.Item1CB.Name = "Item1CB";
-            this.Item1CB.Size = new System.Drawing.Size(121, 21);
+            this.Item1CB.Size = new System.Drawing.Size(144, 21);
             this.Item1CB.TabIndex = 13;
             this.Item1CB.SelectedIndexChanged += new System.EventHandler(this.ItemCB_SelectedIndexChanged);
             // 
@@ -2147,6 +2195,8 @@
             // 
             // TrainersTabPage
             // 
+            this.TrainersTabPage.Controls.Add(this.TrainerEquipBT);
+            this.TrainersTabPage.Controls.Add(this.TrainerSearchBT);
             this.TrainersTabPage.Controls.Add(this.TrainerAICB);
             this.TrainersTabPage.Controls.Add(label111);
             this.TrainersTabPage.Controls.Add(this.TrainerIDSC);
@@ -2195,6 +2245,27 @@
             this.TrainersTabPage.TabIndex = 3;
             this.TrainersTabPage.Text = "Trainers";
             this.TrainersTabPage.UseVisualStyleBackColor = true;
+            // 
+            // TrainerEquipBT
+            // 
+            this.TrainerEquipBT.Location = new System.Drawing.Point(324, 217);
+            this.TrainerEquipBT.Name = "TrainerEquipBT";
+            this.TrainerEquipBT.Size = new System.Drawing.Size(119, 23);
+            this.TrainerEquipBT.TabIndex = 43;
+            this.TrainerEquipBT.Text = "Equip \"Best\" Moves";
+            this.toolTip1.SetToolTip(this.TrainerEquipBT, "Equip the \"best\" moves this puppet can learn by levelup at its current level");
+            this.TrainerEquipBT.UseVisualStyleBackColor = true;
+            this.TrainerEquipBT.Click += new System.EventHandler(this.TrainerEquipBT_Click);
+            // 
+            // TrainerSearchBT
+            // 
+            this.TrainerSearchBT.Location = new System.Drawing.Point(672, 84);
+            this.TrainerSearchBT.Name = "TrainerSearchBT";
+            this.TrainerSearchBT.Size = new System.Drawing.Size(75, 23);
+            this.TrainerSearchBT.TabIndex = 42;
+            this.TrainerSearchBT.Text = "Search ID";
+            this.TrainerSearchBT.UseVisualStyleBackColor = true;
+            this.TrainerSearchBT.Click += new System.EventHandler(this.TrainerSearchBT_Click);
             // 
             // TrainerAICB
             // 
@@ -2782,6 +2853,7 @@
             // 
             // SkillsTabPage
             // 
+            this.SkillsTabPage.Controls.Add(this.SkillSearchBT);
             this.SkillsTabPage.Controls.Add(label113);
             this.SkillsTabPage.Controls.Add(this.HookLinkLabel);
             this.SkillsTabPage.Controls.Add(this.SkillDescTB);
@@ -2819,6 +2891,16 @@
             this.SkillsTabPage.TabIndex = 6;
             this.SkillsTabPage.Text = "Skills";
             this.SkillsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // SkillSearchBT
+            // 
+            this.SkillSearchBT.Location = new System.Drawing.Point(362, 6);
+            this.SkillSearchBT.Name = "SkillSearchBT";
+            this.SkillSearchBT.Size = new System.Drawing.Size(75, 23);
+            this.SkillSearchBT.TabIndex = 28;
+            this.SkillSearchBT.Text = "Search ID";
+            this.SkillSearchBT.UseVisualStyleBackColor = true;
+            this.SkillSearchBT.Click += new System.EventHandler(this.SkillSearchBT_Click);
             // 
             // SkillDescTB
             // 
@@ -3049,6 +3131,7 @@
             // 
             // MapsTabPage
             // 
+            this.MapsTabPage.Controls.Add(this.MapSearchBT);
             this.MapsTabPage.Controls.Add(this.MapIDSC);
             this.MapsTabPage.Controls.Add(label58);
             this.MapsTabPage.Controls.Add(this.BattleBGPB);
@@ -3080,6 +3163,16 @@
             this.MapsTabPage.Text = "Maps (Encounters/OW)";
             this.MapsTabPage.UseVisualStyleBackColor = true;
             // 
+            // MapSearchBT
+            // 
+            this.MapSearchBT.Location = new System.Drawing.Point(450, 84);
+            this.MapSearchBT.Name = "MapSearchBT";
+            this.MapSearchBT.Size = new System.Drawing.Size(75, 23);
+            this.MapSearchBT.TabIndex = 30;
+            this.MapSearchBT.Text = "Search ID";
+            this.MapSearchBT.UseVisualStyleBackColor = true;
+            this.MapSearchBT.Click += new System.EventHandler(this.MapSearchBT_Click);
+            // 
             // MapIDSC
             // 
             this.MapIDSC.Enabled = false;
@@ -3105,7 +3198,7 @@
             // 
             // NewMapBT
             // 
-            this.NewMapBT.Location = new System.Drawing.Point(132, 384);
+            this.NewMapBT.Location = new System.Drawing.Point(132, 401);
             this.NewMapBT.Name = "NewMapBT";
             this.NewMapBT.Size = new System.Drawing.Size(75, 23);
             this.NewMapBT.TabIndex = 26;
@@ -3124,6 +3217,7 @@
             // 
             // groupBox14
             // 
+            this.groupBox14.Controls.Add(this.ForbidGapCB);
             this.groupBox14.Controls.Add(this.MapMusicCB);
             this.groupBox14.Controls.Add(this.ForbidBikeCB);
             this.groupBox14.Controls.Add(label89);
@@ -3135,10 +3229,21 @@
             this.groupBox14.Controls.Add(label87);
             this.groupBox14.Location = new System.Drawing.Point(132, 218);
             this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(255, 160);
+            this.groupBox14.Size = new System.Drawing.Size(255, 177);
             this.groupBox14.TabIndex = 24;
             this.groupBox14.TabStop = false;
             this.groupBox14.Text = "Overworld Metadata";
+            // 
+            // ForbidGapCB
+            // 
+            this.ForbidGapCB.AutoSize = true;
+            this.ForbidGapCB.Location = new System.Drawing.Point(6, 152);
+            this.ForbidGapCB.Name = "ForbidGapCB";
+            this.ForbidGapCB.Size = new System.Drawing.Size(108, 17);
+            this.ForbidGapCB.TabIndex = 28;
+            this.ForbidGapCB.Text = "Disable Gap Map";
+            this.ForbidGapCB.UseVisualStyleBackColor = true;
+            this.ForbidGapCB.CheckedChanged += new System.EventHandler(this.ForbidGapCB_CheckedChanged);
             // 
             // MapMusicCB
             // 
@@ -3335,6 +3440,7 @@
             // 
             // DesignSplit.Panel1
             // 
+            this.DesignSplit.Panel1.Controls.Add(this.MapReadmeBT);
             this.DesignSplit.Panel1.Controls.Add(this.MapGridCB);
             this.DesignSplit.Panel1.Controls.Add(this.groupBox13);
             this.DesignSplit.Panel1.Controls.Add(label104);
@@ -3357,6 +3463,16 @@
             this.DesignSplit.SplitterDistance = 220;
             this.DesignSplit.SplitterWidth = 5;
             this.DesignSplit.TabIndex = 16;
+            // 
+            // MapReadmeBT
+            // 
+            this.MapReadmeBT.Location = new System.Drawing.Point(148, 266);
+            this.MapReadmeBT.Name = "MapReadmeBT";
+            this.MapReadmeBT.Size = new System.Drawing.Size(65, 23);
+            this.MapReadmeBT.TabIndex = 16;
+            this.MapReadmeBT.Text = "Readme";
+            this.MapReadmeBT.UseVisualStyleBackColor = true;
+            this.MapReadmeBT.Click += new System.EventHandler(this.MapReadmeBT_Click);
             // 
             // MapGridCB
             // 
@@ -3437,8 +3553,8 @@
             "Geometry 6",
             "Geometry 7",
             "Geometry 8",
-            "Collision/Zone Mask",
-            "Layer 10",
+            "Collision/Zone 1",
+            "Collision/Zone 2",
             "Objects 1",
             "Objects 2",
             "Background Pattern"});
@@ -3471,8 +3587,8 @@
             "Geometry 6",
             "Geometry 7",
             "Geometry 8",
-            "Collision/Zone Mask",
-            "Layer 10",
+            "Collision/Zone 1",
+            "Collision/Zone 2",
             "Objects 1",
             "Objects 2",
             "Background Pattern"});
@@ -3620,6 +3736,7 @@
             // 
             // EventTabPage
             // 
+            this.EventTabPage.Controls.Add(this.EventReadmeBT);
             this.EventTabPage.Controls.Add(label90);
             this.EventTabPage.Controls.Add(this.EventMapCB);
             this.EventTabPage.Controls.Add(this.groupBox17);
@@ -3636,6 +3753,16 @@
             this.EventTabPage.TabIndex = 8;
             this.EventTabPage.Text = "Maps (Events/Objects)";
             this.EventTabPage.UseVisualStyleBackColor = true;
+            // 
+            // EventReadmeBT
+            // 
+            this.EventReadmeBT.Location = new System.Drawing.Point(205, 6);
+            this.EventReadmeBT.Name = "EventReadmeBT";
+            this.EventReadmeBT.Size = new System.Drawing.Size(75, 23);
+            this.EventReadmeBT.TabIndex = 21;
+            this.EventReadmeBT.Text = "Readme";
+            this.EventReadmeBT.UseVisualStyleBackColor = true;
+            this.EventReadmeBT.Click += new System.EventHandler(this.EventReadmeBT_Click);
             // 
             // EventMapCB
             // 
@@ -3810,6 +3937,93 @@
             this.EventIDSC.TabIndex = 2;
             this.EventIDSC.ValueChanged += new System.EventHandler(this.EventIDSC_ValueChanged);
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.EvsHexCB);
+            this.tabPage1.Controls.Add(this.EvsReadmeBT);
+            this.tabPage1.Controls.Add(this.EvsNewBT);
+            this.tabPage1.Controls.Add(this.EvsSaveBT);
+            this.tabPage1.Controls.Add(this.EvsOpenBT);
+            this.tabPage1.Controls.Add(label19);
+            this.tabPage1.Controls.Add(this.EvsTB);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(768, 555);
+            this.tabPage1.TabIndex = 9;
+            this.tabPage1.Text = "Event Scripts";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // EvsHexCB
+            // 
+            this.EvsHexCB.AutoSize = true;
+            this.EvsHexCB.Checked = true;
+            this.EvsHexCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.EvsHexCB.Location = new System.Drawing.Point(335, 78);
+            this.EvsHexCB.Name = "EvsHexCB";
+            this.EvsHexCB.Size = new System.Drawing.Size(87, 17);
+            this.EvsHexCB.TabIndex = 6;
+            this.EvsHexCB.Text = "Hexadecimal";
+            this.EvsHexCB.UseVisualStyleBackColor = true;
+            this.EvsHexCB.CheckedChanged += new System.EventHandler(this.EvsHexCB_CheckedChanged);
+            // 
+            // EvsReadmeBT
+            // 
+            this.EvsReadmeBT.Location = new System.Drawing.Point(254, 74);
+            this.EvsReadmeBT.Name = "EvsReadmeBT";
+            this.EvsReadmeBT.Size = new System.Drawing.Size(75, 23);
+            this.EvsReadmeBT.TabIndex = 5;
+            this.EvsReadmeBT.Text = "Readme";
+            this.EvsReadmeBT.UseVisualStyleBackColor = true;
+            this.EvsReadmeBT.Click += new System.EventHandler(this.EvsReadmeBT_Click);
+            // 
+            // EvsNewBT
+            // 
+            this.EvsNewBT.Location = new System.Drawing.Point(173, 74);
+            this.EvsNewBT.Name = "EvsNewBT";
+            this.EvsNewBT.Size = new System.Drawing.Size(75, 23);
+            this.EvsNewBT.TabIndex = 4;
+            this.EvsNewBT.Text = "New";
+            this.EvsNewBT.UseVisualStyleBackColor = true;
+            this.EvsNewBT.Click += new System.EventHandler(this.EvsNewBT_Click);
+            // 
+            // EvsSaveBT
+            // 
+            this.EvsSaveBT.Location = new System.Drawing.Point(92, 74);
+            this.EvsSaveBT.Name = "EvsSaveBT";
+            this.EvsSaveBT.Size = new System.Drawing.Size(75, 23);
+            this.EvsSaveBT.TabIndex = 3;
+            this.EvsSaveBT.Text = "Save";
+            this.EvsSaveBT.UseVisualStyleBackColor = true;
+            this.EvsSaveBT.Click += new System.EventHandler(this.EvsSaveBT_Click);
+            // 
+            // EvsOpenBT
+            // 
+            this.EvsOpenBT.Location = new System.Drawing.Point(11, 74);
+            this.EvsOpenBT.Name = "EvsOpenBT";
+            this.EvsOpenBT.Size = new System.Drawing.Size(75, 23);
+            this.EvsOpenBT.TabIndex = 2;
+            this.EvsOpenBT.Text = "Open";
+            this.EvsOpenBT.UseVisualStyleBackColor = true;
+            this.EvsOpenBT.Click += new System.EventHandler(this.EvsOpenBT_Click);
+            // 
+            // EvsTB
+            // 
+            this.EvsTB.AllowDrop = true;
+            this.EvsTB.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.EvsTB.Font = new System.Drawing.Font("Courier New", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EvsTB.Location = new System.Drawing.Point(11, 103);
+            this.EvsTB.Multiline = true;
+            this.EvsTB.Name = "EvsTB";
+            this.EvsTB.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.EvsTB.Size = new System.Drawing.Size(749, 444);
+            this.EvsTB.TabIndex = 0;
+            this.EvsTB.WordWrap = false;
+            this.EvsTB.DragDrop += new System.Windows.Forms.DragEventHandler(this.EvsTB_DragDrop);
+            this.EvsTB.DragEnter += new System.Windows.Forms.DragEventHandler(this.EvsTB_DragEnter);
+            // 
             // GameDirBrowser
             // 
             this.GameDirBrowser.Description = "Locate Game Folder";
@@ -3823,15 +4037,6 @@
             this.ExportPuppetDialog.DefaultExt = "txt";
             this.ExportPuppetDialog.FileName = "puppets.txt";
             // 
-            // PuppetBSTLabel
-            // 
-            this.PuppetBSTLabel.AutoSize = true;
-            this.PuppetBSTLabel.Location = new System.Drawing.Point(70, 99);
-            this.PuppetBSTLabel.Name = "PuppetBSTLabel";
-            this.PuppetBSTLabel.Size = new System.Drawing.Size(40, 13);
-            this.PuppetBSTLabel.TabIndex = 30;
-            this.PuppetBSTLabel.Text = "BST: 0";
-            // 
             // EditorMainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3842,7 +4047,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.3.2";
+            this.Text = "TPDP Editor v1.4.0";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);
@@ -3944,6 +4149,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).EndInit();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -4121,6 +4328,21 @@
         private System.Windows.Forms.LinkLabel HookLinkLabel;
         private System.Windows.Forms.Button PuppetMovesetBT;
         private System.Windows.Forms.Label PuppetBSTLabel;
+        private System.Windows.Forms.CheckBox ForbidGapCB;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox EvsTB;
+        private System.Windows.Forms.Button EvsNewBT;
+        private System.Windows.Forms.Button EvsSaveBT;
+        private System.Windows.Forms.Button EvsOpenBT;
+        private System.Windows.Forms.CheckBox EvsHexCB;
+        private System.Windows.Forms.Button EvsReadmeBT;
+        private System.Windows.Forms.Button TrainerSearchBT;
+        private System.Windows.Forms.Button SkillSearchBT;
+        private System.Windows.Forms.Button MapSearchBT;
+        private System.Windows.Forms.Button MapReadmeBT;
+        private System.Windows.Forms.Button EventReadmeBT;
+        private System.Windows.Forms.Button PuppetSearchBT;
+        private System.Windows.Forms.Button TrainerEquipBT;
     }
 }
 

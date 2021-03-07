@@ -415,6 +415,7 @@ namespace editor
                 MapWeatherCB.SelectedIndex = (int)map.weather;
                 MapEncounterTypeCB.SelectedIndex = (int)map.encounter_type;
                 ForbidBikeCB.Checked = map.forbid_bike > 0;
+                ForbidGapCB.Checked = map.forbid_gap_map > 0;
                 MapIDSC.Value = map.id;
                 RefreshEncounter();
             }
@@ -546,7 +547,7 @@ namespace editor
             if(total > 0)
             {
                 var p = ((double)val / (double)total) * 100.0;
-                string str = "(" + p.ToString("0.##") + "%)";
+                string str = "(" + p.ToString("0.##") + "%) (Sum: " + total.ToString() + ")";
                 MapPercentLabel.Text = str;
             }
             else
@@ -642,6 +643,15 @@ namespace editor
                 return;
 
             maps_[mapindex].forbid_bike = (ForbidBikeCB.Checked ? 1u : 0u);
+        }
+
+        private void ForbidGapCB_CheckedChanged(object sender, EventArgs e)
+        {
+            var mapindex = MapListBox.SelectedIndex;
+            if(mapindex < 0)
+                return;
+
+            maps_[mapindex].forbid_gap_map = (ForbidGapCB.Checked ? 1u : 0u);
         }
 
         // Avert thy gaze
@@ -776,6 +786,29 @@ namespace editor
                     SelectMap(maps_.Count - 1);
                 }
             }
+        }
+
+        private void MapSearchBT_Click(object sender, EventArgs e)
+        {
+            uint id = 0;
+            using(var dialog = new NewIDDialog("Find Map by ID", map_names_.Length - 1))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
+
+            for(var i = 0; i < maps_.Count; ++i)
+            {
+                if(maps_[i].id == id)
+                {
+                    MapListBox.SelectedIndex = i;
+                    return;
+                }
+            }
+
+            ErrMsg("ID not found.");
         }
     }
 }

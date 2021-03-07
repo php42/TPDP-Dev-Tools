@@ -13,6 +13,7 @@ using editor.json;
 using System.Runtime.Serialization.Json;
 
 // Design tab of MainWindow
+// NOTE: some control binds at bottom of MainWindow.cs
 
 namespace editor
 {
@@ -210,11 +211,11 @@ namespace editor
                                 var index = (uint)BitConverter.ToUInt16(map_layers_[i], j * 2);
                                 var src_rect = new Rectangle(0, 0, 32, 32);
                                 var dst_rect = new Rectangle((((j % width) * 16) - 8) - clipping_rect.X, (((j / width) * 16) - 16) - clipping_rect.Y, 32, 32);
-                                var obj_id = obs_data_.entries[index].object_id;
+                                var obj_id = obs_data_.entries[(index < obs_data_.entries.Length) ? index : 0].object_id;
 
                                 if(index > 0)
                                 {
-                                    if((obj_id > 0) && (i != 8) && (i != 12))
+                                    if((obj_id > 0) && (i != 8) && (i != 9) && (i != 12))
                                     {
                                         if(!objects_.ContainsKey(obj_id))
                                             objects_[obj_id] = LoadObjectBmp(obj_id);
@@ -222,7 +223,7 @@ namespace editor
                                         g.DrawImage(obj_bmp, dst_rect, src_rect, GraphicsUnit.Pixel);
                                     }
 
-                                    if(DesignLabelCB.Checked || (i == 8))
+                                    if(DesignLabelCB.Checked || (i == 8) || (i == 9))
                                     {
                                         var str = index.ToString();
                                         var fmt = new StringFormat();
@@ -700,6 +701,87 @@ namespace editor
             }
         }
 
+        private void FloodFill(int layer, int x, int y, uint newval)
+        {
+            if((layer < 0) || (layer >= 12))
+                return;
+            if((x < 0) || (x >= fmf_data_.width))
+                return;
+            if((y < 0) || (y >= fmf_data_.height))
+                return;
+
+            uint oldval = BitConverter.ToUInt16(map_layers_[layer], (int)((x + (y * fmf_data_.width)) * 2));
+            if(oldval == newval)
+                return;
+
+            SaveHistory();
+
+            var queue = new Queue<Tuple<int, int>>();
+            queue.Enqueue(new Tuple<int, int>(x, y));
+
+            int to_index(int x_, int y_)
+            {
+                if((x_ < 0) || (x_ >= fmf_data_.width))
+                    return -1;
+                if((y_ < 0) || (y_ >= fmf_data_.height))
+                    return -1;
+
+                return (int)((x_ + (y_ * fmf_data_.width)) * 2);
+            }
+
+            bool is_valid(int x_, int y_)
+            {
+                var index = to_index(x_, y_);
+                if(index < 0)
+                    return false;
+                if(BitConverter.ToUInt16(map_layers_[layer], index) != oldval)
+                    return false;
+                return true;
+            }
+
+            bool try_replace(int x_, int y_)
+            {
+                if(!is_valid(x_, y_))
+                    return false;
+                var index = to_index(x_, y_);
+
+                var buf = BitConverter.GetBytes((ushort)newval);
+                map_layers_[layer][index] = buf[0];
+                map_layers_[layer][index + 1] = buf[1];
+                return true;
+            }
+
+            void enqueue_single(Tuple<int, int> item)
+            {
+                if(is_valid(item.Item1, item.Item2) && !queue.Contains(item))
+                    queue.Enqueue(item);
+            }
+            void enqueue_adjacent(int x_, int y_)
+            {
+                enqueue_single(new Tuple<int, int>(x_ + 1, y_));
+                enqueue_single(new Tuple<int, int>(x_ - 1, y_));
+                enqueue_single(new Tuple<int, int>(x_, y_ + 1));
+                enqueue_single(new Tuple<int, int>(x_, y_ - 1));
+
+                /*
+                enqueue_single(new Tuple<int, int>(x_ + 1, y_ + 1));
+                enqueue_single(new Tuple<int, int>(x_ - 1, y_ - 1));
+                enqueue_single(new Tuple<int, int>(x_ - 1, y_ + 1));
+                enqueue_single(new Tuple<int, int>(x_ + 1, y_ - 1));
+                */
+            }
+
+            while(queue.Count > 0)
+            {
+                var pos = queue.Dequeue();
+                x = pos.Item1;
+                y = pos.Item2;
+
+                if(try_replace(x, y))
+                    enqueue_adjacent(x, y);
+            }
+        }
+
         private void MapDisplay_MouseClick(Object sender, MouseEventArgs e)
         {
             var mapindex = MapDesignCB.SelectedIndex;
@@ -716,7 +798,8 @@ namespace editor
                     MapEndDrag();
                 paste_x_ = -1;
                 paste_y_ = -1;
-                return;
+                if(e.Button != MouseButtons.Middle)
+                    return;
             }
 
             if((e.X < 0) || (e.Y < 0))
@@ -746,7 +829,24 @@ namespace editor
             var brush_val = (uint)BrushValueSC.Value;
             var index = tile_x + (tile_y * fmf_data_.width);
 
-            if(e.Button == MouseButtons.Right)
+            if(e.Button == MouseButtons.Middle)
+            {
+                var obj1 = BitConverter.ToUInt16(map_layers_[10], (int)(index * 2));
+                var obj2 = BitConverter.ToUInt16(map_layers_[11], (int)(index * 2));
+                if((obj1 != 0) && (obj1 <= EventIDSC.Maximum))
+                {
+                    TabControl.SelectedIndex = 6;
+                    EventIDSC.Value = obj1;
+                }
+                else if((obj2 != 0) && (obj2 <= EventIDSC.Maximum))
+                {
+                    TabControl.SelectedIndex = 6;
+                    EventIDSC.Value = obj2;
+                }
+                return;
+            }
+
+            if((e.Button == MouseButtons.Right) && (ModifierKeys != Keys.Alt))
             {
                 tileset_index = 0;
                 brush_val = 0;
@@ -767,6 +867,13 @@ namespace editor
 
             if(BitConverter.ToUInt16(map_layers_[layer], (int)index * 2) == brush_val)
                 return;
+
+            if((e.Button == MouseButtons.Right) && (ModifierKeys == Keys.Alt))
+            {
+                FloodFill(layer, tile_x, tile_y, brush_val);
+                RenderMap();
+                return;
+            }
 
             if(ModifierKeys == Keys.Control)
             {
@@ -953,6 +1060,14 @@ namespace editor
         private void MapGridCB_CheckedChanged(object sender, EventArgs e)
         {
             RenderMap();
+        }
+
+        private void MapReadmeBT_Click(object sender, EventArgs e)
+        {
+            var path = @".\docs\MAP EDITOR README.txt";
+            if(!File.Exists(path))
+                path = @"https://github.com/php42/TPDP-Dev-Tools/blob/master/docs/MAP%20EDITOR%20README.txt";
+            Process.Start(path);
         }
     }
 }

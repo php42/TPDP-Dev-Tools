@@ -330,7 +330,7 @@ namespace editor
             TrainerLevelSC.Value = 0;
         }
 
-        private void TrainerSlotCB_SelectedIndexChanged(object sender, EventArgs e)
+        private void RefreshTrainerPuppet()
         {
             var index = TrainerSlotCB.SelectedIndex;
             var dodindex = TrainerLB.SelectedIndex;
@@ -358,6 +358,7 @@ namespace editor
 
             HeartMarkCB.Checked = puppet.heart_mark;
 
+            // FIXME: problematic if any skills have the same name
             TrainerSkill1CB.SelectedIndex = TrainerSkill1CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[0]) ? skill_names_[puppet.skills[0]] : "None");
             TrainerSkill2CB.SelectedIndex = TrainerSkill2CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[1]) ? skill_names_[puppet.skills[1]] : "None");
             TrainerSkill3CB.SelectedIndex = TrainerSkill3CB.FindStringExact(skill_names_.ContainsKey(puppet.skills[2]) ? skill_names_[puppet.skills[2]] : "None");
@@ -376,6 +377,11 @@ namespace editor
             EV4SC.Value = puppet.evs[3];
             EV5SC.Value = puppet.evs[4];
             EV6SC.Value = puppet.evs[5];
+        }
+
+        private void TrainerSlotCB_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshTrainerPuppet();
         }
 
         private void TrainerPuppetCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -737,6 +743,116 @@ namespace editor
             TrainerLB.Items.Add(dod.trainer_name);
             TrainerLB.SelectedIndex = TrainerLB.Items.Count - 1;
             WriteDod(dod);
+        }
+
+        private void TrainerSearchBT_Click(object sender, EventArgs e)
+        {
+            uint id = 0;
+            using(var dialog = new NewIDDialog("Find Trainer by ID", 2047))
+            {
+                if(dialog.ShowDialog() != DialogResult.OK)
+                    return;
+                id = (uint)dialog.ID;
+            }
+
+            for(var i = 0; i < dods_.Count; ++i)
+            {
+                if(dods_[i].id == id)
+                {
+                    TrainerLB.SelectedIndex = i;
+                    return;
+                }
+            }
+
+            ErrMsg("ID not found.");
+        }
+
+        private void TrainerEquipBT_Click(object sender, EventArgs e)
+        {
+            var slotindex = TrainerSlotCB.SelectedIndex;
+            var dodindex = TrainerLB.SelectedIndex;
+            if(slotindex < 0 || dodindex < 0)
+                return;
+
+            var puppet = dods_[dodindex].puppets[slotindex];
+            if(puppet.id == 0)
+                return;
+
+            var data = puppets_[puppet.id];
+            var style = data.styles[puppet.style];
+
+            var moves = new List<uint>();
+            void add_move(uint id)
+            {
+                var skill = skills_[id];
+                if((skill.priority <= 0) && (skill.type != "Status"))
+                {
+                    if(style.base_stats[1] > style.base_stats[3])
+                    {
+                        if(skill.type != "Focus")
+                            return;
+                    }
+                    else if(style.base_stats[1] < style.base_stats[3])
+                    {
+                        if(skill.type != "Spread")
+                            return;
+                    }
+                }
+
+                moves.Add(id);
+            }
+
+            var lvl = LevelFromExp(data.cost, puppet.experience);
+            foreach(var it in skills_)
+            {
+                var id = it.Key;
+                var lvlreq = data.LevelToLearn(puppet.style, id);
+                if((lvlreq >= 0) && (lvl >= lvlreq))
+                    add_move(id);
+            }
+            var tmp = new List<uint>(moves);
+            foreach(var i in tmp)
+            {
+                var skill1 = skills_[i];
+                if(skill1.type == "Status")
+                    continue;
+                foreach(var j in moves)
+                {
+                    var skill2 = skills_[j];
+                    if(skill2.type == "Status")
+                        continue;
+                    if((skill2.element == skill1.element) && (skill2.priority == skill1.priority) && (skill2.power > skill1.power))
+                    {
+                        moves.Remove(i);
+                        break;
+                    }
+                }
+            }
+
+            bool is_stab(uint id)
+            {
+                return ((skills_[id].element == style.element1) || (skills_[id].element == style.element2)) && (skills_[id].type != "Status");
+            }
+            int comp(uint l, uint r)
+            {
+                bool lstab = is_stab(l);
+                bool rstab = is_stab(r);
+                var lreq = data.LevelToLearn(puppet.style, l);
+                var rreq = data.LevelToLearn(puppet.style, r);
+                if(!lstab && rstab)
+                    return 1;
+                if(lstab && !rstab)
+                    return -1;
+                if(lreq < rreq)
+                    return 1;
+                if(lreq > rreq)
+                    return -1;
+                return 0;
+            }
+            moves.Sort(comp);
+            for(var i = 0; i < 4; ++i)
+                dods_[dodindex].puppets[slotindex].skills[i] = (i < moves.Count) ? moves[i] : 0u;
+            RefreshTrainerPuppet();
         }
     }
 }

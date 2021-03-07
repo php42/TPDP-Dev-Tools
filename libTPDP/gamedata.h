@@ -221,6 +221,8 @@ public:
     /* null-terminated shift-jis string identifying the location */
     char location_name[32];
 
+    uint8_t forbid_gap_map;
+
     MADData() {}
     MADData(const void *data) { read(data); }
 
