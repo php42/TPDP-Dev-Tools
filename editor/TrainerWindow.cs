@@ -782,25 +782,6 @@ namespace editor
             var style = data.styles[puppet.style];
 
             var moves = new List<uint>();
-            void add_move(uint id)
-            {
-                var skill = skills_[id];
-                if((skill.priority <= 0) && (skill.type != "Status"))
-                {
-                    if(style.base_stats[1] > style.base_stats[3])
-                    {
-                        if(skill.type != "Focus")
-                            return;
-                    }
-                    else if(style.base_stats[1] < style.base_stats[3])
-                    {
-                        if(skill.type != "Spread")
-                            return;
-                    }
-                }
-
-                moves.Add(id);
-            }
 
             var lvl = LevelFromExp(data.cost, puppet.experience);
             foreach(var it in skills_)
@@ -808,7 +789,7 @@ namespace editor
                 var id = it.Key;
                 var lvlreq = data.LevelToLearn(puppet.style, id);
                 if((lvlreq >= 0) && (lvl >= lvlreq))
-                    add_move(id);
+                    moves.Add(id);
             }
             var tmp = new List<uint>(moves);
             foreach(var i in tmp)
@@ -821,7 +802,7 @@ namespace editor
                     var skill2 = skills_[j];
                     if(skill2.type == "Status")
                         continue;
-                    if((skill2.element == skill1.element) && (skill2.priority == skill1.priority) && (skill2.power > skill1.power))
+                    if((skill2.element == skill1.element) && (skill2.type == skill1.type) && (skill2.priority == skill1.priority) && (skill2.power > skill1.power))
                     {
                         moves.Remove(i);
                         break;
