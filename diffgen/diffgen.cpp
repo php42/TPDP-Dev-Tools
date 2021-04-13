@@ -31,7 +31,6 @@
 #include <regex>
 #include <unordered_map>
 #include <algorithm>
-#include "../common/util.h"
 
 namespace algo = boost::algorithm;
 namespace fs = std::filesystem;
@@ -76,7 +75,7 @@ static void diff_task(Path path, Path rel_path, const libtpdp::Archive& arc, int
         if(!dst_file)
             throw DiffgenException("Failed to read file.");
 
-        if((src_file.size() == sz) && (sse2_memcmp(src_file.data(), dst_file.get(), sz) == 0))
+        if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
             return;
 
         std::lock_guard lock(g_mtx);

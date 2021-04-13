@@ -22,13 +22,26 @@
 #include <cstring>
 #include <map>
 #include "../common/textconvert.h"
-#include "../common/util.h"
 
 static const uint8_t save_magic[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x00};
 static const uint8_t save_magic_ynk[] = {0x8C, 0xB6, 0x91, 0x7A, 0x90, 0x6C, 0x8C, 0x60, 0x89, 0x89, 0x95, 0x91, 0x41, 0x50, 0x00};
 
 static const unsigned int pocket_offsets[] = {0x00, 0x80, 0x100, 0x200, 0x300, 0x400, 0x480};
 static const unsigned int pocket_sizes[] = {0x40, 0x40, 0x80, 0x80, 0x80, 0x40, 0x20};
+
+static inline std::size_t run_length(const void *block1, const void *block2, std::size_t sz)
+{
+    auto b1 = (const uint8_t*)block1;
+    auto b2 = (const uint8_t*)block2;
+
+    for(auto i = 0u; i < sz; ++i)
+    {
+        if(b1[i] != b2[i])
+            return i;
+    }
+
+    return sz;
+}
 
 namespace libtpdp
 {
@@ -155,6 +168,20 @@ bool SaveFile::save(const std::wstring& filename)
     auto outfile = generate_save(len);
 
     bool ret = write_file(filename, outfile.get(), len);
+
+    return ret;
+}
+
+bool SaveFile::dump_raw_data(const std::wstring& filename, bool decrypt)
+{
+    if(empty())
+        return false;
+
+    if(!decrypt)
+        encrypt_all_puppets();
+    bool ret = write_file(filename, savebuf_.get(), savebuf_len_);
+    if(!decrypt)
+        decrypt_all_puppets();
 
     return ret;
 }
@@ -371,7 +398,7 @@ int SaveFile::get_item_id(unsigned int pocket, unsigned int index)
     if(!(pocket < 7))
         return -1;
 
-    if(!((index * 2) < pocket_sizes[pocket]))
+    if(index >= pocket_sizes[pocket])
         return -1;
 
     std::size_t offset = item_offset_ + pocket_offsets[pocket];
@@ -400,15 +427,13 @@ bool SaveFile::set_item_id(unsigned int pocket, unsigned int index, unsigned int
     if(!(pocket < 7))
         return false;
 
-    if(!((index * 2) < pocket_sizes[pocket]))
+    if(index >= pocket_sizes[pocket])
         return false;
 
     if(!(item_id < 1024))
         return false;
 
-    std::size_t offset = item_offset_;
-    for(unsigned int i = 0; i <= pocket; ++i)
-        offset += pocket_offsets[i];
+    std::size_t offset = item_offset_ + pocket_offsets[pocket];
 
     write_le16(&savebuf_[offset + (index * 2)], (uint16_t)item_id);
 
@@ -502,6 +527,70 @@ void SaveFile::set_player_secret_id(uint32_t id)
     write_le32(&savebuf_[0xdd], id);
 }
 
+uint32_t SaveFile::get_money()
+{
+    if(empty())
+        return 0;
+
+    return read_le32(&savebuf_[SAVEFILE_PLAYER_OFFSET + 0x29]);
+}
+
+void SaveFile::set_money(uint32_t val)
+{
+    if(empty())
+        return;
+
+    write_le32(&savebuf_[SAVEFILE_PLAYER_OFFSET + 0x29], val);
+}
+
+uint32_t SaveFile::get_playtime()
+{
+    if(empty())
+        return 0;
+
+    return read_le32(&savebuf_[SAVEFILE_PLAYER_OFFSET + 0x2D]);
+}
+
+void SaveFile::set_playtime(uint32_t val)
+{
+    if(empty())
+        return;
+
+    write_le32(&savebuf_[SAVEFILE_PLAYER_OFFSET + 0x2D], val);
+}
+
+uint8_t SaveFile::get_player_gender()
+{
+    if(empty())
+        return 0;
+
+    return savebuf_[SAVEFILE_PLAYER_OFFSET];
+}
+
+void SaveFile::set_player_gender(uint8_t val)
+{
+    if(empty())
+        return;
+
+    savebuf_[SAVEFILE_PLAYER_OFFSET] = val;
+}
+
+uint16_t SaveFile::get_fav_puppet()
+{
+    if(empty())
+        return 0;
+
+    return read_le16(&savebuf_[0x4F5]);
+}
+
+void SaveFile::set_fav_puppet(uint16_t val)
+{
+    if(empty())
+        return;
+
+    write_le16(&savebuf_[0x4F5], val);
+}
+
 uint32_t SaveFile::update_savefile_hash(void *data, std::size_t len)
 {
     uint8_t *buf = (uint8_t*)data;
@@ -590,10 +679,8 @@ void SaveFile::scramble(void *src, const void *rand_data, uint32_t seed, uint32_
 void SaveFile::decrypt(void *src, uint32_t seed, std::size_t len)
 {
     uint8_t *buf = (uint8_t*)src;
-    for(std::size_t i = 0; i < len; i += 2)
+    for(std::size_t i = 0; (i + 1) < len; i += 2)
     {
-        if(i + 1 >= len)
-            break;
         buf[i] = ~buf[i];
         if((i & 3) == 0)
             buf[i + 1] = ~buf[i + 1];
@@ -604,10 +691,8 @@ void SaveFile::decrypt(void *src, uint32_t seed, std::size_t len)
 void SaveFile::encrypt(void *src, uint32_t seed, std::size_t len)
 {
     uint8_t *buf = (uint8_t*)src;
-    for(std::size_t i = 0; i < len; i += 2)
+    for(std::size_t i = 0; (i + 1) < len; i += 2)
     {
-        if(i + 1 >= len)
-            break;
         buf[i] = ~buf[i];
         buf[i + 1] += uint8_t(seed);
         if((i & 3) == 0)
@@ -616,23 +701,22 @@ void SaveFile::encrypt(void *src, uint32_t seed, std::size_t len)
 }
 
 /* 'key' is used as a control code for the compression stream, when 'key' is encountered,
-* the next byte indicates the offset in bytes from the end of the output stream to copy from.
-* the byte after that indicates the total length to copy to the output stream.
-*
-* if 'key' is immediately followed by another key, this behaviour is escaped and 'key' is
-* written to the output stream as a single byte. to avoid being escaped, offsets of 'key'
-* and above are incremented by 1.
-*
-* any values other than 'key' are written to the output stream as a single byte. */
+ * the next byte indicates the offset in bytes from the end of the output stream to copy from.
+ * the byte after that indicates the total length to copy to the output stream.
+ *
+ * if 'key' is immediately followed by another key, this behaviour is escaped and 'key' is
+ * written to the output stream as a single byte. to avoid being escaped, offsets of 'key'
+ * and above are incremented by 1.
+ *
+ * any values other than 'key' are written to the output stream as a single byte. */
 std::size_t SaveFile::decompress(const void *src, void *dest)
 {
     uint32_t output_size, input_size, bytes_written = 0;
-    uint8_t *outptr, key, offset, len;
-    const uint8_t *inptr;
+    uint8_t key, offset, len;
     const uint8_t *endin;
 
-    inptr = (const uint8_t*)src;
-    outptr = (uint8_t*)dest;
+    const uint8_t *inptr = (const uint8_t*)src;
+    uint8_t *outptr = (uint8_t*)dest;
 
     output_size = read_le32(&inptr[0]);
     input_size = read_le32(&inptr[4]) - 12;
@@ -643,7 +727,7 @@ std::size_t SaveFile::decompress(const void *src, void *dest)
     key = inptr[8];
 
     inptr += 12;
-    endin = inptr + input_size;
+    endin = inptr + input_size; // FIXME: don't do this
 
     while(inptr < endin)
     {
@@ -683,30 +767,19 @@ std::size_t SaveFile::decompress(const void *src, void *dest)
     return bytes_written;
 }
 
-/* TODO: don't even bother with compression
- * just scrap this algorithm and output an uncompressed stream
- * (this is valid so long as the escape sequence is used to escape occurrences of 'key') */
-
-/* This algorithm uses brute-force to find the best compression using the method described above.
- * This implementaion is somewhat optimized for speed.
- *
- * as an additional restriction, the length cannot be larger than the offset. the algorithm supports
- * this (sequence would be repeated), but the game does not. also, neither the length nor the offset
- * can be less than 4. */
+/* Simple run-length encoding using the scheme described above. */
 std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 {
     unsigned int frequency_table[256] = {};
     std::size_t bytes_written = 0;
-    uint8_t *destp, *outptr, key = 0, len = 0, offset = 0;
-    const uint8_t *inptr;
-    const uint8_t *srcp;
-    const uint8_t *endin;
+    uint8_t key = 0;
 
-    inptr = (const uint8_t*)src;
-    outptr = (uint8_t*)dest;
-    srcp = inptr;
-    destp = outptr;
-    endin = inptr + src_len;
+    uint8_t *outptr = (uint8_t*)dest;
+    uint8_t *destp = outptr;
+
+    const uint8_t *inptr = (const uint8_t*)src;
+    const uint8_t *endin = inptr + src_len;
+    const uint8_t *srcp = inptr;
 
     for(unsigned int i = 0; i < src_len; ++i)
     {
@@ -726,34 +799,31 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
 
     while(inptr < endin)
     {
-        offset = 0;
-        len = 0;
+        uint8_t offset = 0, len = 0;
         auto maxlen = std::min((std::size_t)(endin - inptr), (std::size_t)0xfe);
         auto maxoff = std::min((std::size_t)(inptr - srcp), (std::size_t)0xfe);
         maxlen = std::min(maxoff, maxlen);
-        for(auto i = maxlen; i >= 8; i -= 8) // increments of 8 trades compression ratio for speed
+        for(auto i = maxoff; i > 3; --i)
         {
-            for(auto j = i; j <= maxoff; ++j)
-            {
-                if(sse2_memcmp(inptr - j, inptr, i) == 0)
-                {
-                    offset = (uint8_t)j;
-                    len = (uint8_t)i;
-                    break;
-                }
-            }
-
-            if(len)
+            if(len >= i)
                 break;
-        }
 
-        if(len < 4)
-            len = 0;
+            auto sz = std::min(i, maxlen);
+            if(sz < 4)
+                continue;
+
+            auto rl = run_length(inptr - i, inptr, sz);
+            if(rl > len)
+            {
+                len = (uint8_t)rl;
+                offset = (uint8_t)i;
+            }
+        }
 
         if(offset >= key)
             ++offset;
 
-        if(len > 0)
+        if(len > 3)
         {
             outptr[0] = key;
             outptr[1] = offset;
@@ -765,7 +835,6 @@ std::size_t SaveFile::compress(const void *src, void *dest, std::size_t src_len)
         }
         else
         {
-
             if(inptr[0] == key)
             {
                 outptr[0] = key;

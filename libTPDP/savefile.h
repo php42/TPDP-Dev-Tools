@@ -35,6 +35,7 @@ constexpr unsigned int SAVEFILE_ITEM_OFFSET_YNK = 0x5AB1F;
 constexpr unsigned int SAVEFILE_ITEM_NUM_OFFSET_YNK = 0x5A71D;
 constexpr unsigned int SAVEFILE_BOX_NAME_OFFSET = 0x4318F;
 constexpr unsigned int SAVEFILE_BOX_NAME_OFFSET_YNK = 0x5A0BD;
+constexpr unsigned int SAVEFILE_PLAYER_OFFSET = 0xB8;
 
 class SaveFile
 {
@@ -92,6 +93,8 @@ public:
     bool save(const std::string& filename);     /* save to a new file */
     bool save(const std::wstring& filename);
 
+    bool dump_raw_data(const std::wstring& filename, bool decrypt);
+
     void close();   /* release all associated resources */
 
     inline int get_max_puppets() const {return (num_boxes_ * 30) + 6;}
@@ -119,9 +122,21 @@ public:
     uint32_t get_player_secret_id();
     void set_player_secret_id(uint32_t id);
 
+    uint32_t get_money();
+    void set_money(uint32_t money);
+
+    uint32_t get_playtime();
+    void set_playtime(uint32_t playtime);
+
+    uint8_t get_player_gender();
+    void set_player_gender(uint8_t gender);
+
+    uint16_t get_fav_puppet();
+    void set_fav_puppet(uint16_t id);
+
     inline bool is_expansion_file() const {return is_expansion_;}   /* returns true if this is a YnK save file */
 
-    inline bool empty() const {return savebuf_ == NULL;}
+    inline bool empty() const {return !savebuf_;}
 };
 
 }
