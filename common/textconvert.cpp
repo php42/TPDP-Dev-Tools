@@ -19,7 +19,6 @@
 #define CP_SJIS 932
 #include <Windows.h>
 #include "textconvert.h"
-#include <memory>
 
 std::wstring sjis_to_utf(const std::string& str)
 {
@@ -32,11 +31,9 @@ std::wstring sjis_to_utf(const std::string& str)
     if(!len)
         return ret;
 
-    std::unique_ptr<wchar_t[]> buf(new wchar_t[len]);
-    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str.c_str(), (int)str.size(), buf.get(), len))
-        return ret;
-
-    ret.assign(buf.get(), len);
+    ret.resize(len);
+    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str.c_str(), (int)str.size(), &ret[0], len))
+        return {};
 
     return ret;
 }
@@ -49,11 +46,9 @@ std::wstring sjis_to_utf(const char *str, std::size_t sz)
     if(!len)
         return ret;
 
-    std::unique_ptr<wchar_t[]> buf(new wchar_t[len]);
-    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str, (int)sz, buf.get(), len))
-        return ret;
-
-    ret.assign(buf.get(), len);
+    ret.resize(len);
+    if(!MultiByteToWideChar(CP_SJIS, MB_PRECOMPOSED, str, (int)sz, &ret[0], len))
+        return {};
 
     return ret;
 }
@@ -69,11 +64,9 @@ std::string utf_to_sjis(const std::wstring& str)
     if(!len)
         return ret;
 
-    std::unique_ptr<char[]> buf(new char[len]);
-    if(!WideCharToMultiByte(CP_SJIS, 0, str.c_str(), (int)str.size(), buf.get(), len, NULL, NULL))
-        return ret;
-
-    ret.assign(buf.get(), len);
+    ret.resize(len);
+    if(!WideCharToMultiByte(CP_SJIS, 0, str.c_str(), (int)str.size(), &ret[0], len, NULL, NULL))
+        return {};
 
     return ret;
 }
@@ -89,11 +82,9 @@ std::wstring utf_widen(const std::string& str)
     if(!len)
         return ret;
 
-    std::unique_ptr<wchar_t[]> buf(new wchar_t[len]);
-    if(!MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), buf.get(), len))
-        return ret;
-
-    ret.assign(buf.get(), len);
+    ret.resize(len);
+    if(!MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &ret[0], len))
+        return {};
 
     return ret;
 }
@@ -109,11 +100,27 @@ std::string utf_narrow(const std::wstring& str)
     if(!len)
         return ret;
 
-    std::unique_ptr<char[]> buf(new char[len]);
-    if(!WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), buf.get(), len, NULL, NULL))
+    ret.resize(len);
+    if(!WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), &ret[0], len, NULL, NULL))
+        return {};
+
+    return ret;
+}
+
+std::wstring ansi_to_utf(const std::string& str)
+{
+    std::wstring ret;
+
+    if(str.empty())
         return ret;
 
-    ret.assign(buf.get(), len);
+    auto len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
+    if(!len)
+        return ret;
+
+    ret.resize(len);
+    if(!MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), &ret[0], len))
+        return {};
 
     return ret;
 }

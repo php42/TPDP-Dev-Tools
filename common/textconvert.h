@@ -28,6 +28,9 @@ std::wstring utf_widen(const std::string& str);
 /* wchar_t to UTF-8 */
 std::string utf_narrow(const std::wstring& str);
 
+/* system default ANSI codepage to unicode */
+std::wstring ansi_to_utf(const std::string& str);
+
 /* convenience functions */
 static inline std::string sjis_to_utf8(const std::string& str) { return utf_narrow(sjis_to_utf(str)); }
 static inline std::string sjis_to_utf8(const char *str, std::size_t sz) { return utf_narrow(sjis_to_utf(str, sz)); }
