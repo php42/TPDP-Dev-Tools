@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
@@ -1068,6 +1069,31 @@ namespace editor
             if(!File.Exists(path))
                 path = @"https://github.com/php42/TPDP-Dev-Tools/blob/master/docs/MAP%20EDITOR%20README.txt";
             Process.Start(path);
+        }
+
+        private void ExportMapImgBT_Click(object sender, EventArgs e)
+        {
+            if((fmf_data_ == null) || (obs_data_ == null) || (MapDesignCB.SelectedIndex < 0))
+                return;
+
+            string path;
+            using(var dlg = new SaveFileDialog())
+            {
+                dlg.DefaultExt = "png";
+                dlg.Filter = "png files (*.png)|*.png";
+                if(dlg.ShowDialog() != DialogResult.OK)
+                    return;
+                path = dlg.FileName;
+            }
+
+            try
+            {
+                map_display_.GetBitmap().Save(path, ImageFormat.Png);
+            }
+            catch
+            {
+                ErrMsg("failed to save file: " + path);
+            }
         }
     }
 }

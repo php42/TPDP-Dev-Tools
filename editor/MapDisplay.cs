@@ -58,6 +58,10 @@ namespace editor
             Invalidate();
             Update();
         }
+        public Bitmap GetBitmap()
+        {
+            return bmp_;
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {

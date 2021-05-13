@@ -283,6 +283,7 @@
             this.MapListBox = new System.Windows.Forms.ListBox();
             this.DesignTabPage = new System.Windows.Forms.TabPage();
             this.DesignSplit = new System.Windows.Forms.SplitContainer();
+            this.ExportMapImgBT = new System.Windows.Forms.Button();
             this.MapReadmeBT = new System.Windows.Forms.Button();
             this.MapGridCB = new System.Windows.Forms.CheckBox();
             this.groupBox13 = new System.Windows.Forms.GroupBox();
@@ -3441,6 +3442,7 @@
             // 
             // DesignSplit.Panel1
             // 
+            this.DesignSplit.Panel1.Controls.Add(this.ExportMapImgBT);
             this.DesignSplit.Panel1.Controls.Add(this.MapReadmeBT);
             this.DesignSplit.Panel1.Controls.Add(this.MapGridCB);
             this.DesignSplit.Panel1.Controls.Add(this.groupBox13);
@@ -3464,6 +3466,16 @@
             this.DesignSplit.SplitterDistance = 220;
             this.DesignSplit.SplitterWidth = 5;
             this.DesignSplit.TabIndex = 16;
+            // 
+            // ExportMapImgBT
+            // 
+            this.ExportMapImgBT.Location = new System.Drawing.Point(148, 238);
+            this.ExportMapImgBT.Name = "ExportMapImgBT";
+            this.ExportMapImgBT.Size = new System.Drawing.Size(65, 23);
+            this.ExportMapImgBT.TabIndex = 17;
+            this.ExportMapImgBT.Text = "Export Img";
+            this.ExportMapImgBT.UseVisualStyleBackColor = true;
+            this.ExportMapImgBT.Click += new System.EventHandler(this.ExportMapImgBT_Click);
             // 
             // MapReadmeBT
             // 
@@ -4344,6 +4356,7 @@
         private System.Windows.Forms.Button EventReadmeBT;
         private System.Windows.Forms.Button PuppetSearchBT;
         private System.Windows.Forms.Button TrainerEquipBT;
+        private System.Windows.Forms.Button ExportMapImgBT;
     }
 }
 
