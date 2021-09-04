@@ -206,8 +206,8 @@ ZipFile ZipArchive::get_file(const ZipEntry& entry)
 
     zip_fclose(file);
 
-    if(!ret || !ret.size())
-        throw ZipError("Unknown error");
+    if(!ret)
+        throw ZipError("ZipArchive::get_file returned nullptr");
 
     return ret;
 }

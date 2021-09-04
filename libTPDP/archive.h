@@ -282,7 +282,7 @@ public:
     void reset() { buf_.reset(); len_ = 0; index_ = Archive::npos; }
     void reset(char *buf, std::size_t sz, std::size_t index) { buf_.reset(buf); len_ = sz; index_ = index; }
 
-    explicit operator bool() const { return ((bool)buf_ && len_ && (index_ != Archive::npos)); }
+    explicit operator bool() const { return ((bool)buf_ && (index_ != Archive::npos)); }
 };
 
 /* points to a filesystem object inside an Archive
