@@ -70,7 +70,8 @@ namespace editor
                     }
                 }
 
-                g.DrawImage(bmp, 0, 0);
+                var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(bmp, rect, rect, GraphicsUnit.Pixel);
             }
 
             SetClientSizeCore(bmp_.Width * Zoom, bmp_.Height * Zoom);
@@ -96,25 +97,9 @@ namespace editor
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
-            // align to tile boundary
             var tile_sz = 16 * Zoom;
-            var dst = e.ClipRectangle;
-            var dx = dst.X % tile_sz;
-            var dy = dst.Y % tile_sz;
-            dst.X -= dx;
-            dst.Y -= dy;
-            dst.Width += dx;
-            dst.Height += dy;
-            if((dst.Width % tile_sz) != 0)
-                dst.Width += tile_sz - (dst.Width % tile_sz);
-            if((dst.Height % tile_sz) != 0)
-                dst.Height += tile_sz - (dst.Height % tile_sz);
-
-            var src = dst;
-            src.X /= Zoom;
-            src.Y /= Zoom;
-            src.Width /= Zoom;
-            src.Height /= Zoom;
+            var dst = new Rectangle(0, 0, bmp_.Width * Zoom, bmp_.Height * Zoom);
+            var src = new Rectangle(0, 0, bmp_.Width, bmp_.Height);
 
             e.Graphics.DrawImage(bmp_, dst, src, GraphicsUnit.Pixel);
 
