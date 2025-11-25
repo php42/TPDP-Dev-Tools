@@ -4065,7 +4065,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(792, 620);
             this.Name = "EditorMainWindow";
-            this.Text = "TPDP Editor v1.4.1";
+            this.Text = "TPDP Editor v1.5.0 Beta1";
             groupBox10.ResumeLayout(false);
             groupBox10.PerformLayout();
             this.TabControl.ResumeLayout(false);
