@@ -3302,6 +3302,11 @@
             // MapBackgroundSC
             // 
             this.MapBackgroundSC.Location = new System.Drawing.Point(107, 23);
+            this.MapBackgroundSC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
             this.MapBackgroundSC.Name = "MapBackgroundSC";
             this.MapBackgroundSC.Size = new System.Drawing.Size(142, 20);
             this.MapBackgroundSC.TabIndex = 9;

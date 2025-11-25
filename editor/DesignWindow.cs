@@ -1,17 +1,18 @@
-﻿using System;
+﻿using editor.json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
-using editor.json;
-using System.Runtime.Serialization.Json;
 
 // Design tab of MainWindow
 // NOTE: some control binds at bottom of MainWindow.cs
@@ -34,6 +35,7 @@ namespace editor
         private int paste_x_ = -1;
         private int paste_y_ = -1;
         private int zoom_ = 1;
+        private Point scroll_pos_ = new Point(0, 0);
 
         // shhh don't look
         private List<byte[][]> undo_history_ = new List<byte[][]>();
@@ -56,6 +58,7 @@ namespace editor
             map_display_ = new MapDisplay();
             map_display_.Location = new Point(0, 0);
             map_display_.MouseDown += MapDisplay_MouseClick;
+            map_display_.MouseDown += MapDisplay_MouseDown;
             map_display_.MouseMove += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseMove;
             map_display_.MouseUp += MapDisplay_MouseClick;
@@ -183,40 +186,42 @@ namespace editor
                     }
                 }
 
-                for(var i = 0; i < 13; ++i)
+                for(var layer = 0; layer < 13; ++layer)
                 {
-                    if(!layers.Contains(i))
+                    if(!layers.Contains(layer))
                         continue;
 
-                    if((i < 8) || (i == 12))
+                    if((layer < 8) || (layer == 12))
                     {
-                        for(var j = 0; j < (width * height); ++j)
+                        for(var i = 0; i < (width * height); ++i)
                         {
-                            var tileset = (uint)map_layers_[i][(j * 2) + 1];
-                            var index = (int)chp_data_[tileset].index_map[(uint)map_layers_[i][j * 2]];
-                            var src_rect = new Rectangle((index % 8) * 16, (index / 8) * 16, 16, 16);
-                            var dst_rect = new Rectangle(((j % width) * 16) - clipping_rect.X, ((j / width) * 16) - clipping_rect.Y, 16, 16);
-
-                            if((index != 0) || (tileset != 0))
+                            var tileset = (uint)map_layers_[layer][(i * 2) + 1];
+                            var raw_index = (uint)map_layers_[layer][i * 2];
+                            if((raw_index != 0) && (tileset < 4))
+                            {
+                                var index = (int)chp_data_[tileset].index_map[raw_index];
+                                var src_rect = new Rectangle((index % 8) * 16, (index / 8) * 16, 16, 16);
+                                var dst_rect = new Rectangle(((i % width) * 16) - clipping_rect.X, ((i / width) * 16) - clipping_rect.Y, 16, 16);
                                 g.DrawImage(chp_bmps_[tileset], dst_rect, src_rect, GraphicsUnit.Pixel);
+                            }
                         }
                     }
-                    if(i >= 8)
+                    if(layer >= 8)
                     {
                         using(var fnt = new Font("Arial", 9))
                         using(var bkgrnd_brush = new SolidBrush(Color.DarkSlateGray))
                         using(var text_brush = new SolidBrush(Color.White))
                         {
-                            for(var j = 0; j < (width * height); ++j)
+                            for(var i = 0; i < (width * height); ++i)
                             {
-                                var index = (uint)BitConverter.ToUInt16(map_layers_[i], j * 2);
+                                var index = (uint)BitConverter.ToUInt16(map_layers_[layer], i * 2);
                                 var src_rect = new Rectangle(0, 0, 32, 32);
-                                var dst_rect = new Rectangle((((j % width) * 16) - 8) - clipping_rect.X, (((j / width) * 16) - 16) - clipping_rect.Y, 32, 32);
+                                var dst_rect = new Rectangle((((i % width) * 16) - 8) - clipping_rect.X, (((i / width) * 16) - 16) - clipping_rect.Y, 32, 32);
                                 var obj_id = obs_data_.entries[(index < obs_data_.entries.Length) ? index : 0].object_id;
 
                                 if(index > 0)
                                 {
-                                    if((obj_id > 0) && (i != 8) && (i != 9) && (i != 12))
+                                    if((obj_id > 0) && (layer != 8) && (layer != 9) && (layer != 12))
                                     {
                                         if(!objects_.ContainsKey(obj_id))
                                             objects_[obj_id] = LoadObjectBmp(obj_id);
@@ -224,7 +229,7 @@ namespace editor
                                         g.DrawImage(obj_bmp, dst_rect, src_rect, GraphicsUnit.Pixel);
                                     }
 
-                                    if(DesignLabelCB.Checked || (i == 8) || (i == 9))
+                                    if(DesignLabelCB.Checked || (layer == 8) || (layer == 9))
                                     {
                                         var str = index.ToString();
                                         var fmt = new StringFormat();
@@ -293,7 +298,7 @@ namespace editor
                 Array.Copy(map_layers_[i], buf[i], sz);
             }
 
-            if(undo_history_.Count >= 24)
+            if(undo_history_.Count >= 128)
             {
                 undo_history_.RemoveAt(0);
                 undo_history_.Add(buf);
@@ -634,7 +639,7 @@ namespace editor
             }
         }
 
-        private void MapEndDrag()
+        private void MapEndDrag(bool single_layer)
         {
             if(!dragging_)
                 return;
@@ -647,17 +652,31 @@ namespace editor
             var h = drag_rect_.Height;
             var stride = w * 2;
 
-            clipboard_ = new byte[12][][];
-            for(var layer = 0; layer < 12; ++layer)
+            if(single_layer)
             {
-                clipboard_[layer] = new byte[h][];
+                clipboard_ = new byte[1][][];
+                clipboard_[0] = new byte[h][];
+                var layer = BrushLayerCB.SelectedIndex;
                 for(var i = 0; i < h; ++i)
                 {
-                    clipboard_[layer][i] = new byte[stride];
-                    Array.Copy(map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), clipboard_[layer][i], 0, stride);
+                    clipboard_[0][i] = new byte[stride];
+                    Array.Copy(map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), clipboard_[0][i], 0, stride);
                 }
             }
-
+            else
+            {
+                clipboard_ = new byte[12][][];
+                for(var layer = 0; layer < 12; ++layer)
+                {
+                    clipboard_[layer] = new byte[h][];
+                    for(var i = 0; i < h; ++i)
+                    {
+                        clipboard_[layer][i] = new byte[stride];
+                        Array.Copy(map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), clipboard_[layer][i], 0, stride);
+                    }
+                }
+            }
+            
             RenderMap();
         }
 
@@ -688,11 +707,23 @@ namespace editor
             w = Math.Min(w, dst_w);
             h = Math.Min(h, dst_h);
 
-            for(var layer = 0; layer < 12; ++layer)
+            var num_layers = clipboard_.GetLength(0);
+            if(num_layers == 1) // single layer copy
             {
+                var layer = BrushLayerCB.SelectedIndex;
                 for(var i = 0; i < h; ++i)
                 {
-                    Array.Copy(clipboard_[layer][i], 0, map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), w);
+                    Array.Copy(clipboard_[0][i], 0, map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), w);
+                }
+            }
+            else
+            {
+                for(var layer = 0; layer < num_layers; ++layer)
+                {
+                    for(var i = 0; i < h; ++i)
+                    {
+                        Array.Copy(clipboard_[layer][i], 0, map_layers_[layer], ((y + i) * fmf_data_.width * 2) + (x * 2), w);
+                    }
                 }
             }
 
@@ -796,7 +827,7 @@ namespace editor
             if((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right))
             {
                 if(dragging_)
-                    MapEndDrag();
+                    MapEndDrag(ModifierKeys == (Keys.Control | Keys.Shift));
                 paste_x_ = -1;
                 paste_y_ = -1;
                 if(e.Button != MouseButtons.Middle)
@@ -814,7 +845,7 @@ namespace editor
                 map_display_.Focus();
             }
 
-            if((e.Button == MouseButtons.Left) && (ModifierKeys == Keys.Shift))
+            if((e.Button == MouseButtons.Left) && ((ModifierKeys & Keys.Shift) != 0))
             {
                 MapDrag(tile_x, tile_y);
                 return;
@@ -892,6 +923,12 @@ namespace editor
             }
 
             UpdateMapIndex((uint)layer, (uint)index, brush_val);
+        }
+
+        private void MapDisplay_MouseDown(Object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Middle)
+                scroll_pos_ = e.Location;
         }
 
         private void DesignLabelCB_CheckedChanged(object sender, EventArgs e)
@@ -1024,6 +1061,14 @@ namespace editor
             var str = (e.X / (16 * zoom_)).ToString() + ", " + (e.Y / (16 * zoom_)).ToString();
             if(DesignCoordLabel.Text != str)
                 DesignCoordLabel.Text = str;
+
+            if(e.Button == MouseButtons.Middle)
+            {
+                var pos = map_display_.Location;
+                pos.X += e.X - scroll_pos_.X;
+                pos.Y += e.Y - scroll_pos_.Y;
+                map_display_.Location = pos;
+            }
         }
 
         private void DesignZoomSC_ValueChanged(object sender, EventArgs e)

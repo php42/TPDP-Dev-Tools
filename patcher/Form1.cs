@@ -122,6 +122,12 @@ namespace patcher
 
         public void onexit(Object source, EventArgs e)
         {
+            if(proc_.HasExited)
+            {
+                var ecode = proc_.ExitCode;
+                if((ecode != 0) && (ecode != 1))
+                    ErrMsg("Failed with exit code: " + ((uint)ecode).ToString("X"));
+            }
             proc_.Close();
             proc_ = null;
             button3.Enabled = true;
@@ -177,7 +183,8 @@ namespace patcher
 
             try
             {
-                proc_.Start();
+                if(!proc_.Start())
+                    throw new Exception("Failed to run diffgen.exe");
                 proc_.BeginOutputReadLine();
                 proc_.BeginErrorReadLine();
             }

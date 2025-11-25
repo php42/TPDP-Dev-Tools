@@ -29,6 +29,7 @@ namespace editor
         private Dictionary<uint, string> skill_descs_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> item_names_ = new Dictionary<uint, string>();
         private Dictionary<uint, string> skillcard_names_ = new Dictionary<uint, string>();
+        private Dictionary<int, string> battle_bgs_ = new Dictionary<int, string>();
         private string[] puppet_names_ = new string[1] { "" };
         private string[] map_names_ = new string[1] { "" };
         private string working_dir_;
@@ -57,6 +58,7 @@ namespace editor
             obj_flags_ = null;
             puppet_flags_ = null;
             bgm_data_ = new Dictionary<uint, string>();
+            battle_bgs_ = new Dictionary<int, string>();
         }
 
         public EditorMainWindow()
@@ -847,6 +849,31 @@ namespace editor
             catch(Exception ex)
             {
                 ErrMsg("Error reading file: " + itm + "\r\n" + ex.Message);
+                return;
+            }
+
+            // Parse battle backgrounds
+            battle_bgs_.Clear();
+            string locationbg = wkdir + (is_ynk_ ? "/gn_dat5.arc/name/MapLocationName.csv" : "/gn_dat3.arc/name/MapLocationName.csv");
+            try
+            {
+                var bgs = File.ReadAllLines(locationbg, Encoding.GetEncoding(932));
+                for(var i = 0; i < bgs.Length; i++)
+                {
+                    var fields = bgs[i].Split(',');
+                    if (fields.Length < 2)
+                        continue;
+
+                    string bgfolder = wkdir + "/gn_dat1.arc/battle/locationBG/";
+                    if(File.Exists(bgfolder + fields[1] + "1.png"))
+                        battle_bgs_[i] = fields[1] + "1.png";
+                    else if(File.Exists(bgfolder + fields[1] + "0.png"))
+                        battle_bgs_[i] = fields[1] + "0.png";
+                }
+            }
+            catch(Exception ex)
+            {
+                ErrMsg("Error reading file: " + locationbg + "\r\n" + ex.Message);
                 return;
             }
 
