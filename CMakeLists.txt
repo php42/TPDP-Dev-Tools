@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
+cmake_policy(VERSION 3.12)
+cmake_policy(SET CMP0074 OLD)
+cmake_policy(SET CMP0077 OLD)
+cmake_policy(SET CMP0167 OLD)
+cmake_policy(SET CMP0144 OLD)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,6 +14,8 @@ project(TPDP-Dev-Tools C CXX CSharp)
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/bin" CACHE PATH "Default install path" FORCE)
 endif()
+
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 # Compiler specific instruction set flags
 # (mostly to allow compiling with clang + visual studio and -march=native)
@@ -83,15 +90,12 @@ if(BUILD_BINEDIT)
 endif()
 
 if(BUILD_DIFFGEN)
-    # We don't need the vcdiff executable
-    option(vcdiff_build_exec "Build vcdiff executable" OFF)
-    mark_as_advanced(FORCE vcdiff_build_exec)
-    add_subdirectory(deps/open-vcdiff)
-
     # Don't install zlib stuff
     set(SKIP_INSTALL_HEADERS ON)
     set(SKIP_INSTALL_FILES ON)
-    add_subdirectory(deps/zlib)
+    add_subdirectory(deps/zlib EXCLUDE_FROM_ALL)
+    export(TARGETS zlib)
+    install(TARGETS zlib)
 
     # Libzip config
     # Coerce find_package into using our cmake build of zlib
@@ -102,22 +106,9 @@ if(BUILD_DIFFGEN)
     OPTION(BUILD_REGRESS "Build regression tests" OFF)
     OPTION(BUILD_EXAMPLES "Build examples" OFF)
     OPTION(BUILD_DOC "Build documentation" OFF)
-    set(BUILD_SHARED_LIBS OFF)
-    add_subdirectory(deps/libzip)
-    #set_property(DIRECTORY deps/libzip APPEND PROPERTY INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/deps/zlib)
+    add_subdirectory(deps/libzip EXCLUDE_FROM_ALL)
+    install(TARGETS zip)
     target_include_directories(zip PRIVATE ${CMAKE_BINARY_DIR}/deps/zlib)
-    set_target_properties(dist distcheck PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
     
     add_subdirectory(diffgen)
-endif()
-
-if(MSVC AND BUILD_DIFFGEN)
-    # Suppress open-vcdiff compiler warnings and set config definitions
-    set_property(DIRECTORY deps/open-vcdiff APPEND PROPERTY COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS _WIN32_WINNT=0x0601 WINVER=0x0601 NTDDI_VERSION=0x06010000 UNICODE _UNICODE)
-    if(BUILD_DIFFGEN)
-        # Needed for open-vcdiff to compile as C++17
-        target_compile_options(vcdcom_STATIC PRIVATE "/Zc:__cplusplus")
-        target_compile_options(vcddec_STATIC PRIVATE "/Zc:__cplusplus")
-        target_compile_options(vcdenc_STATIC PRIVATE "/Zc:__cplusplus")
-    endif()
 endif()

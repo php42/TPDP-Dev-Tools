@@ -16,7 +16,6 @@
 
 #include "diffgen.h"
 #include "ziparchive.h"
-#include "legacy.h"
 #include "../common/filesystem.h"
 #include "../common/textconvert.h"
 #include "../common/console.h"
@@ -303,14 +302,7 @@ bool patch(const Path& input, const Path& output)
 
     try
     {
-        try
-        {
-            zip.open(output);
-        }
-        catch(const ZipWrongFmt&)
-        {
-            return legacy_patch(input, output);
-        }
+        zip.open(output);
 
         auto files = zip.get_file_table();
 

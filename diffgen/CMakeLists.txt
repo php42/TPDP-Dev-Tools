@@ -26,8 +26,6 @@ else()
 endif()
 
 add_executable(diffgen
-    "legacy.h"
-    "legacy.cpp"
     "diffgen.h"
     "diffgen.cpp"
     "ziparchive.h"
@@ -45,10 +43,9 @@ add_executable(diffgen
     "../common/thread_pool.h"
 )
 
-target_link_libraries(diffgen PRIVATE libtpdp zlib zip vcdcom vcddec vcdenc Boost::boost Boost::program_options)
+target_link_libraries(diffgen PRIVATE libtpdp zlib zip Boost::boost Boost::program_options)
 target_include_directories(diffgen PRIVATE
     "../common"
-    "../deps/open-vcdiff/src"
     "../deps/zlib"
     "../deps/libzip/lib"
     "${CMAKE_BINARY_DIR}/deps/zlib"
