@@ -143,6 +143,29 @@
             System.Windows.Forms.Label label113;
             System.Windows.Forms.Label label19;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorMainWindow));
+            System.Windows.Forms.Label label121;
+            System.Windows.Forms.Label label122;
+            System.Windows.Forms.Label label123;
+            System.Windows.Forms.Label label124;
+            System.Windows.Forms.Label label125;
+            System.Windows.Forms.Label label126;
+            System.Windows.Forms.Label label127;
+            System.Windows.Forms.Label label128;
+            System.Windows.Forms.Label label129;
+            System.Windows.Forms.Label label130;
+            System.Windows.Forms.Label label131;
+            System.Windows.Forms.Label label132;
+            System.Windows.Forms.Label label133;
+            System.Windows.Forms.Label label134;
+            System.Windows.Forms.Label label135;
+            System.Windows.Forms.Label label136;
+            System.Windows.Forms.Label label137;
+            System.Windows.Forms.Label label138;
+            System.Windows.Forms.Label label139;
+            System.Windows.Forms.Label label140;
+            System.Windows.Forms.Label label141;
+            System.Windows.Forms.Label label142;
+            System.Windows.Forms.Label label143;
             this.StartBGMCB = new System.Windows.Forms.ComboBox();
             this.BattleBGMCB = new System.Windows.Forms.ComboBox();
             this.VictoryBGMCB = new System.Windows.Forms.ComboBox();
@@ -320,13 +343,52 @@
             this.EventObjIDSC = new System.Windows.Forms.NumericUpDown();
             this.EventObjectPB = new System.Windows.Forms.PictureBox();
             this.EventIDSC = new System.Windows.Forms.NumericUpDown();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ScriptTabPage = new System.Windows.Forms.TabPage();
             this.EvsHexCB = new System.Windows.Forms.CheckBox();
             this.EvsReadmeBT = new System.Windows.Forms.Button();
             this.EvsNewBT = new System.Windows.Forms.Button();
             this.EvsSaveBT = new System.Windows.Forms.Button();
             this.EvsOpenBT = new System.Windows.Forms.Button();
             this.EvsTB = new System.Windows.Forms.TextBox();
+            this.RentalTabPage = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.RentalHeartMarkCB = new System.Windows.Forms.CheckBox();
+            this.RentalLevelSC = new System.Windows.Forms.NumericUpDown();
+            this.RentalExpSC = new System.Windows.Forms.NumericUpDown();
+            this.groupBox18 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.RentalEV6SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalEV5SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalEV4SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalEV3SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalEV2SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalEV1SC = new System.Windows.Forms.NumericUpDown();
+            this.groupBox19 = new System.Windows.Forms.GroupBox();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.RentalIV6SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalIV5SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalIV4SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalIV3SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalIV2SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalIV1SC = new System.Windows.Forms.NumericUpDown();
+            this.RentalItemCB = new System.Windows.Forms.ComboBox();
+            this.RentalPuppetNickTB = new System.Windows.Forms.TextBox();
+            this.groupBox20 = new System.Windows.Forms.GroupBox();
+            this.RentalSkill4CB = new System.Windows.Forms.ComboBox();
+            this.RentalSkill3CB = new System.Windows.Forms.ComboBox();
+            this.RentalSkill2CB = new System.Windows.Forms.ComboBox();
+            this.RentalSkill1CB = new System.Windows.Forms.ComboBox();
+            this.RentalCostumeCB = new System.Windows.Forms.ComboBox();
+            this.RentalMarkCB = new System.Windows.Forms.ComboBox();
+            this.RentalAbilityCB = new System.Windows.Forms.ComboBox();
+            this.RentalStyleCB = new System.Windows.Forms.ComboBox();
+            this.RentalPuppetCB = new System.Windows.Forms.ComboBox();
+            this.RentalSlotCB = new System.Windows.Forms.ComboBox();
+            this.PtsFilepathTB = new System.Windows.Forms.TextBox();
+            this.RentalLB = new System.Windows.Forms.ListBox();
             this.GameDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.WorkingDirBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -444,6 +506,29 @@
             label70 = new System.Windows.Forms.Label();
             label113 = new System.Windows.Forms.Label();
             label19 = new System.Windows.Forms.Label();
+            label121 = new System.Windows.Forms.Label();
+            label122 = new System.Windows.Forms.Label();
+            label123 = new System.Windows.Forms.Label();
+            label124 = new System.Windows.Forms.Label();
+            label125 = new System.Windows.Forms.Label();
+            label126 = new System.Windows.Forms.Label();
+            label127 = new System.Windows.Forms.Label();
+            label128 = new System.Windows.Forms.Label();
+            label129 = new System.Windows.Forms.Label();
+            label130 = new System.Windows.Forms.Label();
+            label131 = new System.Windows.Forms.Label();
+            label132 = new System.Windows.Forms.Label();
+            label133 = new System.Windows.Forms.Label();
+            label134 = new System.Windows.Forms.Label();
+            label135 = new System.Windows.Forms.Label();
+            label136 = new System.Windows.Forms.Label();
+            label137 = new System.Windows.Forms.Label();
+            label138 = new System.Windows.Forms.Label();
+            label139 = new System.Windows.Forms.Label();
+            label140 = new System.Windows.Forms.Label();
+            label141 = new System.Windows.Forms.Label();
+            label142 = new System.Windows.Forms.Label();
+            label143 = new System.Windows.Forms.Label();
             groupBox10.SuspendLayout();
             this.TabControl.SuspendLayout();
             this.FilesTabPage.SuspendLayout();
@@ -526,7 +611,25 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).BeginInit();
-            this.tabPage1.SuspendLayout();
+            this.ScriptTabPage.SuspendLayout();
+            this.RentalTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalLevelSC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalExpSC)).BeginInit();
+            this.groupBox18.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV6SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV5SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV4SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV1SC)).BeginInit();
+            this.groupBox19.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV6SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV5SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV4SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV3SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV2SC)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV1SC)).BeginInit();
+            this.groupBox20.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -1584,6 +1687,213 @@
             label19.TabIndex = 1;
             label19.Text = resources.GetString("label19.Text");
             // 
+            // label121
+            // 
+            label121.AutoSize = true;
+            label121.Location = new System.Drawing.Point(513, 116);
+            label121.Name = "label121";
+            label121.Size = new System.Drawing.Size(33, 13);
+            label121.TabIndex = 74;
+            label121.Text = "Level";
+            // 
+            // label122
+            // 
+            label122.AutoSize = true;
+            label122.Location = new System.Drawing.Point(325, 115);
+            label122.Name = "label122";
+            label122.Size = new System.Drawing.Size(25, 13);
+            label122.TabIndex = 73;
+            label122.Text = "Exp";
+            // 
+            // label123
+            // 
+            label123.AutoSize = true;
+            label123.Location = new System.Drawing.Point(90, 73);
+            label123.Name = "label123";
+            label123.Size = new System.Drawing.Size(29, 13);
+            label123.TabIndex = 22;
+            label123.Text = "SPD";
+            // 
+            // label124
+            // 
+            label124.AutoSize = true;
+            label124.Location = new System.Drawing.Point(6, 73);
+            label124.Name = "label124";
+            label124.Size = new System.Drawing.Size(25, 13);
+            label124.TabIndex = 22;
+            label124.Text = "S.D";
+            // 
+            // label125
+            // 
+            label125.AutoSize = true;
+            label125.Location = new System.Drawing.Point(93, 47);
+            label125.Name = "label125";
+            label125.Size = new System.Drawing.Size(24, 13);
+            label125.TabIndex = 22;
+            label125.Text = "S.A";
+            // 
+            // label126
+            // 
+            label126.AutoSize = true;
+            label126.Location = new System.Drawing.Point(7, 47);
+            label126.Name = "label126";
+            label126.Size = new System.Drawing.Size(24, 13);
+            label126.TabIndex = 22;
+            label126.Text = "F.D";
+            // 
+            // label127
+            // 
+            label127.AutoSize = true;
+            label127.Location = new System.Drawing.Point(94, 21);
+            label127.Name = "label127";
+            label127.Size = new System.Drawing.Size(23, 13);
+            label127.TabIndex = 22;
+            label127.Text = "F.A";
+            // 
+            // label128
+            // 
+            label128.AutoSize = true;
+            label128.Location = new System.Drawing.Point(9, 21);
+            label128.Name = "label128";
+            label128.Size = new System.Drawing.Size(22, 13);
+            label128.TabIndex = 0;
+            label128.Text = "HP";
+            // 
+            // label129
+            // 
+            label129.AutoSize = true;
+            label129.Location = new System.Drawing.Point(90, 73);
+            label129.Name = "label129";
+            label129.Size = new System.Drawing.Size(29, 13);
+            label129.TabIndex = 22;
+            label129.Text = "SPD";
+            // 
+            // label130
+            // 
+            label130.AutoSize = true;
+            label130.Location = new System.Drawing.Point(6, 73);
+            label130.Name = "label130";
+            label130.Size = new System.Drawing.Size(25, 13);
+            label130.TabIndex = 22;
+            label130.Text = "S.D";
+            // 
+            // label131
+            // 
+            label131.AutoSize = true;
+            label131.Location = new System.Drawing.Point(93, 47);
+            label131.Name = "label131";
+            label131.Size = new System.Drawing.Size(24, 13);
+            label131.TabIndex = 22;
+            label131.Text = "S.A";
+            // 
+            // label132
+            // 
+            label132.AutoSize = true;
+            label132.Location = new System.Drawing.Point(7, 47);
+            label132.Name = "label132";
+            label132.Size = new System.Drawing.Size(24, 13);
+            label132.TabIndex = 22;
+            label132.Text = "F.D";
+            // 
+            // label133
+            // 
+            label133.AutoSize = true;
+            label133.Location = new System.Drawing.Point(94, 21);
+            label133.Name = "label133";
+            label133.Size = new System.Drawing.Size(23, 13);
+            label133.TabIndex = 22;
+            label133.Text = "F.A";
+            // 
+            // label134
+            // 
+            label134.AutoSize = true;
+            label134.Location = new System.Drawing.Point(9, 21);
+            label134.Name = "label134";
+            label134.Size = new System.Drawing.Size(22, 13);
+            label134.TabIndex = 0;
+            label134.Text = "HP";
+            // 
+            // label135
+            // 
+            label135.AutoSize = true;
+            label135.Location = new System.Drawing.Point(325, 89);
+            label135.Name = "label135";
+            label135.Size = new System.Drawing.Size(52, 13);
+            label135.TabIndex = 70;
+            label135.Text = "Held Item";
+            // 
+            // label136
+            // 
+            label136.AutoSize = true;
+            label136.Location = new System.Drawing.Point(325, 62);
+            label136.Name = "label136";
+            label136.Size = new System.Drawing.Size(55, 13);
+            label136.TabIndex = 69;
+            label136.Text = "Nickname";
+            // 
+            // label137
+            // 
+            label137.AutoSize = true;
+            label137.Location = new System.Drawing.Point(121, 143);
+            label137.Name = "label137";
+            label137.Size = new System.Drawing.Size(31, 13);
+            label137.TabIndex = 67;
+            label137.Text = "Mark";
+            // 
+            // label138
+            // 
+            label138.AutoSize = true;
+            label138.Location = new System.Drawing.Point(121, 116);
+            label138.Name = "label138";
+            label138.Size = new System.Drawing.Size(34, 13);
+            label138.TabIndex = 66;
+            label138.Text = "Ability";
+            // 
+            // label139
+            // 
+            label139.AutoSize = true;
+            label139.Location = new System.Drawing.Point(121, 170);
+            label139.Name = "label139";
+            label139.Size = new System.Drawing.Size(48, 13);
+            label139.TabIndex = 64;
+            label139.Text = "Costume";
+            // 
+            // label140
+            // 
+            label140.AutoSize = true;
+            label140.Location = new System.Drawing.Point(121, 89);
+            label140.Name = "label140";
+            label140.Size = new System.Drawing.Size(30, 13);
+            label140.TabIndex = 62;
+            label140.Text = "Style";
+            // 
+            // label141
+            // 
+            label141.AutoSize = true;
+            label141.Location = new System.Drawing.Point(121, 62);
+            label141.Name = "label141";
+            label141.Size = new System.Drawing.Size(41, 13);
+            label141.TabIndex = 58;
+            label141.Text = "Puppet";
+            // 
+            // label142
+            // 
+            label142.AutoSize = true;
+            label142.Location = new System.Drawing.Point(121, 35);
+            label142.Name = "label142";
+            label142.Size = new System.Drawing.Size(62, 13);
+            label142.TabIndex = 55;
+            label142.Text = "Puppet Slot";
+            // 
+            // label143
+            // 
+            label143.AutoSize = true;
+            label143.Location = new System.Drawing.Point(121, 9);
+            label143.Name = "label143";
+            label143.Size = new System.Drawing.Size(44, 13);
+            label143.TabIndex = 53;
+            label143.Text = "Filepath";
+            // 
             // HookLinkLabel
             // 
             this.HookLinkLabel.AutoSize = true;
@@ -1604,7 +1914,8 @@
             this.TabControl.Controls.Add(this.MapsTabPage);
             this.TabControl.Controls.Add(this.DesignTabPage);
             this.TabControl.Controls.Add(this.EventTabPage);
-            this.TabControl.Controls.Add(this.tabPage1);
+            this.TabControl.Controls.Add(this.ScriptTabPage);
+            this.TabControl.Controls.Add(this.RentalTabPage);
             this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl.Location = new System.Drawing.Point(0, 0);
             this.TabControl.Name = "TabControl";
@@ -3955,22 +4266,22 @@
             this.EventIDSC.TabIndex = 2;
             this.EventIDSC.ValueChanged += new System.EventHandler(this.EventIDSC_ValueChanged);
             // 
-            // tabPage1
+            // ScriptTabPage
             // 
-            this.tabPage1.Controls.Add(this.EvsHexCB);
-            this.tabPage1.Controls.Add(this.EvsReadmeBT);
-            this.tabPage1.Controls.Add(this.EvsNewBT);
-            this.tabPage1.Controls.Add(this.EvsSaveBT);
-            this.tabPage1.Controls.Add(this.EvsOpenBT);
-            this.tabPage1.Controls.Add(label19);
-            this.tabPage1.Controls.Add(this.EvsTB);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(768, 555);
-            this.tabPage1.TabIndex = 9;
-            this.tabPage1.Text = "Event Scripts";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.ScriptTabPage.Controls.Add(this.EvsHexCB);
+            this.ScriptTabPage.Controls.Add(this.EvsReadmeBT);
+            this.ScriptTabPage.Controls.Add(this.EvsNewBT);
+            this.ScriptTabPage.Controls.Add(this.EvsSaveBT);
+            this.ScriptTabPage.Controls.Add(this.EvsOpenBT);
+            this.ScriptTabPage.Controls.Add(label19);
+            this.ScriptTabPage.Controls.Add(this.EvsTB);
+            this.ScriptTabPage.Location = new System.Drawing.Point(4, 22);
+            this.ScriptTabPage.Name = "ScriptTabPage";
+            this.ScriptTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.ScriptTabPage.Size = new System.Drawing.Size(768, 555);
+            this.ScriptTabPage.TabIndex = 9;
+            this.ScriptTabPage.Text = "Event Scripts";
+            this.ScriptTabPage.UseVisualStyleBackColor = true;
             // 
             // EvsHexCB
             // 
@@ -4041,6 +4352,514 @@
             this.EvsTB.WordWrap = false;
             this.EvsTB.DragDrop += new System.Windows.Forms.DragEventHandler(this.EvsTB_DragDrop);
             this.EvsTB.DragEnter += new System.Windows.Forms.DragEventHandler(this.EvsTB_DragEnter);
+            // 
+            // RentalTabPage
+            // 
+            this.RentalTabPage.Controls.Add(this.button1);
+            this.RentalTabPage.Controls.Add(this.button3);
+            this.RentalTabPage.Controls.Add(this.RentalHeartMarkCB);
+            this.RentalTabPage.Controls.Add(this.RentalLevelSC);
+            this.RentalTabPage.Controls.Add(label121);
+            this.RentalTabPage.Controls.Add(this.RentalExpSC);
+            this.RentalTabPage.Controls.Add(label122);
+            this.RentalTabPage.Controls.Add(this.groupBox18);
+            this.RentalTabPage.Controls.Add(this.groupBox19);
+            this.RentalTabPage.Controls.Add(this.RentalItemCB);
+            this.RentalTabPage.Controls.Add(this.RentalPuppetNickTB);
+            this.RentalTabPage.Controls.Add(label135);
+            this.RentalTabPage.Controls.Add(label136);
+            this.RentalTabPage.Controls.Add(this.groupBox20);
+            this.RentalTabPage.Controls.Add(this.RentalCostumeCB);
+            this.RentalTabPage.Controls.Add(label137);
+            this.RentalTabPage.Controls.Add(this.RentalMarkCB);
+            this.RentalTabPage.Controls.Add(label138);
+            this.RentalTabPage.Controls.Add(this.RentalAbilityCB);
+            this.RentalTabPage.Controls.Add(label139);
+            this.RentalTabPage.Controls.Add(label140);
+            this.RentalTabPage.Controls.Add(this.RentalStyleCB);
+            this.RentalTabPage.Controls.Add(label141);
+            this.RentalTabPage.Controls.Add(this.RentalPuppetCB);
+            this.RentalTabPage.Controls.Add(label142);
+            this.RentalTabPage.Controls.Add(this.RentalSlotCB);
+            this.RentalTabPage.Controls.Add(label143);
+            this.RentalTabPage.Controls.Add(this.PtsFilepathTB);
+            this.RentalTabPage.Controls.Add(this.RentalLB);
+            this.RentalTabPage.Location = new System.Drawing.Point(4, 22);
+            this.RentalTabPage.Name = "RentalTabPage";
+            this.RentalTabPage.Size = new System.Drawing.Size(768, 555);
+            this.RentalTabPage.TabIndex = 10;
+            this.RentalTabPage.Text = "Rental Teams";
+            this.RentalTabPage.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(325, 165);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(119, 23);
+            this.button1.TabIndex = 86;
+            this.button1.Text = "Equip \"Best\" Moves";
+            this.toolTip1.SetToolTip(this.button1, "Attempt to equip the most powerful level up moves available at the puppets curren" +
+        "t level");
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.RentalEquipBT_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(124, 332);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 80;
+            this.button3.Text = "New Team";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.NewRentalBT_Click);
+            // 
+            // RentalHeartMarkCB
+            // 
+            this.RentalHeartMarkCB.AutoSize = true;
+            this.RentalHeartMarkCB.Location = new System.Drawing.Point(328, 139);
+            this.RentalHeartMarkCB.Name = "RentalHeartMarkCB";
+            this.RentalHeartMarkCB.Size = new System.Drawing.Size(79, 17);
+            this.RentalHeartMarkCB.TabIndex = 78;
+            this.RentalHeartMarkCB.Text = "Heart Mark";
+            this.RentalHeartMarkCB.UseVisualStyleBackColor = true;
+            this.RentalHeartMarkCB.CheckedChanged += new System.EventHandler(this.RentalHeartMarkCB_CheckedChanged);
+            // 
+            // RentalLevelSC
+            // 
+            this.RentalLevelSC.Location = new System.Drawing.Point(552, 113);
+            this.RentalLevelSC.Name = "RentalLevelSC";
+            this.RentalLevelSC.Size = new System.Drawing.Size(56, 20);
+            this.RentalLevelSC.TabIndex = 65;
+            this.RentalLevelSC.ValueChanged += new System.EventHandler(this.RentalLevelSC_ValueChanged);
+            // 
+            // RentalExpSC
+            // 
+            this.RentalExpSC.Location = new System.Drawing.Point(386, 113);
+            this.RentalExpSC.Maximum = new decimal(new int[] {
+            1300000,
+            0,
+            0,
+            0});
+            this.RentalExpSC.Name = "RentalExpSC";
+            this.RentalExpSC.Size = new System.Drawing.Size(121, 20);
+            this.RentalExpSC.TabIndex = 63;
+            this.RentalExpSC.ValueChanged += new System.EventHandler(this.RentalExpSC_ValueChanged);
+            // 
+            // groupBox18
+            // 
+            this.groupBox18.Controls.Add(this.button4);
+            this.groupBox18.Controls.Add(this.button5);
+            this.groupBox18.Controls.Add(this.RentalEV6SC);
+            this.groupBox18.Controls.Add(label123);
+            this.groupBox18.Controls.Add(this.RentalEV5SC);
+            this.groupBox18.Controls.Add(label124);
+            this.groupBox18.Controls.Add(this.RentalEV4SC);
+            this.groupBox18.Controls.Add(label125);
+            this.groupBox18.Controls.Add(this.RentalEV3SC);
+            this.groupBox18.Controls.Add(label126);
+            this.groupBox18.Controls.Add(this.RentalEV2SC);
+            this.groupBox18.Controls.Add(label127);
+            this.groupBox18.Controls.Add(this.RentalEV1SC);
+            this.groupBox18.Controls.Add(label128);
+            this.groupBox18.Location = new System.Drawing.Point(471, 196);
+            this.groupBox18.Name = "groupBox18";
+            this.groupBox18.Size = new System.Drawing.Size(200, 130);
+            this.groupBox18.TabIndex = 72;
+            this.groupBox18.TabStop = false;
+            this.groupBox18.Text = "EVs";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(123, 97);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(47, 23);
+            this.button4.TabIndex = 34;
+            this.button4.Text = "All 0";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.RentalAll0BT_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(37, 97);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(47, 23);
+            this.button5.TabIndex = 33;
+            this.button5.Text = "All 64";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.RentalAll64BT_Click);
+            // 
+            // RentalEV6SC
+            // 
+            this.RentalEV6SC.Location = new System.Drawing.Point(123, 71);
+            this.RentalEV6SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV6SC.Name = "RentalEV6SC";
+            this.RentalEV6SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV6SC.TabIndex = 32;
+            this.RentalEV6SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // RentalEV5SC
+            // 
+            this.RentalEV5SC.Location = new System.Drawing.Point(37, 71);
+            this.RentalEV5SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV5SC.Name = "RentalEV5SC";
+            this.RentalEV5SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV5SC.TabIndex = 31;
+            this.RentalEV5SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // RentalEV4SC
+            // 
+            this.RentalEV4SC.Location = new System.Drawing.Point(123, 45);
+            this.RentalEV4SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV4SC.Name = "RentalEV4SC";
+            this.RentalEV4SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV4SC.TabIndex = 30;
+            this.RentalEV4SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // RentalEV3SC
+            // 
+            this.RentalEV3SC.Location = new System.Drawing.Point(37, 45);
+            this.RentalEV3SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV3SC.Name = "RentalEV3SC";
+            this.RentalEV3SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV3SC.TabIndex = 29;
+            this.RentalEV3SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // RentalEV2SC
+            // 
+            this.RentalEV2SC.Location = new System.Drawing.Point(123, 19);
+            this.RentalEV2SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV2SC.Name = "RentalEV2SC";
+            this.RentalEV2SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV2SC.TabIndex = 28;
+            this.RentalEV2SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // RentalEV1SC
+            // 
+            this.RentalEV1SC.Location = new System.Drawing.Point(37, 19);
+            this.RentalEV1SC.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.RentalEV1SC.Name = "RentalEV1SC";
+            this.RentalEV1SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalEV1SC.TabIndex = 27;
+            this.RentalEV1SC.ValueChanged += new System.EventHandler(this.RentalEVSC_ValueChanged);
+            // 
+            // groupBox19
+            // 
+            this.groupBox19.Controls.Add(this.button6);
+            this.groupBox19.Controls.Add(this.button7);
+            this.groupBox19.Controls.Add(this.RentalIV6SC);
+            this.groupBox19.Controls.Add(label129);
+            this.groupBox19.Controls.Add(this.RentalIV5SC);
+            this.groupBox19.Controls.Add(label130);
+            this.groupBox19.Controls.Add(this.RentalIV4SC);
+            this.groupBox19.Controls.Add(label131);
+            this.groupBox19.Controls.Add(this.RentalIV3SC);
+            this.groupBox19.Controls.Add(label132);
+            this.groupBox19.Controls.Add(this.RentalIV2SC);
+            this.groupBox19.Controls.Add(label133);
+            this.groupBox19.Controls.Add(this.RentalIV1SC);
+            this.groupBox19.Controls.Add(label134);
+            this.groupBox19.Location = new System.Drawing.Point(265, 196);
+            this.groupBox19.Name = "groupBox19";
+            this.groupBox19.Size = new System.Drawing.Size(200, 130);
+            this.groupBox19.TabIndex = 71;
+            this.groupBox19.TabStop = false;
+            this.groupBox19.Text = "IVs";
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(123, 97);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(47, 23);
+            this.button6.TabIndex = 33;
+            this.button6.Text = "All E-";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.RentalAllEBT_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(37, 97);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(47, 23);
+            this.button7.TabIndex = 0;
+            this.button7.Text = "All S";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.RentalAllSBT_Click);
+            // 
+            // RentalIV6SC
+            // 
+            this.RentalIV6SC.Location = new System.Drawing.Point(123, 71);
+            this.RentalIV6SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV6SC.Name = "RentalIV6SC";
+            this.RentalIV6SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV6SC.TabIndex = 26;
+            this.RentalIV6SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalIV5SC
+            // 
+            this.RentalIV5SC.Location = new System.Drawing.Point(37, 71);
+            this.RentalIV5SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV5SC.Name = "RentalIV5SC";
+            this.RentalIV5SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV5SC.TabIndex = 25;
+            this.RentalIV5SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalIV4SC
+            // 
+            this.RentalIV4SC.Location = new System.Drawing.Point(123, 45);
+            this.RentalIV4SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV4SC.Name = "RentalIV4SC";
+            this.RentalIV4SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV4SC.TabIndex = 24;
+            this.RentalIV4SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalIV3SC
+            // 
+            this.RentalIV3SC.Location = new System.Drawing.Point(37, 45);
+            this.RentalIV3SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV3SC.Name = "RentalIV3SC";
+            this.RentalIV3SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV3SC.TabIndex = 23;
+            this.RentalIV3SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalIV2SC
+            // 
+            this.RentalIV2SC.Location = new System.Drawing.Point(123, 19);
+            this.RentalIV2SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV2SC.Name = "RentalIV2SC";
+            this.RentalIV2SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV2SC.TabIndex = 22;
+            this.RentalIV2SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalIV1SC
+            // 
+            this.RentalIV1SC.Location = new System.Drawing.Point(37, 19);
+            this.RentalIV1SC.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.RentalIV1SC.Name = "RentalIV1SC";
+            this.RentalIV1SC.Size = new System.Drawing.Size(47, 20);
+            this.RentalIV1SC.TabIndex = 21;
+            this.RentalIV1SC.ValueChanged += new System.EventHandler(this.RentalIVSC_ValueChanged);
+            // 
+            // RentalItemCB
+            // 
+            this.RentalItemCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalItemCB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalItemCB.FormattingEnabled = true;
+            this.RentalItemCB.Location = new System.Drawing.Point(386, 86);
+            this.RentalItemCB.Name = "RentalItemCB";
+            this.RentalItemCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalItemCB.TabIndex = 61;
+            this.RentalItemCB.SelectedIndexChanged += new System.EventHandler(this.RentalItemCB_SelectedIndexChanged);
+            // 
+            // RentalPuppetNickTB
+            // 
+            this.RentalPuppetNickTB.Location = new System.Drawing.Point(386, 59);
+            this.RentalPuppetNickTB.MaxLength = 31;
+            this.RentalPuppetNickTB.Name = "RentalPuppetNickTB";
+            this.RentalPuppetNickTB.Size = new System.Drawing.Size(121, 20);
+            this.RentalPuppetNickTB.TabIndex = 60;
+            this.RentalPuppetNickTB.TextChanged += new System.EventHandler(this.RentalPuppetNickTB_TextChanged);
+            // 
+            // groupBox20
+            // 
+            this.groupBox20.Controls.Add(this.RentalSkill4CB);
+            this.groupBox20.Controls.Add(this.RentalSkill3CB);
+            this.groupBox20.Controls.Add(this.RentalSkill2CB);
+            this.groupBox20.Controls.Add(this.RentalSkill1CB);
+            this.groupBox20.Location = new System.Drawing.Point(124, 194);
+            this.groupBox20.Name = "groupBox20";
+            this.groupBox20.Size = new System.Drawing.Size(135, 132);
+            this.groupBox20.TabIndex = 68;
+            this.groupBox20.TabStop = false;
+            this.groupBox20.Text = "Skills";
+            // 
+            // RentalSkill4CB
+            // 
+            this.RentalSkill4CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalSkill4CB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalSkill4CB.FormattingEnabled = true;
+            this.RentalSkill4CB.Location = new System.Drawing.Point(6, 100);
+            this.RentalSkill4CB.Name = "RentalSkill4CB";
+            this.RentalSkill4CB.Size = new System.Drawing.Size(121, 21);
+            this.RentalSkill4CB.TabIndex = 18;
+            this.RentalSkill4CB.SelectedIndexChanged += new System.EventHandler(this.RentalSkill_SelectedIndexChanged);
+            // 
+            // RentalSkill3CB
+            // 
+            this.RentalSkill3CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalSkill3CB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalSkill3CB.FormattingEnabled = true;
+            this.RentalSkill3CB.Location = new System.Drawing.Point(6, 73);
+            this.RentalSkill3CB.Name = "RentalSkill3CB";
+            this.RentalSkill3CB.Size = new System.Drawing.Size(121, 21);
+            this.RentalSkill3CB.TabIndex = 17;
+            this.RentalSkill3CB.SelectedIndexChanged += new System.EventHandler(this.RentalSkill_SelectedIndexChanged);
+            // 
+            // RentalSkill2CB
+            // 
+            this.RentalSkill2CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalSkill2CB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalSkill2CB.FormattingEnabled = true;
+            this.RentalSkill2CB.Location = new System.Drawing.Point(6, 46);
+            this.RentalSkill2CB.Name = "RentalSkill2CB";
+            this.RentalSkill2CB.Size = new System.Drawing.Size(121, 21);
+            this.RentalSkill2CB.TabIndex = 16;
+            this.RentalSkill2CB.SelectedIndexChanged += new System.EventHandler(this.RentalSkill_SelectedIndexChanged);
+            // 
+            // RentalSkill1CB
+            // 
+            this.RentalSkill1CB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalSkill1CB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalSkill1CB.FormattingEnabled = true;
+            this.RentalSkill1CB.Location = new System.Drawing.Point(6, 19);
+            this.RentalSkill1CB.Name = "RentalSkill1CB";
+            this.RentalSkill1CB.Size = new System.Drawing.Size(121, 21);
+            this.RentalSkill1CB.TabIndex = 15;
+            this.RentalSkill1CB.SelectedIndexChanged += new System.EventHandler(this.RentalSkill_SelectedIndexChanged);
+            // 
+            // RentalCostumeCB
+            // 
+            this.RentalCostumeCB.FormattingEnabled = true;
+            this.RentalCostumeCB.Items.AddRange(new object[] {
+            "Normal",
+            "Alt Color",
+            "Alt Costume",
+            "Wedding Dress"});
+            this.RentalCostumeCB.Location = new System.Drawing.Point(198, 167);
+            this.RentalCostumeCB.Name = "RentalCostumeCB";
+            this.RentalCostumeCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalCostumeCB.TabIndex = 57;
+            this.RentalCostumeCB.SelectedIndexChanged += new System.EventHandler(this.RentalCostumeCB_SelectedIndexChanged);
+            // 
+            // RentalMarkCB
+            // 
+            this.RentalMarkCB.FormattingEnabled = true;
+            this.RentalMarkCB.Items.AddRange(new object[] {
+            "None",
+            "Red",
+            "Blue",
+            "Black",
+            "White",
+            "Green"});
+            this.RentalMarkCB.Location = new System.Drawing.Point(198, 140);
+            this.RentalMarkCB.Name = "RentalMarkCB";
+            this.RentalMarkCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalMarkCB.TabIndex = 56;
+            this.RentalMarkCB.SelectedIndexChanged += new System.EventHandler(this.RentalMarkCB_SelectedIndexChanged);
+            // 
+            // RentalAbilityCB
+            // 
+            this.RentalAbilityCB.FormattingEnabled = true;
+            this.RentalAbilityCB.Location = new System.Drawing.Point(198, 113);
+            this.RentalAbilityCB.Name = "RentalAbilityCB";
+            this.RentalAbilityCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalAbilityCB.TabIndex = 54;
+            this.RentalAbilityCB.SelectedIndexChanged += new System.EventHandler(this.RentalAbilityCB_SelectedIndexChanged);
+            // 
+            // RentalStyleCB
+            // 
+            this.RentalStyleCB.FormattingEnabled = true;
+            this.RentalStyleCB.Location = new System.Drawing.Point(198, 86);
+            this.RentalStyleCB.Name = "RentalStyleCB";
+            this.RentalStyleCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalStyleCB.TabIndex = 52;
+            this.RentalStyleCB.SelectedIndexChanged += new System.EventHandler(this.RentalStyleCB_SelectedIndexChanged);
+            // 
+            // RentalPuppetCB
+            // 
+            this.RentalPuppetCB.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.RentalPuppetCB.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.RentalPuppetCB.FormattingEnabled = true;
+            this.RentalPuppetCB.Location = new System.Drawing.Point(198, 59);
+            this.RentalPuppetCB.Name = "RentalPuppetCB";
+            this.RentalPuppetCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalPuppetCB.TabIndex = 50;
+            this.RentalPuppetCB.SelectedIndexChanged += new System.EventHandler(this.RentalPuppetCB_SelectedIndexChanged);
+            // 
+            // RentalSlotCB
+            // 
+            this.RentalSlotCB.FormattingEnabled = true;
+            this.RentalSlotCB.Items.AddRange(new object[] {
+            "Puppet 1",
+            "Puppet 2",
+            "Puppet 3",
+            "Puppet 4",
+            "Puppet 5",
+            "Puppet 6"});
+            this.RentalSlotCB.Location = new System.Drawing.Point(198, 32);
+            this.RentalSlotCB.Name = "RentalSlotCB";
+            this.RentalSlotCB.Size = new System.Drawing.Size(121, 21);
+            this.RentalSlotCB.TabIndex = 49;
+            this.RentalSlotCB.SelectedIndexChanged += new System.EventHandler(this.RentalSlotCB_SelectedIndexChanged);
+            // 
+            // PtsFilepathTB
+            // 
+            this.PtsFilepathTB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PtsFilepathTB.Location = new System.Drawing.Point(198, 6);
+            this.PtsFilepathTB.Name = "PtsFilepathTB";
+            this.PtsFilepathTB.ReadOnly = true;
+            this.PtsFilepathTB.Size = new System.Drawing.Size(434, 20);
+            this.PtsFilepathTB.TabIndex = 47;
+            // 
+            // RentalLB
+            // 
+            this.RentalLB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.RentalLB.FormattingEnabled = true;
+            this.RentalLB.HorizontalScrollbar = true;
+            this.RentalLB.Location = new System.Drawing.Point(7, 9);
+            this.RentalLB.Name = "RentalLB";
+            this.RentalLB.Size = new System.Drawing.Size(108, 537);
+            this.RentalLB.TabIndex = 44;
+            this.RentalLB.SelectedIndexChanged += new System.EventHandler(this.RentalLB_SelectedIndexChanged);
             // 
             // GameDirBrowser
             // 
@@ -4167,8 +4986,29 @@
             ((System.ComponentModel.ISupportInitialize)(this.EventObjIDSC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventObjectPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.EventIDSC)).EndInit();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.ScriptTabPage.ResumeLayout(false);
+            this.ScriptTabPage.PerformLayout();
+            this.RentalTabPage.ResumeLayout(false);
+            this.RentalTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalLevelSC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalExpSC)).EndInit();
+            this.groupBox18.ResumeLayout(false);
+            this.groupBox18.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV6SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV5SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV4SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalEV1SC)).EndInit();
+            this.groupBox19.ResumeLayout(false);
+            this.groupBox19.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV6SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV5SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV4SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV3SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV2SC)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.RentalIV1SC)).EndInit();
+            this.groupBox20.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -4347,7 +5187,7 @@
         private System.Windows.Forms.Button PuppetMovesetBT;
         private System.Windows.Forms.Label PuppetBSTLabel;
         private System.Windows.Forms.CheckBox ForbidGapCB;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage ScriptTabPage;
         private System.Windows.Forms.TextBox EvsTB;
         private System.Windows.Forms.Button EvsNewBT;
         private System.Windows.Forms.Button EvsSaveBT;
@@ -4362,6 +5202,45 @@
         private System.Windows.Forms.Button PuppetSearchBT;
         private System.Windows.Forms.Button TrainerEquipBT;
         private System.Windows.Forms.Button ExportMapImgBT;
+        private System.Windows.Forms.TabPage RentalTabPage;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.CheckBox RentalHeartMarkCB;
+        private System.Windows.Forms.NumericUpDown RentalLevelSC;
+        private System.Windows.Forms.NumericUpDown RentalExpSC;
+        private System.Windows.Forms.GroupBox groupBox18;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.NumericUpDown RentalEV6SC;
+        private System.Windows.Forms.NumericUpDown RentalEV5SC;
+        private System.Windows.Forms.NumericUpDown RentalEV4SC;
+        private System.Windows.Forms.NumericUpDown RentalEV3SC;
+        private System.Windows.Forms.NumericUpDown RentalEV2SC;
+        private System.Windows.Forms.NumericUpDown RentalEV1SC;
+        private System.Windows.Forms.GroupBox groupBox19;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.NumericUpDown RentalIV6SC;
+        private System.Windows.Forms.NumericUpDown RentalIV5SC;
+        private System.Windows.Forms.NumericUpDown RentalIV4SC;
+        private System.Windows.Forms.NumericUpDown RentalIV3SC;
+        private System.Windows.Forms.NumericUpDown RentalIV2SC;
+        private System.Windows.Forms.NumericUpDown RentalIV1SC;
+        private System.Windows.Forms.ComboBox RentalItemCB;
+        private System.Windows.Forms.TextBox RentalPuppetNickTB;
+        private System.Windows.Forms.GroupBox groupBox20;
+        private System.Windows.Forms.ComboBox RentalSkill4CB;
+        private System.Windows.Forms.ComboBox RentalSkill3CB;
+        private System.Windows.Forms.ComboBox RentalSkill2CB;
+        private System.Windows.Forms.ComboBox RentalSkill1CB;
+        private System.Windows.Forms.ComboBox RentalCostumeCB;
+        private System.Windows.Forms.ComboBox RentalMarkCB;
+        private System.Windows.Forms.ComboBox RentalAbilityCB;
+        private System.Windows.Forms.ComboBox RentalStyleCB;
+        private System.Windows.Forms.ComboBox RentalPuppetCB;
+        private System.Windows.Forms.ComboBox RentalSlotCB;
+        private System.Windows.Forms.TextBox PtsFilepathTB;
+        private System.Windows.Forms.ListBox RentalLB;
     }
 }
 

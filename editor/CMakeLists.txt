@@ -39,6 +39,7 @@ set(editor_sources
     "EvsWindow.cs"
     "Bitmap.cs"
     "MapPanel.cs"
+    "RentalWindow.cs"
     "Properties/AssemblyInfo.cs"
     "Properties/Resources.Designer.cs"
     "Properties/Resources.resx"

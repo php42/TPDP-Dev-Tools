@@ -21,7 +21,8 @@ namespace editor
 
         protected override Point ScrollToControl(Control activeControl)
         {
-            return AutoScrollPosition;
+            //return AutoScrollPosition;
+            return base.ScrollToControl(activeControl);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)

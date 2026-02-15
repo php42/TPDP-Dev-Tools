@@ -22,6 +22,7 @@ namespace editor
         private bool is_ynk_ = false;
         private List<MadJson> maps_ = new List<MadJson>();
         private List<DodJson> dods_ = new List<DodJson>();
+        private List<PtsJson> rentals_ = new List<PtsJson>();
         private Dictionary<uint, DollData> puppets_ = new Dictionary<uint, DollData>();
         private Dictionary<uint, SkillData> skills_ = new Dictionary<uint, SkillData>();
         private Dictionary<uint, string> ability_names_ = new Dictionary<uint, string>();
@@ -44,6 +45,7 @@ namespace editor
             is_ynk_ = false;
             maps_ = new List<MadJson>();
             dods_ = new List<DodJson>();
+            rentals_ = new List<PtsJson>();
             puppets_ = new Dictionary<uint, DollData>();
             skills_ = new Dictionary<uint, SkillData>();
             ability_names_ = new Dictionary<uint, string>();
@@ -428,6 +430,20 @@ namespace editor
             {
                 ErrMsg("Failed to save trainers: " + ex.Message);
                 return;
+            }
+
+            // Save Rental Teams
+            if(is_ynk_)
+            {
+                try
+                {
+                    SaveRentals();
+                }
+                catch(Exception ex)
+                {
+                    ErrMsg("Failed to save rental teams: " + ex.Message);
+                    return;
+                }
             }
 
             // Save Skills
@@ -937,6 +953,22 @@ namespace editor
                 ErrMsg("Error initializing event editor: " + ex.Message);
                 Reset();
                 return;
+            }
+
+            // Populate Rental tab
+            if(is_ynk_)
+            {
+                try
+                {
+                    string rentals = wkdir + "/gn_dat5.arc/script/party";
+                    LoadRentals(rentals);
+                }
+                catch(Exception ex)
+                {
+                    ErrMsg("Failed to load rental team data: " + ex.Message);
+                    Reset();
+                    return;
+                }
             }
 
             ConsoleOutput.AppendText("Done.\r\n");

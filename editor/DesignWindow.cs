@@ -451,6 +451,8 @@ namespace editor
             paste_x_ = -1;
             paste_y_ = -1;
             dragging_ = false;
+            map_display_.AutoScrollOffset = new Point(0, 0);
+            map_panel_.AutoScrollPosition = new Point(0, 0);
 
             ClearUndo();
 
@@ -1064,10 +1066,13 @@ namespace editor
 
             if(e.Button == MouseButtons.Middle)
             {
-                var pos = map_display_.Location;
-                pos.X += e.X - scroll_pos_.X;
-                pos.Y += e.Y - scroll_pos_.Y;
-                map_display_.Location = pos;
+                // Setting AutoScrollPosition while dragging the mouse causes it to spazz out.
+                // I'm too lazy to figure it out so we'll just do it this way instead.
+                var pos = map_display_.AutoScrollOffset;
+                pos.X = Math.Max(Math.Min(pos.X + (e.X - scroll_pos_.X), 0), -map_display_.Width);
+                pos.Y = Math.Max(Math.Min(pos.Y + (e.Y - scroll_pos_.Y), 0), -map_display_.Height);
+                map_display_.AutoScrollOffset = pos;
+                map_panel_.ScrollControlIntoView(map_display_);
             }
         }
 

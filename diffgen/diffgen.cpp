@@ -20,14 +20,11 @@
 #include "../common/filesystem.h"
 #include "../common/textconvert.h"
 #include "../common/console.h"
-#include "../common/endian.h"
 #include "../common/thread_pool.h"
 #include <boost/algorithm/string.hpp>
 #include <libtpdp.h>
 #include <iostream>
 #include <tuple>
-#include <thread>
-#include <future>
 #include <regex>
 #include <unordered_map>
 #include <algorithm>
@@ -62,7 +59,7 @@ static void diff_task(Path path, Path rel_path, const libtpdp::Archive& arc, int
             }
 
             std::lock_guard lock(g_mtx);
-            out.push_back({ arc_num, std::move(rel_path), std::move(path) });
+            out.push_back({ arc_num, rel_path, path });
             return;
         }
 
@@ -70,16 +67,20 @@ static void diff_task(Path path, Path rel_path, const libtpdp::Archive& arc, int
         if(!src_file)
             throw DiffgenException("Error extracting file from archive.");
 
-        std::size_t sz;
+        std::size_t sz = 0;
         auto dst_file = read_file(path.wstring(), sz);
         if(!dst_file)
             throw DiffgenException("Failed to read file.");
+
+        // FIXME: archive code does not like zero-length files currently
+        if((sz == 0) || (src_file.size() == 0))
+            throw DiffgenException("Zero-length files not supported.");
 
         if((src_file.size() == sz) && (memcmp(src_file.data(), dst_file.get(), sz) == 0))
             return;
 
         std::lock_guard lock(g_mtx);
-        out.push_back({ arc_num, std::move(rel_path), std::move(path) });
+        out.push_back({ arc_num, rel_path, path });
     }
     catch(const std::exception& ex)
     {

@@ -50,10 +50,11 @@ namespace fs = std::filesystem;
 namespace b64 = boost::beast::detail::base64;
 
 constexpr unsigned int JSON_MAJOR = 1;
-constexpr unsigned int JSON_MINOR = 4;
+constexpr unsigned int JSON_MINOR = 5;
 
 std::atomic_uint g_count_mad(0);
 std::atomic_uint g_count_dod(0);
+std::atomic_uint g_count_pts(0);
 std::atomic_uint g_count_chp(0);
 std::atomic_uint g_count_fmf(0);
 std::atomic_uint g_count_obs(0);
@@ -531,7 +532,7 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
 {
     std::size_t sz;
     auto file = read_file(in.wstring(), sz);
-    if(!file || (sz < 0x42A))
+    if(!file || (sz != 1066))
         throw BineditException("Error reading file: " + in.string());
 
     boost::property_tree::ptree tree;
@@ -562,30 +563,9 @@ static void convert_dod(const Path& in, const Path& out, const void *rand_data)
     {
         boost::property_tree::ptree node;
 
-        // Hack to detect blank puppets
-        __m128i zero = _mm_setzero_si128();
-        for(unsigned int j = 0; j < libtpdp::PUPPET_SIZE_BOX;)
-        {
-            if((libtpdp::PUPPET_SIZE_BOX - j) >= 16)
-            {
-                auto temp = _mm_loadu_si128((__m128i*)&buf[(i * libtpdp::PUPPET_SIZE_BOX) + j]);
-                if((uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(zero, temp)) != 0xffff)
-                {
-                    libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
-                    break;
-                }
-                j += 16;
-            }
-            else
-            {
-                if(buf[(i * libtpdp::PUPPET_SIZE_BOX) + j] != 0)
-                {
-                    libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
-                    break;
-                }
-                ++j;
-            }
-        }
+        // decrypt if not zeroed out
+        if(std::any_of(&buf[i * libtpdp::PUPPET_SIZE_BOX], &buf[(i + 1) * libtpdp::PUPPET_SIZE_BOX], [] (unsigned char x) { return x != 0; }))
+            libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
         libtpdp::Puppet puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], false);
 
         node.put("nickname", utf_narrow(puppet.puppet_nickname()));
@@ -664,30 +644,115 @@ static void patch_dod(const Path& data, const Path& json, const void *rand_data)
         if(pos >= 6)
             throw BineditException("Too many puppets!");
 
-        // Hack to detect blank puppets
-        __m128i zero = _mm_setzero_si128();
-        for(unsigned int i = 0; i < libtpdp::PUPPET_SIZE_BOX;)
-        {
-            if((libtpdp::PUPPET_SIZE_BOX - i) >= 16)
-            {
-                auto temp = _mm_loadu_si128((__m128i*)&buf[(pos * libtpdp::PUPPET_SIZE_BOX) + i]);
-                if((uint16_t)_mm_movemask_epi8(_mm_cmpeq_epi8(zero, temp)) != 0xffff)
-                {
-                    libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
-                    break;
-                }
-                i += 16;
-            }
-            else
-            {
-                if(buf[(pos * libtpdp::PUPPET_SIZE_BOX) + i] != 0)
-                {
-                    libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
-                    break;
-                }
-                ++i;
-            }
-        }
+        // decrypt if not zeroed out
+        if(std::any_of(&buf[pos * libtpdp::PUPPET_SIZE_BOX], &buf[(pos + 1) * libtpdp::PUPPET_SIZE_BOX], [] (unsigned char x) { return x != 0; }))
+            libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+        libtpdp::Puppet puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
+
+        puppet.set_puppet_nickname(utf_widen(node.get<std::string>("nickname")));
+        puppet.puppet_id = node.get<uint16_t>("id");
+        puppet.style_index = node.get<uint8_t>("style");
+        puppet.ability_index = node.get<uint8_t>("ability");
+        puppet.costume_index = node.get<uint8_t>("costume");
+        puppet.exp = node.get<uint32_t>("experience");
+        puppet.mark = (uint8_t)mark_to_uint(node.get<std::string>("mark"));
+        puppet.held_item_id = node.get<uint16_t>("held_item");
+        puppet.set_heart_mark(node.get<bool>("heart_mark"));
+
+        if(puppet.mark == -1)
+            throw BineditException("Invalid puppet mark: " + node.get<std::string>("mark"));
+
+        if(node.get_child("evs").size() != 6)
+            throw BineditException("Puppet must have 6 evs!");
+        if(node.get_child("ivs").size() != 6)
+            throw BineditException("Puppet must have 6 ivs!");
+        if(node.get_child("skills").size() != 4)
+            throw BineditException("Puppet must have 4 skills!");
+
+        auto index = 0;
+        for(auto& child : node.get_child("evs"))
+            puppet.evs[index++] = child.second.get_value<uint8_t>();
+        index = 0;
+        for(auto& child : node.get_child("ivs"))
+            puppet.ivs[index++] = child.second.get_value<uint8_t>();
+        index = 0;
+        for(auto& child : node.get_child("skills"))
+            puppet.skills[index++] = child.second.get_value<uint16_t>();
+
+        puppet.write(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
+        libtpdp::encrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
+        ++pos;
+    }
+
+    if(!write_file(data.wstring(), file.get(), sz))
+        throw BineditException("Failed to write to file: " + data.string());
+}
+
+static void convert_pts(const Path& in, const Path& out, const void *rand_data)
+{
+    std::size_t sz;
+    auto file = read_file(in.wstring(), sz);
+    if(!file || (sz != (libtpdp::PUPPET_SIZE_BOX * 6ull)))
+        throw BineditException("Error reading file: " + in.string());
+
+    boost::property_tree::ptree tree;
+
+    unsigned char *buf = (unsigned char*)file.get();
+    for(auto i = 0; i < 6; ++i)
+    {
+        boost::property_tree::ptree node;
+
+        // decrypt if not zeroed out
+        if(std::any_of(&buf[i * libtpdp::PUPPET_SIZE_BOX], &buf[(i + 1) * libtpdp::PUPPET_SIZE_BOX], [] (unsigned char x) { return x != 0; }))
+            libtpdp::decrypt_puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], rand_data);
+        libtpdp::Puppet puppet(&buf[i * libtpdp::PUPPET_SIZE_BOX], false);
+
+        node.put("nickname", utf_narrow(puppet.puppet_nickname()));
+        node.put("id", puppet.puppet_id);
+        node.put("style", puppet.style_index);
+        node.put("ability", puppet.ability_index);
+        node.put("costume", puppet.costume_index);
+        node.put("experience", puppet.exp);
+        node.put("mark", utf_narrow(libtpdp::puppet_mark_string(puppet.mark)));
+        node.put("held_item", puppet.held_item_id);
+        node.put("heart_mark", puppet.has_heart_mark());
+
+        for(auto j : puppet.skills)
+            node.add("skills.", j);
+
+        for(auto j : puppet.ivs)
+            node.add("ivs.", j);
+
+        for(auto j : puppet.evs)
+            node.add("evs.", j);
+
+        tree.add_child("puppets.", node);
+    }
+
+    save_as_utf8(out, tree);
+}
+
+static void patch_pts(const Path& data, const Path& json, const void *rand_data)
+{
+    boost::property_tree::ptree tree;
+    read_as_utf8(json, tree);
+
+    std::size_t sz;
+    auto file = read_file(data.wstring(), sz);
+    if(!file || (sz != (libtpdp::PUPPET_SIZE_BOX * 6ull)))
+        throw BineditException("Error reading file: " + data.string());
+
+    std::size_t pos = 0;
+    auto buf = (unsigned char*)file.get();
+    for(auto& it : tree.get_child("puppets"))
+    {
+        auto& node = it.second;
+        if(pos >= 6)
+            throw BineditException("Too many puppets!");
+
+        // decrypt if not zeroed out
+        if(std::any_of(&buf[pos * libtpdp::PUPPET_SIZE_BOX], &buf[(pos + 1) * libtpdp::PUPPET_SIZE_BOX], [] (unsigned char x) { return x != 0; }))
+            libtpdp::decrypt_puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], rand_data);
         libtpdp::Puppet puppet(&buf[pos * libtpdp::PUPPET_SIZE_BOX], false);
 
         puppet.set_puppet_nickname(utf_widen(node.get<std::string>("nickname")));
@@ -1068,6 +1133,10 @@ bool convert(const Path& input, int threads)
                 {
                     pool.queue_task(make_task(in.wstring(), convert_dod, &g_count_dod, in, json, rand_data.get()));
                 }
+                else if(algo::iequals(in.extension().wstring(), L".pts"))
+                {
+                    pool.queue_task(make_task(in.wstring(), convert_pts, &g_count_pts, in, json, rand_data.get()));
+                }
                 else if(algo::iequals(in.extension().wstring(), L".chp"))
                 {
                     pool.queue_task(make_task(in.wstring(), convert_chip, &g_count_chp, in, json));
@@ -1103,6 +1172,7 @@ bool convert(const Path& input, int threads)
     pool.stop();
 
     std::wcout << L"converted " << g_count_dod.load() << L" .dod files." << std::endl;
+    std::wcout << L"converted " << g_count_pts.load() << L" .pts files." << std::endl;
     std::wcout << L"converted " << g_count_mad.load() << L" .mad files." << std::endl;
     std::wcout << L"converted " << g_count_chp.load() << L" .chp files." << std::endl;
     std::wcout << L"converted " << g_count_fmf.load() << L" .fmf files." << std::endl;
@@ -1190,6 +1260,13 @@ bool patch(const Path& input, int threads)
                         pool.queue_task(make_task(json.wstring(), patch_dod, &g_count_dod, in, json, rand_data.get()));
                     }
                 }
+                else if(algo::iequals(in.extension().wstring(), L".pts"))
+                {
+                    if(fs::exists(json) && fs::is_regular_file(json))
+                    {
+                        pool.queue_task(make_task(json.wstring(), patch_pts, &g_count_pts, in, json, rand_data.get()));
+                    }
+                }
                 else if(algo::iequals(in.filename().wstring(), L"DollData.dbs"))
                 {
                     if(fs::exists(json) && fs::is_regular_file(json))
@@ -1217,6 +1294,7 @@ bool patch(const Path& input, int threads)
     pool.stop();
 
     std::wcout << L"patched " << g_count_dod.load() << L" .dod files." << std::endl;
+    std::wcout << L"patched " << g_count_pts.load() << L" .pts files." << std::endl;
     std::wcout << L"patched " << g_count_mad.load() << L" .mad files." << std::endl;
     std::wcout << L"patched " << g_count_fmf.load() << L" .fmf files." << std::endl;
     std::wcout << L"patched " << g_count_obs.load() << L" .obs files." << std::endl;

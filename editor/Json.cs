@@ -21,7 +21,7 @@ namespace editor.json
 
         public static int VersionMinor
         {
-            get { return 4; }
+            get { return 5; }
         }
 
         public bool VersionMatches()
@@ -110,6 +110,16 @@ namespace editor.json
         [DataMember]
         public uint ai_difficulty;
 
+        [DataMember]
+        public PuppetJson[] puppets = { new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson() };
+
+        public string filepath = "";
+        public int id;
+    }
+
+    [DataContract]
+    class PtsJson
+    {
         [DataMember]
         public PuppetJson[] puppets = { new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson(), new PuppetJson() };
 
