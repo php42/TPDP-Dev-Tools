@@ -2,9 +2,11 @@ Controls:
 Left click: Paint.
 Right click: Erase.
 Middle Click: Edit event.
+Middle click drag: Scroll window.
 Ctrl + left click: Select brush from active layer.
 Ctrl + right click: Erase (all  layers).
 Shift + drag left click: Copy region (all layers).
+Ctrl + shift + drag left click: Copy region (selected layer).
 Alt + left click: Paste.
 Alt + right click: Flood fill.
 
