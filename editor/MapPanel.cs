@@ -19,21 +19,16 @@ namespace editor
             AutoScroll = true;
         }
 
-        protected override Point ScrollToControl(Control activeControl)
-        {
-            //return AutoScrollPosition;
-            return base.ScrollToControl(activeControl);
-        }
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            Focus();
+            if(!Focused)
+                Focus();
             base.OnMouseDown(e);
         }
 
         protected override void OnScroll(ScrollEventArgs se)
         {
-            if(GetScrollState(ScrollStateUserHasScrolled))
+            if(GetScrollState(ScrollStateUserHasScrolled) && !Focused)
                 Focus();
             base.OnScroll(se);
         }

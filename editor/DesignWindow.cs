@@ -9,6 +9,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -57,11 +58,9 @@ namespace editor
 
             map_display_ = new MapDisplay();
             map_display_.Location = new Point(0, 0);
-            map_display_.MouseDown += MapDisplay_MouseClick;
             map_display_.MouseDown += MapDisplay_MouseDown;
-            map_display_.MouseMove += MapDisplay_MouseClick;
             map_display_.MouseMove += MapDisplay_MouseMove;
-            map_display_.MouseUp += MapDisplay_MouseClick;
+            map_display_.MouseUp += MapDisplay_MouseUp;
             map_panel_.Controls.Add(map_display_);
 
             tileset_display_ = new TilesetDisplay();
@@ -371,6 +370,10 @@ namespace editor
             if((fmf_data_ == null) || (obs_data_ == null) || (MapDesignCB.SelectedIndex < 0))
                 return;
 
+            // skip identical tiles
+            if(BitConverter.ToUInt16(map_layers_[layer], (int)index * 2) == value)
+                return;
+
             SaveHistory();
 
             var buf = BitConverter.GetBytes((ushort)value);
@@ -453,6 +456,7 @@ namespace editor
             dragging_ = false;
             map_display_.AutoScrollOffset = new Point(0, 0);
             map_panel_.AutoScrollPosition = new Point(0, 0);
+            scroll_pos_ = new Point(0, 0);
 
             ClearUndo();
 
@@ -816,7 +820,7 @@ namespace editor
             }
         }
 
-        private void MapDisplay_MouseClick(Object sender, MouseEventArgs e)
+        private void MapDisplay_MouseDown(Object sender, MouseEventArgs e)
         {
             var mapindex = MapDesignCB.SelectedIndex;
             var layer = BrushLayerCB.SelectedIndex;
@@ -826,15 +830,132 @@ namespace editor
             var tile_x = e.X / (16 * zoom_);
             var tile_y = e.Y / (16 * zoom_);
 
-            if((e.Button != MouseButtons.Left) && (e.Button != MouseButtons.Right))
+            if((e.X < 0) || (e.Y < 0))
+                return;
+
+            if((tile_x >= fmf_data_.width) || (tile_y >= fmf_data_.height))
+                return;
+
+            var tileset_index = (uint)BrushTilesetSC.Value;
+            var brush_val = (uint)BrushValueSC.Value;
+            var index = tile_x + (tile_y * fmf_data_.width);
+
+            if(!map_panel_.Focused)
+                map_panel_.Focus();
+
+            switch(e.Button)
             {
-                if(dragging_)
-                    MapEndDrag(ModifierKeys == (Keys.Control | Keys.Shift));
-                paste_x_ = -1;
-                paste_y_ = -1;
-                if(e.Button != MouseButtons.Middle)
-                    return;
+                case MouseButtons.Left:
+                    if(ModifierKeys == Keys.Alt)
+                    {
+                        MapPasteClipboard(tile_x, tile_y);
+                    }
+                    else if(ModifierKeys == Keys.Control)
+                    {
+                        if(layer < 8)
+                        {
+                            BrushTilesetSC.Value = map_layers_[layer][(index * 2) + 1];
+                            BrushValueSC.Value = map_layers_[layer][index * 2];
+                        }
+                        else
+                        {
+                            BrushValueSC.Value = BitConverter.ToUInt16(map_layers_[layer], (int)index * 2);
+                        }
+                    }
+                    else if(ModifierKeys == Keys.None)
+                    {
+                        if(layer < 8)
+                        {
+                            if(brush_val >= 256)
+                                break;
+                            brush_val = (tileset_index * 256) + brush_val;
+                        }
+
+                        UpdateMapIndex((uint)layer, (uint)index, brush_val);
+                    }
+                    break;
+
+                case MouseButtons.Right:
+                    if(ModifierKeys == Keys.Control)
+                    {
+                        EraseMapIndex((uint)index);
+                    }
+                    else if(ModifierKeys == Keys.Alt)
+                    {
+                        if(layer < 8)
+                        {
+                            if(brush_val >= 256)
+                                break;
+                            brush_val = (tileset_index * 256) + brush_val;
+                        }
+
+                        FloodFill(layer, tile_x, tile_y, brush_val);
+                        RenderMap();
+                    }
+                    else if(ModifierKeys == Keys.None)
+                    {
+                        UpdateMapIndex((uint)layer, (uint)index, 0);
+                    }
+                    break;
+
+                case MouseButtons.Middle:
+                    scroll_pos_ = e.Location;
+
+                    var obj1 = BitConverter.ToUInt16(map_layers_[10], (int)(index * 2));
+                    var obj2 = BitConverter.ToUInt16(map_layers_[11], (int)(index * 2));
+                    if((obj1 != 0) && (obj1 <= EventIDSC.Maximum))
+                    {
+                        TabControl.SelectedIndex = 6;
+                        EventIDSC.Value = obj1;
+                    }
+                    else if((obj2 != 0) && (obj2 <= EventIDSC.Maximum))
+                    {
+                        TabControl.SelectedIndex = 6;
+                        EventIDSC.Value = obj2;
+                    }
+                    break;
+
+                default:
+                    break;
             }
+        }
+
+        private void MapDisplay_MouseUp(Object sender, MouseEventArgs e)
+        {
+            var mapindex = MapDesignCB.SelectedIndex;
+            var layer = BrushLayerCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0) || (layer < 0))
+                return;
+
+            switch(e.Button)
+            {
+                case MouseButtons.Left:
+                    if(dragging_)
+                        MapEndDrag(ModifierKeys == (Keys.Control | Keys.Shift));
+                    paste_x_ = -1;
+                    paste_y_ = -1;
+                    break;
+
+                case MouseButtons.Right:
+                    break;
+
+                case MouseButtons.Middle:
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void MapDisplay_MouseMove(object sender, MouseEventArgs e)
+        {
+            var mapindex = MapDesignCB.SelectedIndex;
+            var layer = BrushLayerCB.SelectedIndex;
+            if((fmf_data_ == null) || (obs_data_ == null) || (mapindex < 0) || (layer < 0))
+                return;
+
+            var tile_x = e.X / (16 * zoom_);
+            var tile_y = e.Y / (16 * zoom_);
 
             if((e.X < 0) || (e.Y < 0))
                 return;
@@ -842,95 +963,63 @@ namespace editor
             if((tile_x >= fmf_data_.width) || (tile_y >= fmf_data_.height))
                 return;
 
-            if(!map_display_.Focused)
-            {
-                map_display_.Focus();
-            }
-
-            if((e.Button == MouseButtons.Left) && ((ModifierKeys & Keys.Shift) != 0))
-            {
-                MapDrag(tile_x, tile_y);
-                return;
-            }
-
-            if((e.Button == MouseButtons.Left) && (ModifierKeys == Keys.Alt))
-            {
-                MapPasteClipboard(tile_x, tile_y);
-                return;
-            }
-
             var tileset_index = (uint)BrushTilesetSC.Value;
             var brush_val = (uint)BrushValueSC.Value;
             var index = tile_x + (tile_y * fmf_data_.width);
 
-            if(e.Button == MouseButtons.Middle)
+            var str = (e.X / (16 * zoom_)).ToString() + ", " + (e.Y / (16 * zoom_)).ToString();
+            if(DesignCoordLabel.Text != str)
+                DesignCoordLabel.Text = str;
+
+            switch(e.Button)
             {
-                var obj1 = BitConverter.ToUInt16(map_layers_[10], (int)(index * 2));
-                var obj2 = BitConverter.ToUInt16(map_layers_[11], (int)(index * 2));
-                if((obj1 != 0) && (obj1 <= EventIDSC.Maximum))
-                {
-                    TabControl.SelectedIndex = 6;
-                    EventIDSC.Value = obj1;
-                }
-                else if((obj2 != 0) && (obj2 <= EventIDSC.Maximum))
-                {
-                    TabControl.SelectedIndex = 6;
-                    EventIDSC.Value = obj2;
-                }
-                return;
+                case MouseButtons.Left:
+                    if((ModifierKeys & Keys.Shift) != 0)
+                    {
+                        MapDrag(tile_x, tile_y);
+                    }
+                    else if(ModifierKeys == Keys.Alt)
+                    {
+                        MapPasteClipboard(tile_x, tile_y);
+                    }
+                    else if(ModifierKeys == Keys.None)
+                    {
+                        if(layer < 8)
+                        {
+                            if(brush_val >= 256)
+                                break;
+                            brush_val = (tileset_index * 256) + brush_val;
+                        }
+
+                        UpdateMapIndex((uint)layer, (uint)index, brush_val);
+                    }
+                    break;
+
+                case MouseButtons.Right:
+                    if(ModifierKeys == Keys.Control)
+                    {
+                        EraseMapIndex((uint)index);
+                    }
+                    else if(ModifierKeys == Keys.None)
+                    {
+                        UpdateMapIndex((uint)layer, (uint)index, 0);
+                        break;
+                    }
+                    break;
+
+                case MouseButtons.Middle:
+                    // Setting AutoScrollPosition while dragging the mouse causes it to spazz out.
+                    // This serves as a workaround until a better solution is found.
+                    var pos = map_display_.AutoScrollOffset;
+                    pos.X = Math.Max(Math.Min(pos.X + (e.X - scroll_pos_.X), 0), -map_display_.Width);
+                    pos.Y = Math.Max(Math.Min(pos.Y + (e.Y - scroll_pos_.Y), 0), -map_display_.Height);
+                    map_display_.AutoScrollOffset = pos;
+                    map_panel_.ScrollControlIntoView(map_display_);
+                    break;
+
+                default:
+                    break;
             }
-
-            if((e.Button == MouseButtons.Right) && (ModifierKeys != Keys.Alt))
-            {
-                tileset_index = 0;
-                brush_val = 0;
-
-                if(ModifierKeys == Keys.Control)
-                {
-                    EraseMapIndex((uint)index);
-                    return;
-                }
-            }
-
-            if(layer < 8)
-            {
-                if(brush_val >= 256)
-                    return;
-                brush_val = (tileset_index * 256) + brush_val;
-            }
-
-            if(BitConverter.ToUInt16(map_layers_[layer], (int)index * 2) == brush_val)
-                return;
-
-            if((e.Button == MouseButtons.Right) && (ModifierKeys == Keys.Alt))
-            {
-                FloodFill(layer, tile_x, tile_y, brush_val);
-                RenderMap();
-                return;
-            }
-
-            if(ModifierKeys == Keys.Control)
-            {
-                if(layer < 8)
-                {
-                    BrushTilesetSC.Value = map_layers_[layer][(index * 2) + 1];
-                    BrushValueSC.Value = map_layers_[layer][index * 2];
-                }
-                else
-                {
-                    BrushValueSC.Value = BitConverter.ToUInt16(map_layers_[layer], (int)index * 2);
-                }
-
-                return;
-            }
-
-            UpdateMapIndex((uint)layer, (uint)index, brush_val);
-        }
-
-        private void MapDisplay_MouseDown(Object sender, MouseEventArgs e)
-        {
-            if(e.Button == MouseButtons.Middle)
-                scroll_pos_ = e.Location;
         }
 
         private void DesignLabelCB_CheckedChanged(object sender, EventArgs e)
@@ -1055,24 +1144,6 @@ namespace editor
                         map_layers_[i][j] = 0;
                 }
                 RenderMap();
-            }
-        }
-
-        private void MapDisplay_MouseMove(object sender, MouseEventArgs e)
-        {
-            var str = (e.X / (16 * zoom_)).ToString() + ", " + (e.Y / (16 * zoom_)).ToString();
-            if(DesignCoordLabel.Text != str)
-                DesignCoordLabel.Text = str;
-
-            if(e.Button == MouseButtons.Middle)
-            {
-                // Setting AutoScrollPosition while dragging the mouse causes it to spazz out.
-                // I'm too lazy to figure it out so we'll just do it this way instead.
-                var pos = map_display_.AutoScrollOffset;
-                pos.X = Math.Max(Math.Min(pos.X + (e.X - scroll_pos_.X), 0), -map_display_.Width);
-                pos.Y = Math.Max(Math.Min(pos.Y + (e.Y - scroll_pos_.Y), 0), -map_display_.Height);
-                map_display_.AutoScrollOffset = pos;
-                map_panel_.ScrollControlIntoView(map_display_);
             }
         }
 
