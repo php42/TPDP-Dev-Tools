@@ -8,7 +8,7 @@ copy "..\LICENSE" ".\release\LICENSE"
 copy "..\licenses.txt" ".\release\licenses.txt"
 copy "..\README.md" ".\release\README.md"
 copy ".\bin\*.exe" ".\release\*.exe"
-copy ".\bin\zlib.dll" ".\release\zlib.dll"
+copy ".\bin\z.dll" ".\release\z.dll"
 copy "..\docs\*.txt" ".\release\docs\*.txt"
 copy "..\docs\file_formats\*.txt" ".\release\docs\file_formats\*.txt"
 ) else (
