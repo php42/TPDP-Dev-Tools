@@ -27,6 +27,7 @@ The purpose of "Event Arg" varies depending on the value of "Event Index".
 
 The "Flags" values are mostly unknown, but the 1st value controls collision and the 3rd value adjusts the maximum distance that trainers will go to intercept the player when entering line of sight.
 When set to 0, the player will need to explicitly interact with the trainer to begin the battle.
+Flag 4 is an auto-trigger flag. Use with flag 1 set to 0 and it'll trigger when stepped on.
 
 "Movement Mode" values:
 0: static, 1: face down, 2: face left, 3: face right, 4: face up
