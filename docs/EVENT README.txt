@@ -27,9 +27,11 @@ The purpose of "Event Arg" varies depending on the value of "Event Index".
 
 The "Flags" values are mostly unknown, but the 1st value controls collision and the 3rd value adjusts the maximum distance that trainers will go to intercept the player when entering line of sight.
 When set to 0, the player will need to explicitly interact with the trainer to begin the battle.
+Flag 4 is an auto-trigger flag. Use with flag 1 set to 0 and it'll trigger when stepped on.
 
 "Movement Mode" values:
 0: static, 1: face down, 2: face left, 3: face right, 4: face up
 5: look around, 6: wander, 7: run around, 8: face player
-9: intercept player, 11: look away from player, 12: avoid player
-13: run from player, 14: spin counter-clockwise, 15: spin clockwise
+9: intercept player, 10: run and intercept player, 11: look away from player,
+12: avoid player, 13: run from player, 14: spin counter-clockwise,
+15: spin clockwise, 16: causes dialogue click sounds? Probably don't use, 17: follow player
