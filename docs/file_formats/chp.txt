@@ -1,9 +1,53 @@
-.chp files contain information about the animations for a tileset.
-it contains an array of 26-byte structures.
-the json generated for this one is purely informational as all it does is map linear addresses to the index of the first frame of animation on the sprite sheet.
-this is mostly useful for rendering .fmf files.
+.chp files contain information about the animations and properties of the tiles of a tileset.
 
----BINARY FORMAT---
-                             _
-0x00: u8 index of first frame |
-0x01-0x19: ???               _|--0x1A
+Each .chp contains an array of 256 sets of 26 (0x1A) bytes each.
+.png of corresponding tileset contains 256 tiles arranged in 32 rows of 8 tiles each. Each tile is a visual ID.
+Both together are used to display maps and tell the game what each tile's properties are.
+
+Clicking on a visual tile in the Map Editor will highlight the corresponding tile's first frame, while displaying the tile's functional ID in the Value field.
+
+the json generated for this one is purely informational as all it does is map linear addresses to the index of the first frame of animation on the sprite sheet.
+
+ID of each visual tile can be calculated by hand, not too differently from dollIcon.png:
+- Each odd row, start from X0 and count up.
+- Each even row, start from X8 and count up.
+- Every 2 rows, increase X by 1.
+e.g. 5th row, 3rd tile:
+5th row = Start at 20. 3rd tile = 20+2 = 0x22
+
+To find the start of what tile you're looking for: Take the tile ID provided by the Map Editor, multiply by 1A (26 in decimal)
+e.g. Value 41 = 41*26 = 1066 = 0x42A
+
+Offsets, per object:
+0x00: Visual/display ID - Doesn't need to match the Tile's actual ID.
+0x01-0x03: Extra Display IDs to use as Frames. Up to 3 total, not counting offset 0x00's. Optional
+0x04: Encounters
+	= 0x00: No Encounters
+	= 0x01: Yes - Normal Encounters
+	= 0x03: Yes - Blue Grass Encounters
+0x05: Animation Type
+	= 0x00: No Animation
+	= 0x01: Always looping
+	= 0x02: When stepped on, then reset to first frame
+	= 0x03: When tile below's stepped on, then reset to first frame
+	= 0x04: When stepped on, then animate back on exiting tile (Uses offset 0x0C for sounds)
+	= 0x05: When tile below's stepped on, then animate back on exiting said tile (Used for door tops)
+0x06-0x08: If not 0, animations don't play. Some suspicion the three may be some sort of conditional? Or at least linked.
+Always 0 on all vanilla tilesets.
+0x09: Particles and Sound Effects
+	= 0x01: Green Leaves + Sounds (SFX only if Animation Type = 02
+	= 0x02: Pink Leaves
+	= 0x03: Lower Pink Leaves?
+	= 0x04: Water Ripple + SFX (requires transparency; SFX only if not on boat)
+	= 0x05: Create Dirt Footprints
+	= 0x06: Create Snowy Footprints
+	= 0x07: Nothing?
+	= 0x08: Emit Glow (Center of Tile)
+	= 0x09: Emit Glow (Bottom of Tile)
+	= 0x0A: Remove Geometry Layer 1?
+0x0A: Animation Speed (Lower is faster)
+0x0B: Number of Animation Frames
+0x0C: Animation Mode 04 - Sound Effect. Made on entering and on leaving
+	= 0x01: Swinging door
+	= 0x02: Sliding door
+0x0D-0x19 [Half the set]: Seemingly completely unused. Don't seem to do anything, and always 0 on all vanilla tilesets.

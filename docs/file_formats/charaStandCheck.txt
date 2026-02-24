@@ -1,0 +1,17 @@
+TPDP: N/A. File only found in YnK.
+YnK: gn_dat1.arc/talkImage/stand/charaStandCheck.bin
+This file is an array of 1-byte bools indicating what portraits should be loaded.
+They form groups of 12. One for each portrait, 12 per character.
+You will need to use a hex editor to set these accordingly if you add new characters to the game.
+Puppets and trainer fights ignore this file, but it is necessary for using new portraits in dialogue files.
+
+0x00: 000_00.png
+0x0C: 001_00.png
+0x0D: 001_01.png
+0x0E: 001_02.png
+...
+0x18: 002_00.png
+0x19: 002_01.png
+0x1A: 002_02.png
+...
+So on, so forth.
