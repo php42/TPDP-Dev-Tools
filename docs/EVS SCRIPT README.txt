@@ -31,7 +31,7 @@ F: Toggles trainer. After a trainer is beaten, it can't be fought again, even vi
 1B: Direction Test
 1C: Shop
 1D: Team heal
-1E: ??? -- Seems to just be broken
+1E: Alpha Color
 1F: Check Puppet Book completion
 20: Teleport object
 21: Fullscreen text
@@ -58,12 +58,12 @@ F: Toggles trainer. After a trainer is beaten, it can't be fought again, even vi
 36: Increment Winstreak
 37: Check Winstreak
 38: Fight HVT Trainer
-39: ??? -- Needs Research
-3A: ??? -- Needs Research
+39: Conditional branch
+3A: Import base game save
 3B: Change map weather
-3C: ??? -- Needs Research
-3D: ??? -- Needs Research
-3E: ??? -- Needs Research
+3C: Increment/decrement accumulator variable
+3D: Comparison against accumulator variable
+3E: Reset accumulator variable
 3F: Update Winstreak
 40: HVT Validity Check
 41: Forced Save
@@ -72,6 +72,9 @@ F: Toggles trainer. After a trainer is beaten, it can't be fought again, even vi
 44: Load starter
 45: Uncatchable Battle
 46: Post-game Credits
+47: No-op
+48: Use Item
+49: Sell Items, max vanilla event opcode
 
 =============================================================================================
 In-depth documentation:
@@ -285,8 +288,15 @@ F: Trainer Toggle
 		2: Fade to Black + Jingle
 		3+: Softlock
 	
-1E: ??? Messes with transparencies?? Seems to be a broken event. Do not use?
-	1E, [Makes transparency white??]
+1E: Alpha Color
+	1E, [Color]
+	
+	Alpha gets composited with this color.
+		0: Black
+		1: White
+	
+	Strange blending operation that causes semi-transparent pixels to get blown out if you set it to 1.
+	Not very useful.
 
 1F: Puppet Book Check
 	1F, [Puppet Count], [Line to Skip to if not enough Puppet types caught]
@@ -362,9 +372,14 @@ F: Trainer Toggle
 	
 34-38: HVT Events. See Omega's HVT Doc [Or here, if they add on the info].
 
-39: ??? - Currently Unknown
+39: Conditional Branch
+	39, [Line]
+	
+	Jumps to [Line] depending on some flag set when reading a base game save file.
+	Presumably meant to be used with 3A.
 
-3A: ??? - Currently Unknown
+3A: Import base game save
+	Appears to read puppets from a base TPDP save file and put them... somewhere.
 
 3B: Switch Map Effect
 	3B, [Map ID], [Effect ID]
@@ -383,11 +398,27 @@ F: Trainer Toggle
 	
 	Replaces the effect for the map in question PERMANENTLY, until changed again via this event. Carries over between map transitions and save & reloads.
 
-3C: ??? - Currently Unknown
+3C: Increment/Decrement Accumulator
+	3C, [Index], [Value], [Subtract]
+	
+	Adds [Value] to one of the 128 accumulator variables in the save file.
+	[Index] must be less than 0x80 (128).
+	If [Subtract] is nonzero, [Value] is negated (subtracted).
+	The result is clamped to the range [0, 9999].
 
-3D: ??? - Currently Unknown
+3D: Compare Accumulator
+	3D, [Index], [Value], [Operator], [Line]
+	
+	[Operator] selects one of the following operations:
+		0: [Value] <= accumulator
+		nonzero: accumulator < [Value]
+	
+	Jumps to [Line] if [Operator] evaluates true.
 
-3E: ??? - Currently Unknown
+3E: Reset Accumulator
+	3E, [Index]
+	
+	Sets specified accumulator to 0.
 
 3F-40: HVT Events. See Omega's HVT Doc [Or here, if they add on the info].
 
@@ -407,3 +438,23 @@ F: Trainer Toggle
 		Exactly the same as Event Type C, but the Puppet is uncatchable and you can't run away from the fight. You can, however, use a Plain Doll to flee. This is counted as a win.
 	
 46: Post-Game Credits
+
+47: No-op
+	Advances to next line.
+	This is also the default behaviour for invalid event opcodes.
+
+48: Use Item
+	48, [Item ID]
+	
+	Invokes the effect of [Item ID] as if it were used by the player.
+	Some items have hardcoded behaviours when used this way:
+		0x00A: Bead necklace.
+		0x00B: Talisman.
+		0x00C: Magatama.
+		0x243: Gap map, behaves like event 4 with a target object of 894. Target map is set elsewhere but defaults to 0 (same map).
+		0x245: Bike.
+		0x248: Boat.
+
+49: Sell Items
+	Open shop screen for selling items in your bag.
+	This is the highest event opcode in vanilla SoD.

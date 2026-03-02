@@ -1,0 +1,5 @@
+gn_dat5.arc/script/###.pts
+YnK/SoD only.
+
+These files contain the rental teams used with event 0x31 (see EVS SCRIPT README.txt).
+Each one is just an array of 6 encrypted puppets (see puppet.txt) in their box format (0x95 bytes each).
